@@ -61,3 +61,10 @@ class PropertyImageUploadView(APIView):
             {"detail": "Images uploaded successfully"},
             status=status.HTTP_201_CREATED
         )
+
+class ApprovedPropertyListView(generics.ListAPIView):
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Property.objects.filter(is_approved=True)
