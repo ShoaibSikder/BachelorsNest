@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'properties',
     'rentals',
     'messaging',
+    'notifications',
 ]
 
 

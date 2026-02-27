@@ -35,6 +35,10 @@ urlpatterns = [
     path('api/properties/', include('properties.urls')),
     # rentals
     path('api/rentals/', include('rentals.urls')),
+    # notifications
+    path('api/notifications/', include('notifications.urls')),
+    # messaging
+    path('api/messages/', include('messaging.urls')),
 ]
 
 if settings.DEBUG:

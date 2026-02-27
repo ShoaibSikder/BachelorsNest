@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import generics, permissions
 
-from BachelorsNest.backend.accounts.permissions import IsAdmin
+from .permissions import IsAdmin
 from .models import User
 from .serializers import RegisterSerializer, UserSerializer
 from rest_framework.views import APIView

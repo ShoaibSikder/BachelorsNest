@@ -8,6 +8,7 @@ from .serializers import RentRequestSerializer
 from properties.models import Property
 from rest_framework.response import Response
 from rest_framework import status
+from notifications.models import Notification
 
 
 class CreateRentRequestView(generics.CreateAPIView):
@@ -73,3 +74,18 @@ class OwnerRequestListView(generics.ListAPIView):
 
     def get_queryset(self):
         return RentRequest.objects.filter(owner=self.request.user)
+    
+
+def perform_update(self, serializer):
+    rent_request = serializer.save()
+    
+    if rent_request.status == "accepted":
+        Notification.objects.create(
+            user=rent_request.bachelor,
+            message="Your rent request has been accepted."
+        )
+    elif rent_request.status == "rejected":
+        Notification.objects.create(
+            user=rent_request.bachelor,
+            message="Your rent request has been rejected."
+        )

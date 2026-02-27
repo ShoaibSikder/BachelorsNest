@@ -9,6 +9,9 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Property, PropertyImage
 from .serializers import PropertySerializer
 from accounts.permissions import IsOwner, IsAdmin
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+from notifications.models import Notification
 
 # Owner: Add property
 class PropertyCreateView(generics.CreateAPIView):
@@ -88,3 +91,21 @@ class AdminPropertyListView(generics.ListAPIView):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated, IsAdmin]
+
+class ApprovedPropertyListView(generics.ListAPIView):
+    queryset = Property.objects.filter(is_approved=True)
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]
+
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['price', 'location', 'rooms']
+    search_fields = ['location', 'title']
+    
+
+def perform_update(self, serializer):
+    property_obj = serializer.save(is_approved=True)
+
+    Notification.objects.create(
+        user=property_obj.owner,
+        message="Your property has been approved by admin."
+    )
