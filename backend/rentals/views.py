@@ -66,3 +66,10 @@ class BachelorRequestListView(generics.ListAPIView):
 
     def get_queryset(self):
         return RentRequest.objects.filter(bachelor=self.request.user)
+    
+class OwnerRequestListView(generics.ListAPIView):
+    serializer_class = RentRequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return RentRequest.objects.filter(owner=self.request.user)

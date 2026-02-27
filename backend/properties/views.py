@@ -68,3 +68,11 @@ class ApprovedPropertyListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Property.objects.filter(is_approved=True)
+
+
+class OwnerPropertyListView(generics.ListAPIView):
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Property.objects.filter(owner=self.request.user)
