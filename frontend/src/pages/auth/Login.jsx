@@ -4,7 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -23,7 +23,7 @@ const Login = () => {
 
     try {
       const user = await login(formData);
-
+      alert("Login successful ✅");
       // Role-based redirect
       if (user.role === "bachelor") {
         navigate("/bachelor");
@@ -46,11 +46,11 @@ const Login = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
         <input
-          type="email"
-          name="email"
-          placeholder="Email"
+          type="text"
+          name="username"
+          placeholder="Username"
           className="w-full p-2 mb-4 border rounded"
-          value={formData.email}
+          value={formData.username}
           onChange={handleChange}
           required
         />
