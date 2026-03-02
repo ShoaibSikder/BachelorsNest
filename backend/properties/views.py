@@ -98,7 +98,7 @@ class ApprovedPropertyListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    filterset_fields = ['price', 'location', 'rooms']
+    filterset_fields = ['rent', 'location', 'property_type'] 
     search_fields = ['location', 'title']
     
 

@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { getApprovedProperties } from "../../api/propertyApi";
+import { sendRentRequest } from "../../api/rentalApi";
 
 const BachelorHome = () => {
   const [properties, setProperties] = useState([]);
+
+  const handleRentRequest = async (propertyId) => {
+    try {
+      await sendRentRequest(propertyId);
+      alert("Rent request sent successfully!");
+    } catch (error) {
+      alert(error.response?.data?.detail || "Failed to send request.");
+    }
+  };
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -26,23 +36,17 @@ const BachelorHome = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {properties.map((property) => (
-            <div
-              key={property.id}
-              className="bg-white shadow-md rounded p-4"
-            >
-              <h2 className="text-xl font-semibold mb-2">
-                {property.title}
-              </h2>
+            <div key={property.id} className="bg-white shadow-md rounded p-4">
+              <h2 className="text-xl font-semibold mb-2">{property.title}</h2>
 
-              <p className="text-gray-600 mb-2">
-                {property.description}
-              </p>
+              <p className="text-gray-600 mb-2">{property.description}</p>
 
-              <p className="font-bold mb-4">
-                ৳ {property.price}
-              </p>
+              <p className="font-bold mb-4">৳ {property.rent}</p>
 
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              <button
+                onClick={() => handleRentRequest(property.id)}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
                 Send Rent Request
               </button>
             </div>

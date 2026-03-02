@@ -1,4 +1,4 @@
 import api from "./axios";
 
 export const getApprovedProperties = () =>
-  api.get("properties/");
+  api.get("properties/approved/");
