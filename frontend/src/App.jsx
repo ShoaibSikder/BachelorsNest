@@ -6,12 +6,13 @@ import OwnerHome from "./pages/owner/Home";
 import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import BachelorLayout from "./layouts/BachelorLayout";
+import MyRequests from "./pages/bachelor/MyRequests";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-
+        
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />

@@ -32,6 +32,7 @@ class CreateRentRequestView(generics.CreateAPIView):
             owner=property.owner,
             property=property
         )
+        
 class UpdateRentRequestStatusView(generics.UpdateAPIView):
     queryset = RentRequest.objects.all()
     serializer_class = RentRequestSerializer
@@ -58,6 +59,18 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
         rent_request.status = new_status
         rent_request.save()
 
+        # ✅ Send Notification
+        if new_status == "accepted":
+            Notification.objects.create(
+                user=rent_request.bachelor,
+                message="Your rent request has been accepted."
+            )
+        else:
+            Notification.objects.create(
+                user=rent_request.bachelor,
+                message="Your rent request has been rejected."
+            )
+
         return Response(
             {"detail": f"Request {new_status} successfully"},
             status=status.HTTP_200_OK
@@ -77,18 +90,17 @@ class OwnerRequestListView(generics.ListAPIView):
 
     def get_queryset(self):
         return RentRequest.objects.filter(owner=self.request.user)
-    
 
-def perform_update(self, serializer):
-    rent_request = serializer.save()
-    
-    if rent_request.status == "accepted":
-        Notification.objects.create(
-            user=rent_request.bachelor,
-            message="Your rent request has been accepted."
-        )
-    elif rent_request.status == "rejected":
-        Notification.objects.create(
-            user=rent_request.bachelor,
-            message="Your rent request has been rejected."
-        )
+    def perform_update(self, serializer):
+        rent_request = serializer.save()
+
+        if rent_request.status == "accepted":
+            Notification.objects.create(
+                user=rent_request.bachelor,
+                message="Your rent request has been accepted."
+            )
+        elif rent_request.status == "rejected":
+            Notification.objects.create(
+                user=rent_request.bachelor,
+                message="Your rent request has been rejected."
+            )
