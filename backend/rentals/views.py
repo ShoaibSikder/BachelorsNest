@@ -9,6 +9,9 @@ from properties.models import Property
 from rest_framework.response import Response
 from rest_framework import status
 from notifications.models import Notification
+from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+
 
 
 class CreateRentRequestView(generics.CreateAPIView):
@@ -18,11 +21,11 @@ class CreateRentRequestView(generics.CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
 
-        if user.role != 'BACHELOR':
-            raise PermissionError("Only bachelors can send rent requests")
+        if user.role.lower() != 'bachelor':
+            raise PermissionDenied("Only bachelors can send rent requests")
 
         property_id = self.request.data.get('property')
-        property = Property.objects.get(id=property_id)
+        property = get_object_or_404(Property, id=property_id)
 
         serializer.save(
             bachelor=user,
