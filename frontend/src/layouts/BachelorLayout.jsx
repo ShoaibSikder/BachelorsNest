@@ -13,7 +13,6 @@ const BachelorLayout = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-md p-5">
         <h2 className="text-xl font-bold mb-6">Bachelor Panel</h2>
@@ -32,6 +31,11 @@ const BachelorLayout = () => {
           <li>
             <Link to="/bachelor/profile" className="hover:text-blue-500">
               Profile
+            </Link>
+          </li>
+          <li>
+            <Link to="/bachelor/notifications" className="hover:text-blue-500">
+              Notifications
             </Link>
           </li>
           <li>

@@ -15,6 +15,9 @@ const OwnerLayout = () => {
           <Link to="/owner/requests" className="hover:text-gray-300 transition">
             Rent Requests
           </Link>
+          <Link to="/owner/notifications" className="hover:text-gray-300 transition">
+            Notifications
+          </Link>
         </nav>
       </div>
 

@@ -9,6 +9,8 @@ import BachelorLayout from "./layouts/BachelorLayout";
 import MyRequests from "./pages/bachelor/MyRequests";
 import OwnerLayout from "./layouts/OwnerLayout";
 import OwnerRequests from "./pages/owner/OwnerRequests";
+import BachelorNotifications from "./pages/bachelor/Notifications";
+import OwnerNotifications from "./pages/owner/Notifications";
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
           <Route index element={<BachelorHome />} />
           <Route path="requests" element={<div>My Requests Page</div>} />
           <Route path="profile" element={<div>Profile Page</div>} />
+          <Route path="notifications" element={<BachelorNotifications />} />
         </Route>
 
         {/* Owner Dashboard */}
@@ -43,6 +46,7 @@ function App() {
         >
           <Route index element={<OwnerHome />} />
           <Route path="requests" element={<OwnerRequests />} />
+          <Route path="notifications" element={<OwnerNotifications />} />
         </Route>
 
         {/* Admin Dashboard */}
