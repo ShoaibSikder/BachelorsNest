@@ -13,7 +13,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -34,22 +33,16 @@ function App() {
 
         {/* Owner Dashboard */}
         <Route
-  path="/owner"
-  element={
-    <ProtectedRoute allowedRole="owner">
-      <OwnerHome />
-    </ProtectedRoute>
-  }
-/>
-
-<Route
-  path="/owner/requests"
-  element={
-    <ProtectedRoute allowedRole="owner">
-      <OwnerRequests />
-    </ProtectedRoute>
-  }
-/>
+          path="/owner"
+          element={
+            <ProtectedRoute allowedRole="owner">
+              <OwnerLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<OwnerHome />} />
+          <Route path="requests" element={<OwnerRequests />} />
+        </Route>
 
         {/* Admin Dashboard */}
         <Route
@@ -60,7 +53,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
       </Routes>
     </BrowserRouter>
   );
