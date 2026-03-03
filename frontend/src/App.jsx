@@ -7,6 +7,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import BachelorLayout from "./layouts/BachelorLayout";
 import MyRequests from "./pages/bachelor/MyRequests";
+import OwnerRequests from "./pages/owner/OwnerRequests";
 
 function App() {
   return (
@@ -33,13 +34,22 @@ function App() {
 
         {/* Owner Dashboard */}
         <Route
-          path="/owner"
-          element={
-            <ProtectedRoute allowedRole="owner">
-              <OwnerHome />
-            </ProtectedRoute>
-          }
-        />
+  path="/owner"
+  element={
+    <ProtectedRoute allowedRole="owner">
+      <OwnerHome />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/owner/requests"
+  element={
+    <ProtectedRoute allowedRole="owner">
+      <OwnerRequests />
+    </ProtectedRoute>
+  }
+/>
 
         {/* Admin Dashboard */}
         <Route
