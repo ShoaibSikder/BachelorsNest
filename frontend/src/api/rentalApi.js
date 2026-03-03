@@ -1,5 +1,4 @@
 import api from "./axios";
-import axiosInstance from "./axiosInstance";
 
 export const sendRentRequest = (propertyId) =>
   api.post("rentals/request/", {

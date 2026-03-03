@@ -7,6 +7,7 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import BachelorLayout from "./layouts/BachelorLayout";
 import MyRequests from "./pages/bachelor/MyRequests";
+import OwnerLayout from "./layouts/OwnerLayout";
 import OwnerRequests from "./pages/owner/OwnerRequests";
 
 function App() {
