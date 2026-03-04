@@ -1,22 +1,13 @@
 import api from "./axios";
 
 export const sendRentRequest = (propertyId) =>
-  api.post("rentals/request/", {
-    property: propertyId,
-  });
+  api.post("rentals/request/", { property: propertyId });
 
-export const getMyRentRequests = () => {
-  return axiosInstance.get("/rentals/bachelor/");
-};
+export const getMyRentRequests = () =>
+  api.get("rentals/bachelor/");
 
-// Owner - Get incoming requests
-export const getOwnerRequests = () => {
-  return axiosInstance.get("/rentals/owner/");
-};
+export const getOwnerRequests = () =>
+  api.get("rentals/owner/");
 
-// Owner - Update request status
-export const updateRentRequestStatus = (id, status) => {
-  return axiosInstance.patch(`/rentals/update/${id}/`, {
-    status: status,
-  });
-};
+export const updateRentRequestStatus = (id, status) =>
+  api.patch(`rentals/update/${id}/`, { status });

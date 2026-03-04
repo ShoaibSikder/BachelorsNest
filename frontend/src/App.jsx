@@ -30,7 +30,7 @@ function App() {
           }
         >
           <Route index element={<BachelorHome />} />
-          <Route path="requests" element={<div>My Requests Page</div>} />
+          <Route path="requests" element={<MyRequests />} />
           <Route path="profile" element={<div>Profile Page</div>} />
           <Route path="notifications" element={<BachelorNotifications />} />
         </Route>
