@@ -22,10 +22,12 @@ class SendMessageView(generics.CreateAPIView):
 
         exists = RentRequest.objects.filter(
             bachelor=self.request.user,
-            owner=receiver
+            owner=receiver,
+            status="accepted"
         ).exists() or RentRequest.objects.filter(
             bachelor=receiver,
-            owner=self.request.user
+            owner=self.request.user,
+            status="accepted"
         ).exists()
 
         if not exists:

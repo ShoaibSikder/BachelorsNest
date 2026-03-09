@@ -9,13 +9,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.other_user_id = self.scope['url_route']['kwargs']['user_id']
-        self.room_group_name = f"chat_{self.scope['user'].id}_{self.other_user_id}"
+        user1 = int(self.scope['user'].id)
+        user2 = int(self.other_user_id)
+
+        # 🔥 Create consistent room name
+        self.room_group_name = f"chat_{min(user1, user2)}_{max(user1, user2)}"
 
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
-
+        
+        await Message.objects.filter(
+            sender_id=self.other_user_id,
+            receiver=self.scope['user'],
+            is_read=False
+        ).aupdate(is_read=True)
         await self.accept()
 
     async def receive(self, text_data):

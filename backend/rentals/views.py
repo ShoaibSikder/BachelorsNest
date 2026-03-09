@@ -21,16 +21,21 @@ class CreateRentRequestView(generics.CreateAPIView):
     def perform_create(self, serializer):
         user = self.request.user
 
-        if user.role.lower() != 'bachelor':
+        if user.role.lower() != "bachelor":
             raise PermissionDenied("Only bachelors can send rent requests")
 
-        property_id = self.request.data.get('property')
+        property_id = self.request.data.get("property")
         property = get_object_or_404(Property, id=property_id)
+
+        # ✅ Prevent duplicate requests
+        if RentRequest.objects.filter(bachelor=user, property=property).exists():
+            raise PermissionDenied("You already sent a request for this property.")
 
         serializer.save(
             bachelor=user,
             owner=property.owner,
-            property=property
+            property=property,
+            status="pending"
         )
         
 class UpdateRentRequestStatusView(generics.UpdateAPIView):
@@ -41,7 +46,6 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         rent_request = self.get_object()
 
-        # Only property owner can update
         if request.user != rent_request.owner:
             return Response(
                 {"detail": "Only owner can update this request"},
@@ -59,17 +63,18 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
         rent_request.status = new_status
         rent_request.save()
 
-        # ✅ Send Notification
+        # ✅ If accepted, reject all other pending requests
         if new_status == "accepted":
-            Notification.objects.create(
-                user=rent_request.bachelor,
-                message="Your rent request has been accepted."
-            )
-        else:
-            Notification.objects.create(
-                user=rent_request.bachelor,
-                message="Your rent request has been rejected."
-            )
+            RentRequest.objects.filter(
+                property=rent_request.property,
+                status="pending"
+            ).exclude(id=rent_request.id).update(status="rejected")
+
+        # ✅ Send notification
+        Notification.objects.create(
+            user=rent_request.bachelor,
+            message=f"Your rent request has been {new_status}."
+        )
 
         return Response(
             {"detail": f"Request {new_status} successfully"},
@@ -90,17 +95,3 @@ class OwnerRequestListView(generics.ListAPIView):
 
     def get_queryset(self):
         return RentRequest.objects.filter(owner=self.request.user)
-
-    def perform_update(self, serializer):
-        rent_request = serializer.save()
-
-        if rent_request.status == "accepted":
-            Notification.objects.create(
-                user=rent_request.bachelor,
-                message="Your rent request has been accepted."
-            )
-        elif rent_request.status == "rejected":
-            Notification.objects.create(
-                user=rent_request.bachelor,
-                message="Your rent request has been rejected."
-            )
