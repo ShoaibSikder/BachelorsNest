@@ -10,7 +10,7 @@ const Notifications = () => {
       try {
         const response = await getNotifications();
         setNotifications(response.data);
-      } catch (error) {
+      } catch {
         console.error("Failed to load notifications");
       } finally {
         setLoading(false);
@@ -20,26 +20,34 @@ const Notifications = () => {
     fetchNotifications();
   }, []);
 
-  if (loading) return <p>Loading notifications...</p>;
+  if (loading) {
+    return (
+      <p className="text-gray-600 dark:text-gray-300">
+        Loading notifications...
+      </p>
+    );
+  }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Notifications</h1>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+        Notifications
+      </h2>
 
-      {notifications.length === 0 ? (
-        <p>No notifications yet.</p>
-      ) : (
-        <div className="space-y-4">
-          {notifications.map((n) => (
-            <div key={n.id} className="bg-white p-4 shadow rounded">
-              <p>{n.message}</p>
-              <p className="text-sm text-gray-500 mt-2">
-                {new Date(n.created_at).toLocaleString()}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="space-y-5">
+        {notifications.map((n) => (
+          <div
+            key={n.id}
+            className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-2xl"
+          >
+            <p className="text-gray-800 dark:text-white">{n.message}</p>
+
+            <p className="text-sm text-gray-500 mt-2">
+              {new Date(n.created_at).toLocaleString()}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

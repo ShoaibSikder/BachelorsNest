@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  getOwnerRequests,
-  updateRentRequestStatus,
-} from "../../api/rentalApi";
+import { getOwnerRequests, updateRentRequestStatus } from "../../api/rentalApi";
 
 const OwnerRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -12,8 +9,8 @@ const OwnerRequests = () => {
     try {
       const response = await getOwnerRequests();
       setRequests(response.data);
-    } catch (error) {
-      console.error("Failed to load owner requests");
+    } catch {
+      console.error("Failed to load requests");
     } finally {
       setLoading(false);
     }
@@ -26,76 +23,66 @@ const OwnerRequests = () => {
   const handleUpdate = async (id, status) => {
     try {
       await updateRentRequestStatus(id, status);
-      alert(`Request ${status} successfully`);
-      fetchRequests(); // refresh list
-    } catch (error) {
+      fetchRequests();
+    } catch {
       alert("Failed to update request");
     }
   };
 
   if (loading) {
-    return <p className="p-6">Loading requests...</p>;
+    return (
+      <p className="text-gray-600 dark:text-gray-300">Loading requests...</p>
+    );
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">
-        Incoming Rent Requests
-      </h1>
+    <div>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+        Incoming Requests
+      </h2>
 
-      {requests.length === 0 ? (
-        <p>No rent requests yet.</p>
-      ) : (
-        <div className="space-y-4">
-          {requests.map((request) => (
-            <div
-              key={request.id}
-              className="bg-white shadow-md rounded p-4"
-            >
-              <h2 className="text-lg font-semibold">
-                {request.property.title}
-              </h2>
+      <div className="space-y-5">
+        {requests.map((request) => (
+          <div
+            key={request.id}
+            className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-2xl"
+          >
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+              {request.property.title}
+            </h2>
 
-              <p className="text-gray-600">
-                📍 {request.property.location}
-              </p>
+            <p className="text-gray-600 dark:text-gray-300">
+              📍 {request.property.location}
+            </p>
 
-              <p className="mt-1">
-                👤 Bachelor: {request.bachelor.username}
-              </p>
+            <p className="mt-2 text-gray-700 dark:text-gray-300">
+              👤 {request.bachelor.username}
+            </p>
 
-              <p className="mt-2">
-                Status:{" "}
-                <span className="font-bold">
-                  {request.status}
-                </span>
-              </p>
+            <p className="mt-2 font-bold text-gray-800 dark:text-white">
+              Status: {request.status}
+            </p>
 
-              {request.status === "pending" && (
-                <div className="mt-4 flex gap-3">
-                  <button
-                    onClick={() =>
-                      handleUpdate(request.id, "accepted")
-                    }
-                    className="bg-green-600 text-white px-4 py-2 rounded"
-                  >
-                    Accept
-                  </button>
+            {request.status === "pending" && (
+              <div className="mt-4 flex gap-3">
+                <button
+                  onClick={() => handleUpdate(request.id, "accepted")}
+                  className="flex-1 bg-green-600 text-white p-2 rounded-lg"
+                >
+                  Accept
+                </button>
 
-                  <button
-                    onClick={() =>
-                      handleUpdate(request.id, "rejected")
-                    }
-                    className="bg-red-600 text-white px-4 py-2 rounded"
-                  >
-                    Reject
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+                <button
+                  onClick={() => handleUpdate(request.id, "rejected")}
+                  className="flex-1 bg-red-500 text-white p-2 rounded-lg"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
