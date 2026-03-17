@@ -14,6 +14,13 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from properties.models import Property
+# Import your rent requests and messages models
+# from rent.models import RentRequest
+# from messages.models import Message
 
 
 class RegisterView(generics.CreateAPIView):
@@ -67,3 +74,28 @@ class AdminUserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsAdmin]
+    
+
+
+class OwnerDashboardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        total_properties = Property.objects.filter(owner=user).count()
+        approved_properties = Property.objects.filter(owner=user, is_approved=True).count()
+        pending_properties = Property.objects.filter(owner=user, is_approved=False).count()
+        
+        # Replace below with your actual RentRequest model query
+        rent_requests = 0  
+        # Replace below with your actual Message model query
+        unread_messages = 0  
+
+        return Response({
+            "total_properties": total_properties,
+            "approved_properties": approved_properties,
+            "pending_properties": pending_properties,
+            "rent_requests": rent_requests,
+            "unread_messages": unread_messages
+        })
