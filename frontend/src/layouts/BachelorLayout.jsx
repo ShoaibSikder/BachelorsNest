@@ -34,7 +34,7 @@ const BachelorLayout = () => {
         <div>
           {/* HEADER */}
           <div className="flex items-center justify-between p-4">
-            {open && <h2 className="text-xl font-extrabold">Bachelor Home Page</h2>}
+            {open && <h2 className="text-xl font-extrabold">Bachelor</h2>}
             <Menu className="cursor-pointer" onClick={() => setOpen(!open)} />
           </div>
 
