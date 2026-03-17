@@ -6,68 +6,65 @@ const BachelorHome = () => {
   const [properties, setProperties] = useState([]);
   const [myRequests, setMyRequests] = useState([]);
 
-  // ✅ Fetch Properties
   const fetchProperties = async () => {
     try {
       const response = await getApprovedProperties();
       setProperties(response.data);
-    } catch (error) {
+    } catch {
       console.error("Failed to fetch properties");
     }
   };
 
-  // ✅ Fetch My Requests
   const fetchMyRequests = async () => {
     try {
       const response = await getMyRentRequests();
       setMyRequests(response.data);
-    } catch (error) {
-      console.error("Failed to fetch my requests");
+    } catch {
+      console.error("Failed to fetch requests");
     }
   };
 
   useEffect(() => {
     fetchProperties();
     fetchMyRequests();
-    const interval = setInterval(() => {
-      fetchMyRequests(); // refresh every 5 seconds
-    }, 5000);
-    return () => clearInterval(interval);
   }, []);
 
-  // ✅ Send Rent Request
   const handleRentRequest = async (propertyId) => {
     try {
       await sendRentRequest(propertyId);
-      alert("Rent request sent successfully!");
-      fetchMyRequests(); // refresh status after sending
+      fetchMyRequests();
     } catch (error) {
       alert(error.response?.data?.detail || "Failed to send request.");
     }
   };
 
-  // ✅ Check request status for property
   const getRequestStatus = (propertyId) => {
-    const request = myRequests.find(
-      (req) => req.property === propertyId, // IMPORTANT: property is likely ID
-    );
+    const request = myRequests.find((req) => req.property === propertyId);
     return request ? request.status : null;
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Available Properties</h1>
+    <div>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+        Available Properties
+      </h2>
 
       {properties.length === 0 ? (
-        <p>No properties available.</p>
+        <p className="text-gray-600 dark:text-gray-300">
+          No properties available.
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {properties.map((property) => {
             const status = getRequestStatus(property.id);
 
             return (
-              <div key={property.id} className="bg-white shadow-md rounded p-4">
-                {property.images && property.images.length > 0 && (
+              <div
+                key={property.id}
+                className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-2xl space-y-3"
+              >
+                {/* IMAGE */}
+                {property.images?.length > 0 && (
                   <img
                     src={
                       property.images[0].image.startsWith("http")
@@ -75,46 +72,54 @@ const BachelorHome = () => {
                         : `http://127.0.0.1:8000${property.images[0].image}`
                     }
                     alt={property.title}
-                    className="w-full h-48 object-cover rounded mb-3"
+                    className="w-full h-48 object-cover rounded-xl"
                   />
                 )}
 
-                <h2 className="text-xl font-semibold mb-2">{property.title}</h2>
-                <p className="text-gray-600 mb-2">{property.description}</p>
-                <p className="text-gray-700 mb-1">📍 {property.location}</p>
-                <p className="font-bold mb-4">৳ {property.rent}</p>
+                {/* TITLE */}
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                  {property.title}
+                </h2>
 
-                {/* 🔥 Smart Button Logic */}
+                {/* DESCRIPTION */}
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  {property.description}
+                </p>
 
+                {/* LOCATION */}
+                <p className="text-gray-700 dark:text-gray-300">
+                  📍 {property.location}
+                </p>
+
+                {/* RENT */}
+                <p className="font-bold text-lg text-gray-800 dark:text-white">
+                  ৳ {property.rent}
+                </p>
+
+                {/* BUTTONS */}
                 {!status && (
                   <button
                     onClick={() => handleRentRequest(property.id)}
-                    className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-lg font-semibold hover:scale-[1.02] transition"
                   >
                     Send Rent Request
                   </button>
                 )}
 
                 {status === "pending" && (
-                  <button
-                    disabled
-                    className="w-full bg-yellow-500 text-white px-4 py-2 rounded cursor-not-allowed"
-                  >
+                  <button className="w-full bg-yellow-500 text-white p-3 rounded-lg cursor-not-allowed">
                     Request Sent
                   </button>
                 )}
 
                 {status === "accepted" && (
-                  <button className="w-full bg-green-600 text-white px-4 py-2 rounded">
+                  <button className="w-full bg-green-600 text-white p-3 rounded-lg">
                     Send Message
                   </button>
                 )}
 
                 {status === "rejected" && (
-                  <button
-                    disabled
-                    className="w-full bg-red-500 text-white px-4 py-2 rounded cursor-not-allowed"
-                  >
+                  <button className="w-full bg-red-500 text-white p-3 rounded-lg cursor-not-allowed">
                     Rejected
                   </button>
                 )}
