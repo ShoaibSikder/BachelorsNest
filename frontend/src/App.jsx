@@ -12,6 +12,9 @@ import OwnerRequests from "./pages/owner/OwnerRequests";
 import BachelorNotifications from "./pages/bachelor/Notifications";
 import OwnerNotifications from "./pages/owner/Notifications";
 import OwnerProperties from "./pages/owner/OwnerProperties"; 
+import OwnerAddProperty from "./pages/owner/OwnerAddProperty";
+import OwnerEditProperty from "./pages/owner/OwnerEditProperty";
+
 
 function App() {
   return (
@@ -48,8 +51,9 @@ function App() {
           <Route index element={<OwnerHome />} />
           <Route path="requests" element={<OwnerRequests />} />
           <Route path="notifications" element={<OwnerNotifications />} />
-          // Example in App.jsx or owner routes file
           <Route path="/owner/properties" element={<OwnerProperties />} />
+          <Route path="/owner/properties/add" element={<OwnerAddProperty />} />
+          <Route path="/owner/properties/edit/:id" element={<OwnerEditProperty />} />
         </Route>
 
         {/* Admin Dashboard */}

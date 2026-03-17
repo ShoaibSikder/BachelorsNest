@@ -66,6 +66,19 @@ const OwnerProperties = () => {
             key={property.id}
             className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg"
           >
+            {/* Property image */}
+            {property.images && property.images.length > 0 ? (
+              <img
+                src={property.images[0].image} // first image
+                alt={property.title}
+                className="w-full h-40 object-cover rounded-lg mb-2"
+              />
+            ) : (
+              <div className="w-full h-40 bg-gray-200 dark:bg-gray-700 rounded-lg mb-2 flex items-center justify-center text-gray-500">
+                No image
+              </div>
+            )}
+
             <h3 className="text-lg font-semibold">{property.title}</h3>
             <p className="text-gray-500 dark:text-gray-300">
               Location: {property.location}
@@ -82,13 +95,13 @@ const OwnerProperties = () => {
                 onClick={() => handleEdit(property.id)}
                 className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
               >
-                <Edit size={16} /> Edit
+                Edit
               </button>
               <button
                 onClick={() => handleDelete(property.id)}
                 className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
               >
-                <Trash2 size={16} /> Delete
+                Delete
               </button>
             </div>
           </div>

@@ -10,6 +10,7 @@ const OwnerLayout = () => {
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/owner" },
     { name: "My Properties", icon: LayoutDashboard, path: "/owner/properties" },
+    { name: "Add Property", icon: FileText, path: "/owner/properties/add" },
     { name: "Rent Requests", icon: FileText, path: "/owner/requests" },
     { name: "Notifications", icon: Bell, path: "/owner/notifications" },
   ];

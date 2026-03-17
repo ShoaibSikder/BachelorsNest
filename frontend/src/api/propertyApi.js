@@ -12,4 +12,12 @@ export const deleteProperty = (id) =>
 
 // Update a property by ID (for edit)
 export const updateProperty = (id, data) =>
-  api.put(`properties/update-delete/${id}/`, data);
+  api.put(`properties/update-delete/${id}/`, data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+// Add property with images
+export const addProperty = (data) =>
+  api.post("properties/add/", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
