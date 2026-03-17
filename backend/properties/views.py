@@ -13,6 +13,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from notifications.models import Notification
 
+
+
 # Owner: Add property
 class PropertyCreateView(generics.CreateAPIView):
     serializer_class = PropertySerializer
@@ -109,3 +111,9 @@ def perform_update(self, serializer):
         user=property_obj.owner,
         message="Your property has been approved by admin."
     )
+    
+
+class PropertyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated, IsOwner]

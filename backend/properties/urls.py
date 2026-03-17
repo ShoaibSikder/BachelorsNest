@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AdminPropertyListView, PropertyCreateView, PropertyListView, PropertyApproveView
+from .views import AdminPropertyListView, PropertyCreateView, PropertyListView, PropertyApproveView, PropertyUpdateDeleteView
 from .views import PropertyImageUploadView
 from .views import ApprovedPropertyListView
 from .views import OwnerPropertyListView
@@ -14,4 +14,5 @@ urlpatterns = [
     path('owner/', OwnerPropertyListView.as_view(), name='owner-properties'),
     path('admin/pending/', PendingPropertyListView.as_view(), name='pending-properties'),
     path('admin/all/', AdminPropertyListView.as_view(), name='admin-all-properties'),
+    path('update-delete/<int:pk>/', PropertyUpdateDeleteView.as_view(), name='property-update-delete'),
 ]
