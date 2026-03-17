@@ -1,11 +1,18 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext"; // import your AuthContext
 import { LayoutDashboard, FileText, Bell, LogOut, Menu } from "lucide-react";
 
 const OwnerLayout = () => {
-  const [open, setOpen] = useState(true);
+  const { logout } = useContext(AuthContext); // get logout function from context
   const navigate = useNavigate();
   const location = useLocation();
+  const [open, setOpen] = useState(true);
+
+  const handleLogout = () => {
+    logout(); // clear session/token
+    navigate("/"); // redirect to login or home
+  };
 
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/owner" },
@@ -25,8 +32,9 @@ const OwnerLayout = () => {
       >
         {/* TOP */}
         <div>
+          {/* HEADER */}
           <div className="flex items-center justify-between p-4">
-            {open && <h2 className="text-xl font-extrabold">Owner Panel</h2>}
+            {open && <h2 className="text-xl font-extrabold">Owner</h2>}
             <Menu className="cursor-pointer" onClick={() => setOpen(!open)} />
           </div>
 
@@ -34,7 +42,6 @@ const OwnerLayout = () => {
           <ul className="mt-6 space-y-2 px-2">
             {menuItems.map((item, index) => {
               const isActive = location.pathname === item.path;
-
               return (
                 <li
                   key={index}
@@ -55,19 +62,21 @@ const OwnerLayout = () => {
 
         {/* LOGOUT */}
         <div className="p-4">
-          <button className="flex items-center gap-2 w-full bg-white text-red-500 py-2 rounded-lg justify-center hover:scale-[1.03] transition">
+          <button
+            onClick={handleLogout} // use context logout
+            className="flex items-center gap-2 w-full bg-white text-red-500 py-2 rounded-lg justify-center hover:scale-[1.03] transition"
+          >
             <LogOut size={18} />
             {open && "Logout"}
           </button>
         </div>
       </div>
 
-      {/* MAIN */}
+      {/* MAIN CONTENT */}
       <div className="flex-1 p-6">
         <h1 className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-          Owner Panel
+          Owner Home Page
         </h1>
-
         <Outlet />
       </div>
     </div>

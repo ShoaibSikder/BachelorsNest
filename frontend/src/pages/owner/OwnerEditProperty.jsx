@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { addOrUpdateProperty } from "../../api/propertyApi";
+import { updateProperty } from "../../api/propertyApi";
 import api from "../../api/axios";
 
 const OwnerEditProperty = () => {
@@ -70,7 +70,7 @@ const OwnerEditProperty = () => {
     images.forEach((img) => data.append("images", img));
 
     try {
-      await addOrUpdateProperty(data, id); // edit if id exists
+      await updateProperty(id, data); // edit if id exists
       navigate("/owner/properties");
     } catch (err) {
       console.error("Failed to save property:", err);
