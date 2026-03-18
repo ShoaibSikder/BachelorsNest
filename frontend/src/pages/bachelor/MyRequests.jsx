@@ -1,24 +1,40 @@
 import { useEffect, useState } from "react";
-import { getMyRentRequests } from "../../api/rentalApi";
+import { useNavigate } from "react-router-dom";
+import { getMyRentRequests, cancelRentRequest } from "../../api/rentalApi";
 
 const MyRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const response = await getMyRentRequests();
-        setRequests(response.data);
-      } catch {
-        console.error("Failed to fetch rent requests");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchRequests();
   }, []);
+
+  const fetchRequests = async () => {
+    try {
+      const response = await getMyRentRequests();
+      setRequests(response.data);
+    } catch {
+      console.error("Failed to fetch rent requests");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = async (id) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this request?",
+    );
+    if (!confirmCancel) return;
+
+    try {
+      await cancelRentRequest(id);
+      setRequests((prev) => prev.filter((req) => req.id !== id));
+    } catch {
+      alert("Failed to cancel request");
+    }
+  };
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -54,18 +70,20 @@ const MyRequests = () => {
               key={request.id}
               className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-2xl"
             >
+              {/* PROPERTY INFO */}
               <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                {request.property.title}
+                {request.property?.title || "No Title"}
               </h2>
 
               <p className="text-gray-600 dark:text-gray-300 mt-1">
-                📍 {request.property.location}
+                📍 {request.property?.location || "No Location"}
               </p>
 
               <p className="font-medium text-gray-800 dark:text-white mt-1">
-                ৳ {request.property.rent}
+                ৳ {request.property?.rent || "N/A"}
               </p>
 
+              {/* STATUS */}
               <p className="mt-3 text-gray-700 dark:text-gray-300">
                 Status:{" "}
                 <span className={`font-bold ${getStatusStyle(request.status)}`}>
@@ -76,6 +94,25 @@ const MyRequests = () => {
               <p className="text-sm text-gray-500 mt-1">
                 Sent on: {new Date(request.created_at).toLocaleDateString()}
               </p>
+
+              {/* ACTION BUTTONS */}
+              {request.status === "pending" && (
+                <button
+                  onClick={() => handleCancel(request.id)}
+                  className="mt-4 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
+                >
+                  Cancel Request
+                </button>
+              )}
+
+              {request.status === "accepted" && (
+                <button
+                  onClick={() => navigate(`/chat/${request.owner}`)}
+                  className="mt-4 px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition"
+                >
+                  Message Owner
+                </button>
+              )}
             </div>
           ))}
         </div>

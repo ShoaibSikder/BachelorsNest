@@ -23,25 +23,22 @@ const BachelorLayout = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
       {/* SIDEBAR */}
       <div
         className={`${
           open ? "w-64" : "w-20"
-        } bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all duration-300 flex flex-col justify-between`}
+        } bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all duration-300 flex flex-col justify-between h-full`}
       >
-        {/* TOP */}
         <div>
-          {/* HEADER */}
           <div className="flex items-center justify-between p-4">
             {open && <h2 className="text-xl font-extrabold">Bachelor</h2>}
             <Menu className="cursor-pointer" onClick={() => setOpen(!open)} />
           </div>
 
-          {/* MENU */}
           <ul className="mt-6 space-y-2 px-2">
             {menuItems.map((item, index) => {
-              const isActive = location.pathname === item.path;
+              const isActive = location.pathname.startsWith(item.path);
 
               return (
                 <li
@@ -61,7 +58,6 @@ const BachelorLayout = () => {
           </ul>
         </div>
 
-        {/* LOGOUT */}
         <div className="p-4">
           <button
             onClick={handleLogout}
@@ -74,13 +70,11 @@ const BachelorLayout = () => {
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 p-6">
-        {/* PAGE TITLE */}
+      <div className="flex-1 overflow-y-auto p-6">
         <h1 className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
           Bachelor Home Page
         </h1>
 
-        {/* CONTENT */}
         <Outlet />
       </div>
     </div>

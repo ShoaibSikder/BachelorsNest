@@ -87,11 +87,27 @@ class BachelorRequestListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return RentRequest.objects.filter(bachelor=self.request.user)
+        return RentRequest.objects.filter(
+            bachelor=self.request.user
+        ).select_related('property')
     
 class OwnerRequestListView(generics.ListAPIView):
     serializer_class = RentRequestSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return RentRequest.objects.filter(owner=self.request.user)
+        return RentRequest.objects.filter(
+            owner=self.request.user
+        ).select_related('property')
+        
+        
+from rest_framework.generics import DestroyAPIView
+
+class DeleteRentRequestView(DestroyAPIView):
+    queryset = RentRequest.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        if self.request.user != instance.bachelor:
+            raise PermissionDenied("You can only delete your own request")
+        instance.delete()
