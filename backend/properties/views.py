@@ -7,17 +7,18 @@ from accounts.permissions import IsOwner, IsAdmin
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from notifications.models import Notification
-
+from .models import PropertyImage
 # Owner: Add property with images
 class PropertyCreateView(generics.CreateAPIView):
-    queryset = Property.objects.all()
-    serializer_class = PropertyCreateUpdateSerializer  # Use serializer that handles images
-    permission_classes = [IsAuthenticated, IsOwner]
-    parser_classes = [MultiPartParser, FormParser]  # Handle FormData with files
+    serializer_class = PropertySerializer
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+        property_instance = serializer.save(owner=self.request.user)
 
+        images = self.request.FILES.getlist('images')
+
+        for img in images:
+            PropertyImage.objects.create(property=property_instance, image=img)
 
 # Owner: List own properties
 class OwnerPropertyListView(generics.ListAPIView):

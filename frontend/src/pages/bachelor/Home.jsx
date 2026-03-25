@@ -8,6 +8,22 @@ const BachelorHome = () => {
   const [myRequests, setMyRequests] = useState([]);
   const navigate = useNavigate();
 
+  // 🔹 Time formatter (Facebook style)
+  const formatTime = (dateString) => {
+    if (!dateString) return "";
+
+    const now = new Date();
+    const posted = new Date(dateString);
+    const diff = Math.floor((now - posted) / 1000);
+
+    if (diff < 60) return "Just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
+
+    return posted.toLocaleDateString();
+  };
+
   // 🔹 Fetch properties
   const fetchProperties = async () => {
     try {
@@ -38,7 +54,6 @@ const BachelorHome = () => {
     try {
       await sendRentRequest(propertyId);
 
-      // ✅ instant UI update
       setMyRequests((prev) => [
         ...prev,
         {
@@ -51,19 +66,19 @@ const BachelorHome = () => {
     }
   };
 
-  // 🔹 Get request status (FIXED)
+  // 🔹 Get request status
   const getRequestStatus = (propertyId) => {
     const request = myRequests.find((req) => req.property?.id === propertyId);
     return request ? request.status : null;
   };
 
-  // 🔹 Get full request (for chat navigation)
+  // 🔹 Get full request object
   const getRequestObject = (propertyId) => {
     return myRequests.find((req) => req.property?.id === propertyId);
   };
 
   return (
-    <div>
+    <div className="p-4 md:p-6">
       <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
         Available Properties
       </h2>
@@ -81,82 +96,120 @@ const BachelorHome = () => {
             return (
               <div
                 key={property.id}
-                className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-2xl flex flex-col h-full"
+                className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden flex flex-col"
               >
-                {/* TOP CONTENT */}
-                <div className="space-y-3">
-                  {/* IMAGE */}
-                  {property.images?.length > 0 && (
-                    <img
-                      src={
-                        property.images[0].image.startsWith("http")
-                          ? property.images[0].image
-                          : `http://127.0.0.1:8000${property.images[0].image}`
-                      }
-                      alt={property.title}
-                      className="w-full h-48 object-cover rounded-xl"
-                    />
-                  )}
+                {/* 🔹 HEADER (Owner + Time) */}
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3">
+                    {/* OWNER IMAGE */}
+                    {property.owner?.profile_image ? (
+                      <img
+                        src={
+                          property.owner.profile_image.startsWith("http")
+                            ? property.owner.profile_image
+                            : `http://127.0.0.1:8000${property.owner.profile_image}`
+                        }
+                        alt="owner"
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">
+                        {property.owner?.username?.charAt(0) || "U"}
+                      </div>
+                    )}
 
-                  {/* TITLE */}
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
-                    {property.title}
-                  </h2>
+                    {/* OWNER NAME + LOCATION + TIME */}
+                    <div>
+                      <h2 className="text-sm font-semibold text-gray-800 dark:text-white">
+                        {property.owner?.username || "Unknown Owner"}
+                      </h2>
 
-                  {/* DESCRIPTION */}
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        📍 {property.location} •{" "}
+                        {formatTime(property.created_at)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* THREE DOT MENU */}
+                  <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                    ⋯
+                  </button>
+                </div>
+
+                {/* 🔹 IMAGE */}
+                {property.images?.length > 0 && (
+                  <img
+                    src={
+                      property.images[0].image.startsWith("http")
+                        ? property.images[0].image
+                        : `http://127.0.0.1:8000${property.images[0].image}`
+                    }
+                    alt={property.title}
+                    className="w-full h-56 object-cover"
+                  />
+                )}
+
+                {/* 🔹 CONTENT */}
+                <div className="p-4 flex flex-col flex-grow">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
                     {property.description}
                   </p>
 
-                  {/* LOCATION */}
-                  <p className="text-gray-700 dark:text-gray-300">
-                    📍 {property.location}
-                  </p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <p className="text-lg font-bold text-indigo-600">
+                      ৳ {property.rent}
+                    </p>
 
-                  {/* RENT */}
-                  <p className="font-bold text-lg text-gray-800 dark:text-white">
-                    ৳ {property.rent}
-                  </p>
-                </div>
+                    {/* STATUS BADGE */}
+                    {status && (
+                      <span
+                        className={`text-xs px-3 py-1 rounded-full font-medium
+                          ${status === "pending" && "bg-yellow-100 text-yellow-700"}
+                          ${status === "accepted" && "bg-green-100 text-green-700"}
+                          ${status === "rejected" && "bg-red-100 text-red-700"}
+                        `}
+                      >
+                        {status}
+                      </span>
+                    )}
+                  </div>
 
-                {/* BUTTON SECTION */}
-                <div className="mt-auto pt-4">
-                  {/* ✅ NO REQUEST */}
-                  {!status && (
-                    <button
-                      onClick={() => handleRentRequest(property.id)}
-                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-lg font-semibold hover:scale-[1.02] transition"
-                    >
-                      Send Rent Request
-                    </button>
-                  )}
+                  {/* 🔹 BUTTON */}
+                  <div className="mt-4">
+                    {!status && (
+                      <button
+                        onClick={() => handleRentRequest(property.id)}
+                        className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition"
+                      >
+                        Request Rent
+                      </button>
+                    )}
 
-                  {/* 🟡 PENDING */}
-                  {status === "pending" && (
-                    <button className="w-full bg-yellow-500 text-white p-3 rounded-lg cursor-not-allowed">
-                      Request Sent
-                    </button>
-                  )}
+                    {status === "pending" && (
+                      <button className="w-full bg-gray-300 text-gray-700 py-2.5 rounded-lg cursor-not-allowed">
+                        Request Sent
+                      </button>
+                    )}
 
-                  {/* 🟢 ACCEPTED */}
-                  {status === "accepted" && (
-                    <button
-                      onClick={() => navigate(`/chat/${request?.owner}`)}
-                      className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition"
-                    >
-                      Send Message
-                    </button>
-                  )}
+                    {status === "accepted" && (
+                      <button
+                        onClick={() => navigate(`/chat/${request?.owner}`)}
+                        className="w-full bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 transition"
+                      >
+                        Message Owner
+                      </button>
+                    )}
 
-                  {/* 🔴 REJECTED */}
-                  {status === "rejected" && (
-                    <button
-                      onClick={() => handleRentRequest(property.id)}
-                      className="w-full bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition"
-                    >
-                      Request Again
-                    </button>
-                  )}
+                    {status === "rejected" && (
+                      <button
+                        onClick={() => handleRentRequest(property.id)}
+                        className="w-full bg-red-500 text-white py-2.5 rounded-lg hover:bg-red-600 transition"
+                      >
+                        Request Again
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );
