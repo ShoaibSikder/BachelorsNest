@@ -1,7 +1,15 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { Home, FileText, User, Bell, LogOut, Menu } from "lucide-react";
+import {
+  Home,
+  FileText,
+  User,
+  Bell,
+  LogOut,
+  Menu,
+  MessageSquare,
+} from "lucide-react";
 
 const BachelorLayout = () => {
   const { logout } = useContext(AuthContext);
@@ -20,6 +28,7 @@ const BachelorLayout = () => {
     { name: "My Requests", icon: FileText, path: "/bachelor/requests" },
     { name: "Profile", icon: User, path: "/bachelor/profile" },
     { name: "Notifications", icon: Bell, path: "/bachelor/notifications" },
+    { name: "Chats", icon: MessageSquare, path: "/bachelor/chats" }, // Added Chats
   ];
 
   return (
@@ -31,15 +40,16 @@ const BachelorLayout = () => {
         } bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all duration-300 flex flex-col justify-between h-full`}
       >
         <div>
+          {/* Sidebar Header */}
           <div className="flex items-center justify-between p-4">
             {open && <h2 className="text-xl font-extrabold">Bachelor</h2>}
             <Menu className="cursor-pointer" onClick={() => setOpen(!open)} />
           </div>
 
+          {/* Sidebar Menu */}
           <ul className="mt-6 space-y-2 px-2">
             {menuItems.map((item, index) => {
               const isActive = location.pathname.startsWith(item.path);
-
               return (
                 <li
                   key={index}
@@ -58,6 +68,7 @@ const BachelorLayout = () => {
           </ul>
         </div>
 
+        {/* Logout Button */}
         <div className="p-4">
           <button
             onClick={handleLogout}
@@ -74,7 +85,6 @@ const BachelorLayout = () => {
         <h1 className="text-4xl font-extrabold mb-6 bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
           Bachelor Home Page
         </h1>
-
         <Outlet />
       </div>
     </div>

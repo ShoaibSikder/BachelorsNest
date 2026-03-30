@@ -11,7 +11,22 @@ from rest_framework.response import Response
 from django.db.models import Count
 from rentals.models import RentRequest
 from rest_framework.exceptions import PermissionDenied
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
+class ChatUsersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Users you can chat with (accepted rent requests)
+        bachelors = RentRequest.objects.filter(owner=request.user, status="accepted").values_list('bachelor', flat=True)
+        owners = RentRequest.objects.filter(bachelor=request.user, status="accepted").values_list('owner', flat=True)
+
+        user_ids = list(set(list(bachelors) + list(owners)))
+        users = User.objects.filter(id__in=user_ids).values('id', 'username')
+
+        return Response(users)
 
 class SendMessageView(generics.CreateAPIView):
     serializer_class = MessageSerializer

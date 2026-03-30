@@ -1,13 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, X } from "lucide-react";
 import { getOwnerProperties, deleteProperty } from "../../api/propertyApi";
 
 const OwnerProperties = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [openMenuId, setOpenMenuId] = useState(null); // track which card menu is open
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const [modalImage, setModalImage] = useState(null); // for lightbox
   const navigate = useNavigate();
   const menuRef = useRef();
 
@@ -152,18 +153,102 @@ const OwnerProperties = () => {
               </div>
             </div>
 
-            {/* 🔹 IMAGE */}
-            {property.images?.length > 0 ? (
-              <img
-                src={
-                  property.images[0].image.startsWith("http")
-                    ? property.images[0].image
-                    : `http://127.0.0.1:8000${property.images[0].image}`
-                }
-                alt={property.title}
-                className="w-full h-56 object-cover"
-              />
-            ) : (
+            {/* 🔹 IMAGES (Collage style) */}
+            {property.images?.length > 0 && (
+              <div className="grid gap-1 w-full">
+                {property.images.length === 1 && (
+                  <img
+                    src={
+                      property.images[0].image.startsWith("http")
+                        ? property.images[0].image
+                        : `http://127.0.0.1:8000${property.images[0].image}`
+                    }
+                    alt={`${property.title} 1`}
+                    className="w-full h-60 object-cover rounded cursor-pointer"
+                    onClick={() => setModalImage(property.images[0].image)}
+                  />
+                )}
+
+                {property.images.length === 2 && (
+                  <div className="grid grid-cols-2 gap-1">
+                    {property.images.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={
+                          img.image.startsWith("http")
+                            ? img.image
+                            : `http://127.0.0.1:8000${img.image}`
+                        }
+                        alt={`${property.title} ${idx + 1}`}
+                        className="w-full h-40 object-cover rounded cursor-pointer"
+                        onClick={() => setModalImage(img.image)}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {property.images.length === 3 && (
+                  <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60">
+                    <img
+                      src={
+                        property.images[0].image.startsWith("http")
+                          ? property.images[0].image
+                          : `http://127.0.0.1:8000${property.images[0].image}`
+                      }
+                      alt={`${property.title} 1`}
+                      className="row-span-2 w-full h-full object-cover rounded cursor-pointer"
+                      onClick={() => setModalImage(property.images[0].image)}
+                    />
+                    <img
+                      src={
+                        property.images[1].image.startsWith("http")
+                          ? property.images[1].image
+                          : `http://127.0.0.1:8000${property.images[1].image}`
+                      }
+                      alt={`${property.title} 2`}
+                      className="w-full h-full object-cover rounded cursor-pointer"
+                      onClick={() => setModalImage(property.images[1].image)}
+                    />
+                    <img
+                      src={
+                        property.images[2].image.startsWith("http")
+                          ? property.images[2].image
+                          : `http://127.0.0.1:8000${property.images[2].image}`
+                      }
+                      alt={`${property.title} 3`}
+                      className="w-full h-full object-cover rounded cursor-pointer"
+                      onClick={() => setModalImage(property.images[2].image)}
+                    />
+                  </div>
+                )}
+
+                {property.images.length >= 4 && (
+                  <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60 relative">
+                    {property.images.slice(0, 4).map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={
+                          img.image.startsWith("http")
+                            ? img.image
+                            : `http://127.0.0.1:8000${img.image}`
+                        }
+                        alt={`${property.title} ${idx + 1}`}
+                        className="w-full h-full object-cover rounded cursor-pointer"
+                        onClick={() => setModalImage(img.image)}
+                      />
+                    ))}
+
+                    {property.images.length > 4 && (
+                      <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-2xl font-bold rounded">
+                        +{property.images.length - 4}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {!property.images?.length && (
               <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">
                 No image
               </div>
@@ -193,6 +278,25 @@ const OwnerProperties = () => {
           </div>
         ))}
       </div>
+
+      {/* 🔹 IMAGE MODAL */}
+      {modalImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+          <div className="relative">
+            <button
+              onClick={() => setModalImage(null)}
+              className="absolute top-2 right-2 text-white hover:text-gray-300"
+            >
+              <X size={32} />
+            </button>
+            <img
+              src={modalImage}
+              alt="Large view"
+              className="max-h-[90vh] max-w-[90vw] rounded shadow-lg"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
