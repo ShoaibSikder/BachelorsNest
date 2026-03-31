@@ -1,0 +1,260 @@
+Create Apps
+python manage.py startapp accounts
+python manage.py startapp properties
+python manage.py startapp rentals
+python manage.py startapp messaging
+
+
+django-admin startproject backend
+
+backend structure
+BachelorsNest/
+├── backend/
+│   ├── backend/
+│   │   ├── __init__.py
+│   │   ├── asgi.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   └── manage.py
+└── venv/
+
+
+npm run dev (run Frontend)
+python manage.py runserver(run backend)
+daphne backend.asgi:application (run backend)
+python -m daphne backend.asgi:application (run backend)
+python manage.py createsuperuser
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+
+http://127.0.0.1:8000/admin/
+http://127.0.0.1:8000/api/accounts/register/
+http://127.0.0.1:8000/api/token/
+http://127.0.0.1:8000/api/properties/add/
+http://127.0.0.1:8000/api/rentals/request/
+
+.\venv\Scripts\Activate.ps1
+
+Bachelor Dashboard APIs
+Bachelor Dashboard APIs
+
+Home Feed:
+GET /api/properties/approved/
+
+My Requests:
+GET /api/rentals/bachelor/
+
+Profile:
+GET   /api/accounts/profile/
+PATCH /api/accounts/profile/
+
+Logout:
+Frontend clears JWT
+
+
+Owner Dashboard APIs
+
+My Properties:
+GET /api/properties/owner/
+
+Rent Requests:
+GET /api/rentals/owner/
+
+Accept / Reject:
+PATCH /api/rentals/update/<id>/
+
+Profile:
+GET   /api/accounts/profile/
+PATCH /api/accounts/profile/
+
+Logout:
+POST /api/accounts/logout/
+
+
+
+Backend APIs
+http://127.0.0.1:8000/admin/
+http://127.0.0.1:8000/api/token/ (user login)
+http://127.0.0.1:8000/api/accounts/register/ (register)
+http://127.0.0.1:8000/api/properties/
+http://127.0.0.1:8000//api/properties/add/
+http://127.0.0.1:8000///api/properties/list/
+http://127.0.0.1:8000///api/properties/upload-images/
+http://127.0.0.1:8000/media/
+http://api/rentals/request/
+http://127.0.0.1:8000/api/rentals/update/
+GET /api/rentals/bachelor/
+GET /api/rentals/owner/
+GET /api/accounts/profile/
+PATCH /api/accounts/profile/
+GET /api/properties/approved/
+GET /api/rentals/bachelor/
+GET /api/properties/owner/
+GET /api/properties/owner/
+PATCH /api/rentals/update/<id>/
+GET /api/properties/admin/pending/
+PATCH /api/properties/approve/<id>/
+GET /api/properties/admin/all/
+GET /api/accounts/admin/users/
+GET /api/accounts/admin/users/
+GET /api/notifications/
+PATCH /api/notifications/read/
+POST /api/messages/send/
+GET /api/messages/conversation/
+GET /api/messages/unread-count/
+
+
+
+Bachelor Dashboard APIs
+
+Home Feed:
+GET /api/properties/approved/
+
+My Requests:
+GET /api/rentals/bachelor/
+
+Profile:
+GET   /api/accounts/profile/
+PATCH /api/accounts/profile/
+
+Logout:
+Frontend clears JWT
+/api/accounts/logout/
+
+
+Owner Dashboard APIs
+
+My Properties:
+GET /api/properties/owner/
+
+Rent Requests:
+GET /api/rentals/owner/
+
+Accept / Reject:
+PATCH /api/rentals/update/<id>/
+
+Profile:
+GET   /api/accounts/profile/
+PATCH /api/accounts/profile/
+
+Logout:
+POST /api/accounts/logout/
+
+
+
+Pending Properties:
+GET /api/properties/admin/pending/
+
+Approve Property:
+PATCH /api/properties/approve/<id>/
+
+All Properties:
+GET /api/properties/admin/all/
+
+All Users:
+GET /api/accounts/admin/users/
+
+All Rent Requests:
+GET /api/rentals/admin/all/
+
+Logout:
+POST /api/accounts/logout/
+
+
+
+
+API Structure overview
+accounts
+POST   /api/accounts/register/
+POST   /api/token
+POST   /api/accounts/logout/
+GET    /api/accounts/profile/
+PATCH  /api/accounts/profile/
+GET    /api/accounts/admin/users/
+
+properties
+POST   /api/properties/create/
+GET    /api/properties/              (Approved + filter)
+GET    /api/properties/owner/
+GET    /api/properties/admin/pending/
+PATCH  /api/properties/approve/<id>/
+
+rentals
+POST   /api/rentals/request/
+GET    /api/rentals/my-requests/
+GET    /api/rentals/owner/
+PATCH  /api/rentals/update/<id>/
+GET    /api/rentals/admin/all/
+
+notifications
+GET    /api/notifications/
+PATCH  /api/notifications/read/<id>/
+
+messaging
+POST   /api/messages/send/
+GET    /api/messages/conversation/<user_id>/
+GET    /api/messages/unread-count/
+
+webSocket
+ws://domain/ws/chat/<user_id>/
+ws://localhost:8000/ws/chat/<user_id>/
+
+Frontend structure
+frontend/
+│
+├── src/
+│   │
+│   ├── api/                  # Axios configuration & API calls
+│   │   ├── axios.js
+│   │   ├── authApi.js
+│   │   ├── propertyApi.js
+│   │   ├── rentalApi.js
+│   │   ├── notificationApi.js
+│   │   └── chatApi.js
+│   │
+│   ├── context/              # Global state (Auth)
+│   │   └── AuthContext.jsx
+│   │
+│   ├── routes/               # Route protection
+│   │   └── ProtectedRoute.jsx
+│   │
+│   ├── layouts/              # Dashboard layouts
+│   │   ├── BachelorLayout.jsx
+│   │   ├── OwnerLayout.jsx
+│   │   └── AdminLayout.jsx
+│   │
+│   ├── components/           # Reusable UI components
+│   │   ├── Navbar.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── PropertyCard.jsx
+│   │   ├── RequestCard.jsx
+│   │   ├── NotificationBell.jsx
+│   │   └── ChatBox.jsx
+│   │
+│   ├── pages/
+│   │   ├── auth/
+│   │   │   ├── Login.jsx
+│   │   │   └── Register.jsx
+│   │   │
+│   │   ├── bachelor/
+│   │   │   ├── Home.jsx
+│   │   │   ├── MyRequests.jsx
+│   │   │   └── Profile.jsx
+│   │   │
+│   │   ├── owner/
+│   │   │   ├── Home.jsx
+│   │   │   ├── AddProperty.jsx
+│   │   │   ├── MyProperties.jsx
+│   │   │   └── Requests.jsx
+│   │   │
+│   │   ├── admin/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── PendingProperties.jsx
+│   │   │   └── Users.jsx
+│   │
+│   ├── App.jsx
+│   └── main.jsx
+│
+└── package.json
