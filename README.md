@@ -176,7 +176,7 @@ BachelorNest/
 <summary>Clone Repository</summary>
 
 ```bash
-git clone https://github.com/ShoaibSikder/BachelorNest.git
+git clone https://github.com/ShoaibSikder/BachelorsNest.git
 cd BachelorNest
 ```
 
