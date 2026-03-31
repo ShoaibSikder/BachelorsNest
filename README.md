@@ -70,8 +70,8 @@
 ### 💬 Chat System
 
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-<img src="Documentation/SystemImages/chat_1.png" width="100%" alt="Chat System Screenshot 1" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-<img src="Documentation/SystemImages/chat_2.png" width="100%" alt="Chat System Screenshot 2" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+<img src="Documentations/SystemImages/chat_1.png" width="100%" alt="Chat System Screenshot 1" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
+<img src="Documentations/SystemImages/chat_2.png" width="100%" alt="Chat System Screenshot 2" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
 </div>
 
 ---
@@ -99,13 +99,13 @@ Django, Django REST Framework, Django Channels, SQLite
 
 📸 Screenshots
 🔑 Login & Registration
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"> <img src="Documentation/SystemImages/Login.png" width="100%" alt="Login Page" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentation/SystemImages/Registration.png" width="100%" alt="Registration Page" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/Login.png" width="100%" alt="Login Page" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/Registration.png" width="100%" alt="Registration Page" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
 🧑‍🎓 Bachelor Dashboard
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"> <img src="Documentation/SystemImages/BachelorHome.png" width="100%" alt="Bachelor Home" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentation/SystemImages/MyRequest.png" width="100%" alt="My Requests" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentation/SystemImages/Notifications.png" width="100%" alt="Notifications" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/BachelorHome.png" width="100%" alt="Bachelor Home" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/MyRequest.png" width="100%" alt="My Requests" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/Notifications.png" width="100%" alt="Notifications" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
 🏠 Owner Dashboard
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"> <img src="Documentation/SystemImages/OwnerDashboard.png" width="100%" alt="Owner Dashboard" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentation/SystemImages/MyProperties.png" width="100%" alt="My Properties" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentation/SystemImages/AddProperty.png" width="100%" alt="Add Property" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentation/SystemImages/RentRequest.png" width="100%" alt="Rent Requests" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentation/SystemImages/OwnerNotification.png" width="100%" alt="Owner Notifications" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/OwnerDashboard.png" width="100%" alt="Owner Dashboard" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/MyProperties.png" width="100%" alt="My Properties" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/AddProperty.png" width="100%" alt="Add Property" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/RentRequest.png" width="100%" alt="Rent Requests" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/OwnerNotification.png" width="100%" alt="Owner Notifications" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
 💬 Chat System
-<div style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px;"> <img src="Documentation/SystemImages/Chat.png" width="100%" alt="Chat System" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
+<div style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/Chat.png" width="100%" alt="Chat System" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
 
 ---
 
@@ -115,7 +115,7 @@ Django, Django REST Framework, Django Channels, SQLite
 <summary>Clone Repository</summary>
 
 ```bash
-git clone https://github.com/yourusername/BachelorNest.git
+git clone https://github.com/ShoaibSikder/BachelorNest.git
 cd BachelorNest
 ```
 
@@ -246,9 +246,3 @@ MIT License
 If you find this project useful, please give it a ⭐ on GitHub!
 
 ---
-
----
-
-If you want, I can **also add live badges for backend endpoints, project status, and npm/django commands**, so the README looks like a real dashboard with live indicators.
-
-Do you want me to add those next?
