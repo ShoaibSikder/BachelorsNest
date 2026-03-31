@@ -292,7 +292,11 @@ const BachelorHome = () => {
 
                     {status === "accepted" && (
                       <button
-                        onClick={() => navigate(`/chat/${request?.owner}`)}
+                        onClick={() =>
+                          navigate("/bachelor/chats", {
+                            state: { selectedUser: property.owner },
+                          })
+                        }
                         className="w-full bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 transition"
                       >
                         Message Owner

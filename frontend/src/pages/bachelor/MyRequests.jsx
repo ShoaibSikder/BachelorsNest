@@ -107,7 +107,11 @@ const MyRequests = () => {
 
               {request.status === "accepted" && (
                 <button
-                  onClick={() => navigate(`/chat/${request.owner}`)}
+                  onClick={() =>
+                    navigate("/bachelor/chats", {
+                      state: { selectedUser: request.property?.owner },
+                    })
+                  }
                   className="mt-4 px-4 py-2 bg-green-500 text-white rounded-xl hover:bg-green-600 transition"
                 >
                   Message Owner

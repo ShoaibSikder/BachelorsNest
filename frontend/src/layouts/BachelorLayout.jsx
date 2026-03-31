@@ -26,7 +26,6 @@ const BachelorLayout = () => {
   const menuItems = [
     { name: "Home Feed", icon: Home, path: "/bachelor" },
     { name: "My Requests", icon: FileText, path: "/bachelor/requests" },
-    { name: "Profile", icon: User, path: "/bachelor/profile" },
     { name: "Notifications", icon: Bell, path: "/bachelor/notifications" },
     { name: "Chats", icon: MessageSquare, path: "/bachelor/chats" }, // Added Chats
   ];
