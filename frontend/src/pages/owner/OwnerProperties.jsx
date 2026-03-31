@@ -8,10 +8,11 @@ const OwnerProperties = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
-  const [modalImage, setModalImage] = useState(null); // for lightbox
+  const [modalImage, setModalImage] = useState(null);
+  const menuRefs = useRef({});
   const navigate = useNavigate();
-  const menuRef = useRef();
 
+  // Fetch properties
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -24,14 +25,13 @@ const OwnerProperties = () => {
         setLoading(false);
       }
     };
-
     fetchProperties();
   }, []);
 
+  // Handle delete
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this property?"))
       return;
-
     try {
       await deleteProperty(id);
       setProperties(properties.filter((p) => p.id !== id));
@@ -41,10 +41,10 @@ const OwnerProperties = () => {
     }
   };
 
-  const handleEdit = (id) => {
-    navigate(`/owner/properties/edit/${id}`);
-  };
+  // Handle edit
+  const handleEdit = (id) => navigate(`/owner/properties/edit/${id}`);
 
+  // Format date
   const formatTime = (dateString) => {
     if (!dateString) return "";
     const now = new Date();
@@ -57,12 +57,13 @@ const OwnerProperties = () => {
     return posted.toLocaleDateString();
   };
 
-  // close menu when clicking outside
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setOpenMenuId(null);
-      }
+      const isInsideAnyMenu = Object.values(menuRefs.current).some(
+        (ref) => ref && ref.contains(e.target),
+      );
+      if (!isInsideAnyMenu) setOpenMenuId(null);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -73,7 +74,7 @@ const OwnerProperties = () => {
       <p className="text-gray-600 dark:text-gray-300">Loading properties...</p>
     );
   if (error) return <p className="text-red-500 dark:text-red-400">{error}</p>;
-  if (properties.length === 0)
+  if (!properties.length)
     return (
       <p className="text-gray-600 dark:text-gray-300">
         You have no properties yet.
@@ -85,14 +86,13 @@ const OwnerProperties = () => {
       <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
         My Properties
       </h2>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {properties.map((property) => (
           <div
             key={property.id}
             className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden flex flex-col"
           >
-            {/* 🔹 HEADER */}
+            {/* HEADER */}
             <div className="flex items-center justify-between p-4 relative">
               <div className="flex items-center gap-3">
                 {property.owner?.profile_image ? (
@@ -110,7 +110,6 @@ const OwnerProperties = () => {
                     {property.owner?.username?.charAt(0) || "U"}
                   </div>
                 )}
-
                 <div>
                   <h2 className="text-sm font-semibold text-gray-800 dark:text-white">
                     {property.owner?.username || "Unknown Owner"}
@@ -121,8 +120,11 @@ const OwnerProperties = () => {
                 </div>
               </div>
 
-              {/* 🔹 THREE DOT MENU */}
-              <div ref={menuRef} className="relative">
+              {/* MENU */}
+              <div
+                ref={(el) => (menuRefs.current[property.id] = el)}
+                className="relative"
+              >
                 <button
                   onClick={() =>
                     setOpenMenuId(
@@ -133,7 +135,6 @@ const OwnerProperties = () => {
                 >
                   ⋯
                 </button>
-
                 {openMenuId === property.id && (
                   <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
                     <button
@@ -153,8 +154,8 @@ const OwnerProperties = () => {
               </div>
             </div>
 
-            {/* 🔹 IMAGES (Collage style) */}
-            {property.images?.length > 0 && (
+            {/* IMAGES */}
+            {property.images?.length > 0 ? (
               <div className="grid gap-1 w-full">
                 {property.images.length === 1 && (
                   <img
@@ -168,7 +169,6 @@ const OwnerProperties = () => {
                     onClick={() => setModalImage(property.images[0].image)}
                   />
                 )}
-
                 {property.images.length === 2 && (
                   <div className="grid grid-cols-2 gap-1">
                     {property.images.map((img, idx) => (
@@ -186,7 +186,6 @@ const OwnerProperties = () => {
                     ))}
                   </div>
                 )}
-
                 {property.images.length === 3 && (
                   <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60">
                     <img
@@ -221,7 +220,6 @@ const OwnerProperties = () => {
                     />
                   </div>
                 )}
-
                 {property.images.length >= 4 && (
                   <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60 relative">
                     {property.images.slice(0, 4).map((img, idx) => (
@@ -237,7 +235,6 @@ const OwnerProperties = () => {
                         onClick={() => setModalImage(img.image)}
                       />
                     ))}
-
                     {property.images.length > 4 && (
                       <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-2xl font-bold rounded">
                         +{property.images.length - 4}
@@ -246,20 +243,17 @@ const OwnerProperties = () => {
                   </div>
                 )}
               </div>
-            )}
-
-            {!property.images?.length && (
+            ) : (
               <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">
                 No image
               </div>
             )}
 
-            {/* 🔹 CONTENT */}
+            {/* CONTENT */}
             <div className="p-4 flex flex-col flex-grow">
               <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
                 {property.description}
               </p>
-
               <div className="mt-3 flex items-center justify-between">
                 <p className="text-lg font-bold text-indigo-600">
                   ৳ {property.rent}
@@ -279,7 +273,7 @@ const OwnerProperties = () => {
         ))}
       </div>
 
-      {/* 🔹 IMAGE MODAL */}
+      {/* IMAGE MODAL */}
       {modalImage && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
           <div className="relative">

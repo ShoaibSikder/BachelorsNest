@@ -34,8 +34,6 @@ const OwnerHome = () => {
           { title: "Total Properties", value: stats.total_properties },
           { title: "Approved Properties", value: stats.approved_properties },
           { title: "Pending Properties", value: stats.pending_properties },
-          { title: "Rent Requests", value: stats.rent_requests },
-          { title: "Unread Messages", value: stats.unread_messages },
         ].map((item, i) => (
           <div
             key={i}
