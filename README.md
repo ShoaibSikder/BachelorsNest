@@ -67,15 +67,6 @@
 
 ---
 
-### 💬 Chat System
-
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-<img src="Documentations/SystemImages/chat_1.png" width="100%" alt="Chat System Screenshot 1" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-<img src="Documentations/SystemImages/chat_2.png" width="100%" alt="Chat System Screenshot 2" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-</div>
-
----
-
 ### 🔔 Notifications (Planned)
 
 * Real-time notifications for request status changes and new messages.
@@ -97,15 +88,85 @@ Django, Django REST Framework, Django Channels, SQLite
 
 ---
 
-📸 Screenshots
-🔑 Login & Registration
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/Login.png" width="100%" alt="Login Page" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/Registration.png" width="100%" alt="Registration Page" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
-🧑‍🎓 Bachelor Dashboard
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/BachelorHome.png" width="100%" alt="Bachelor Home" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/MyRequest.png" width="100%" alt="My Requests" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/Notifications.png" width="100%" alt="Notifications" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
-🏠 Owner Dashboard
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/OwnerDashboard.png" width="100%" alt="Owner Dashboard" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/MyProperties.png" width="100%" alt="My Properties" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/AddProperty.png" width="100%" alt="Add Property" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/RentRequest.png" width="100%" alt="Rent Requests" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> <img src="Documentations/SystemImages/OwnerNotification.png" width="100%" alt="Owner Notifications" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
-💬 Chat System
-<div style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px;"> <img src="Documentations/SystemImages/Chat.png" width="100%" alt="Chat System" style="border-radius:10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" /> </div>
+## 📸 Screenshots
+
+### 🔑 Login & Registration
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/Login.png" target="_blank">
+<img src="Documentations/SystemImages/Login.png" width="250" alt="Login Page" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/Registration.png" target="_blank">
+<img src="Documentations/SystemImages/Registration.png" width="250" alt="Registration Page" style="border-radius:10px;"/>
+</a>
+</div>
+
+### 🧑‍🎓 Bachelor Dashboard
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/BachelorHome.png" target="_blank">
+<img src="Documentations/SystemImages/BachelorHome.png" width="200" alt="Bachelor Home" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/MyRequest.png" target="_blank">
+<img src="Documentations/SystemImages/MyRequest.png" width="200" alt="My Requests" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/Notifications.png" target="_blank">
+<img src="Documentations/SystemImages/Notifications.png" width="200" alt="Notifications" style="border-radius:10px;"/>
+</a>
+</div>
+
+### 🏠 Owner Dashboard
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/OwnerDashboard.png" target="_blank">
+<img src="Documentations/SystemImages/OwnerDashboard.png" width="200" alt="Owner Dashboard" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/MyProperties.png" target="_blank">
+<img src="Documentations/SystemImages/MyProperties.png" width="200" alt="My Properties" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/AddProperty.png" target="_blank">
+<img src="Documentations/SystemImages/AddProperty.png" width="200" alt="Add Property" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/RentRequest.png" target="_blank">
+<img src="Documentations/SystemImages/RentRequest.png" width="200" alt="Rent Requests" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/OwnerNotification.png" target="_blank">
+<img src="Documentations/SystemImages/OwnerNotification.png" width="200" alt="Owner Notifications" style="border-radius:10px;"/>
+</a>
+</div>
+
+### 💬 Chat System
+<div style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/Chat.png" target="_blank">
+<img src="Documentations/SystemImages/Chat.png" width="250" alt="Chat System" style="border-radius:10px;"/>
+</a>
+</div>
+
+---
+
+## 📂 Project Structure
+
+```text
+BachelorNest/
+│
+├── backend/
+│   ├── accounts/
+│   ├── properties/
+│   ├── rentals/
+│   ├── backend/               # Django project folder
+│   ├── messaging/
+│   ├── notifications/
+│   └── manage.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── layouts/
+│   │   ├── api/
+│   │   └── App.jsx
+│
+├── Documentations/            # Contains screenshots and other documentation
+│   ├── SystemImages/
+└── README.md
+````
 
 ---
 
@@ -115,7 +176,7 @@ Django, Django REST Framework, Django Channels, SQLite
 <summary>Clone Repository</summary>
 
 ```bash
-git clone https://github.com/ShoaibSikder/BachelorNest.git
+git clone https://github.com/ShoaibSikder/BachelorsNest.git
 cd BachelorNest
 ```
 
@@ -167,7 +228,7 @@ VITE_API_URL=http://127.0.0.1:8000/api
 
 ---
 
-## 🔗 Backend APIs (Collapsible)
+## 🔗 Backend APIs
 
 <details>
 <summary>Authentication</summary>
@@ -244,5 +305,3 @@ MIT License
 ## 🌟 Support
 
 If you find this project useful, please give it a ⭐ on GitHub!
-
----
