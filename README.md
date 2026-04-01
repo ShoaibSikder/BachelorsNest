@@ -1,10 +1,10 @@
-# 🏠 BachelorNest
+# 🏠 BachelorsNest
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Frontend](https://img.shields.io/badge/Frontend-React-green)](https://reactjs.org/)
 [![Backend](https://img.shields.io/badge/Backend-Django-blue)](https://www.djangoproject.com/)
 
-**BachelorNest** is a full-stack **Flat Rental System for Bachelors**, connecting property owners with tenants through a modern web platform. Built with **Django (Backend)** and **React + Tailwind CSS (Frontend)**, it provides seamless property browsing, rent requests, and real-time communication.
+**BachelorsNest** is a full-stack **Flat Rental System for Bachelors**, connecting property owners with tenants through a modern web platform. Built with **Django (Backend)** and **React + Tailwind CSS (Frontend)**, it provides seamless property browsing, rent requests, and real-time communication.
 
 ---
 
