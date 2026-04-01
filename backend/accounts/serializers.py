@@ -1,7 +1,9 @@
 from rest_framework import serializers
-from .models import User
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+
+from .models import UserLog, User
+
+User = get_user_model()
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -20,13 +22,18 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-User = get_user_model()
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'username', 'role', 'is_staff']
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'role']
         read_only_fields = ['role']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'role', 'is_staff', 'is_banned', 'date_joined']
+
+class UserLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserLog
+        fields = ['id', 'action', 'timestamp']
