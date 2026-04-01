@@ -8,6 +8,78 @@
 
 ---
 
+## 📸 Screenshots
+
+### 🔑 Login & Registration
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/Login.png" target="_blank">
+<img src="Documentations/SystemImages/Login.png" width="250" alt="Login Page" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/Registration.png" target="_blank">
+<img src="Documentations/SystemImages/Registration.png" width="250" alt="Registration Page" style="border-radius:10px;"/>
+</a>
+</div>
+
+### 🧑‍🎓 Bachelor Dashboard
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/BachelorHome.png" target="_blank">
+<img src="Documentations/SystemImages/BachelorHome.png" width="200" alt="Bachelor Home" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/MyRequest.png" target="_blank">
+<img src="Documentations/SystemImages/MyRequest.png" width="200" alt="My Requests" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/Notifications.png" target="_blank">
+<img src="Documentations/SystemImages/Notifications.png" width="200" alt="Notifications" style="border-radius:10px;"/>
+</a>
+</div>
+
+### 🏠 Owner Dashboard
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/OwnerDashboard.png" target="_blank">
+<img src="Documentations/SystemImages/OwnerDashboard.png" width="200" alt="Owner Dashboard" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/MyProperties.png" target="_blank">
+<img src="Documentations/SystemImages/MyProperties.png" width="200" alt="My Properties" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/AddProperty.png" target="_blank">
+<img src="Documentations/SystemImages/AddProperty.png" width="200" alt="Add Property" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/RentRequest.png" target="_blank">
+<img src="Documentations/SystemImages/RentRequest.png" width="200" alt="Rent Requests" style="border-radius:10px;"/>
+</a>
+<a href="Documentations/SystemImages/OwnerNotification.png" target="_blank">
+<img src="Documentations/SystemImages/OwnerNotification.png" width="200" alt="Owner Notifications" style="border-radius:10px;"/>
+</a>
+</div>
+
+### 🛠️ Admin Dashboard
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
+  <a href="Documentations/SystemImages/AdminUsers.png" target="_blank">
+    <img src="Documentations/SystemImages/AdminUsers.png" width="200" alt="Admin Users" style="border-radius:10px;"/>
+  </a>
+  <a href="Documentations/SystemImages/AdminProperties.png" target="_blank">
+    <img src="Documentations/SystemImages/AdminProperties.png" width="200" alt="Admin Properties" style="border-radius:10px;"/>
+  </a>
+  <a href="Documentations/SystemImages/AdminUserLogs.png" target="_blank">
+    <img src="Documentations/SystemImages/AdminUserLogs.png" width="200" alt="Admin User Logs" style="border-radius:10px;"/>
+  </a>
+  <a href="Documentations/SystemImages/AdminEditUsers.png" target="_blank">
+    <img src="Documentations/SystemImages/AdminEditUsers.png" width="200" alt="Admin Edit Users" style="border-radius:10px;"/>
+  </a>
+  <a href="Documentations/SystemImages/AdminEditUsers.png" target="_blank">
+    <img src="Documentations/SystemImages/AdminEditProperties.png" width="200" alt="Admin Edit Users" style="border-radius:10px;"/>
+  </a>
+</div>
+
+### 💬 Chat System
+<div style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px; justify-items: center;">
+<a href="Documentations/SystemImages/Chat.png" target="_blank">
+<img src="Documentations/SystemImages/Chat.png" width="250" alt="Chat System" style="border-radius:10px;"/>
+</a>
+</div>
+
+---
+
 ## 🚀 Features
 
 ### 👤 Authentication & Roles
@@ -84,59 +156,6 @@ React.js, Tailwind CSS, Axios, React Router
 <h4>Backend</h4>
 Django, Django REST Framework, Django Channels, SQLite
 </div>
-</div>
-
----
-
-## 📸 Screenshots
-
-### 🔑 Login & Registration
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; justify-items: center;">
-<a href="Documentations/SystemImages/Login.png" target="_blank">
-<img src="Documentations/SystemImages/Login.png" width="250" alt="Login Page" style="border-radius:10px;"/>
-</a>
-<a href="Documentations/SystemImages/Registration.png" target="_blank">
-<img src="Documentations/SystemImages/Registration.png" width="250" alt="Registration Page" style="border-radius:10px;"/>
-</a>
-</div>
-
-### 🧑‍🎓 Bachelor Dashboard
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
-<a href="Documentations/SystemImages/BachelorHome.png" target="_blank">
-<img src="Documentations/SystemImages/BachelorHome.png" width="200" alt="Bachelor Home" style="border-radius:10px;"/>
-</a>
-<a href="Documentations/SystemImages/MyRequest.png" target="_blank">
-<img src="Documentations/SystemImages/MyRequest.png" width="200" alt="My Requests" style="border-radius:10px;"/>
-</a>
-<a href="Documentations/SystemImages/Notifications.png" target="_blank">
-<img src="Documentations/SystemImages/Notifications.png" width="200" alt="Notifications" style="border-radius:10px;"/>
-</a>
-</div>
-
-### 🏠 Owner Dashboard
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; justify-items: center;">
-<a href="Documentations/SystemImages/OwnerDashboard.png" target="_blank">
-<img src="Documentations/SystemImages/OwnerDashboard.png" width="200" alt="Owner Dashboard" style="border-radius:10px;"/>
-</a>
-<a href="Documentations/SystemImages/MyProperties.png" target="_blank">
-<img src="Documentations/SystemImages/MyProperties.png" width="200" alt="My Properties" style="border-radius:10px;"/>
-</a>
-<a href="Documentations/SystemImages/AddProperty.png" target="_blank">
-<img src="Documentations/SystemImages/AddProperty.png" width="200" alt="Add Property" style="border-radius:10px;"/>
-</a>
-<a href="Documentations/SystemImages/RentRequest.png" target="_blank">
-<img src="Documentations/SystemImages/RentRequest.png" width="200" alt="Rent Requests" style="border-radius:10px;"/>
-</a>
-<a href="Documentations/SystemImages/OwnerNotification.png" target="_blank">
-<img src="Documentations/SystemImages/OwnerNotification.png" width="200" alt="Owner Notifications" style="border-radius:10px;"/>
-</a>
-</div>
-
-### 💬 Chat System
-<div style="display: grid; grid-template-columns: repeat(1, 1fr); gap: 10px; justify-items: center;">
-<a href="Documentations/SystemImages/Chat.png" target="_blank">
-<img src="Documentations/SystemImages/Chat.png" width="250" alt="Chat System" style="border-radius:10px;"/>
-</a>
 </div>
 
 ---
