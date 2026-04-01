@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    AdminPropertyListView, PropertyCreateView, OwnerPropertyListView, PropertyRejectView, PropertyUpdateDeleteView,
+    AdminPropertyListView, PropertyCreateView, OwnerPropertyListView, PropertyRejectView, PropertyRevertPendingView, PropertyUpdateDeleteView,
     PropertyApproveView, PropertyListView
 )
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path('approved/', PropertyListView.as_view(), name='approved-properties'),
     path('admin/all/', AdminPropertyListView.as_view(), name='admin-all-properties'),
     path('reject/<int:pk>/', PropertyRejectView.as_view(), name='property-reject'),
+    path('revert-pending/<int:pk>/', PropertyRevertPendingView.as_view(), name='property-revert-pending'),
+
 ]

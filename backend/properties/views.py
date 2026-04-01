@@ -68,6 +68,19 @@ class PropertyRejectView(generics.UpdateAPIView):
     def perform_update(self, serializer):
         property_obj = serializer.save(is_rejected=True, is_approved=False)
         
+# Admin: Revert approved/rejected property to pending
+class PropertyRevertPendingView(generics.UpdateAPIView):
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def perform_update(self, serializer):
+        property_obj = serializer.save(is_approved=False, is_rejected=False)
+        Notification.objects.create(
+            user=property_obj.owner,
+            message="Your property has been reverted to pending by admin."
+        )
+        
 # Public: View approved properties
 class PropertyListView(generics.ListAPIView):
     serializer_class = PropertySerializer

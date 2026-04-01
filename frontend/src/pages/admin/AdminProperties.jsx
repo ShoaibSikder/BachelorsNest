@@ -1,3 +1,4 @@
+import { CornerUpLeft } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Edit, Trash2, CheckCircle, XCircle, X } from "lucide-react";
 import {
@@ -6,6 +7,7 @@ import {
   rejectProperty,
   deleteProperty,
   updateProperty,
+  revertPropertyPending,
 } from "../../api/adminPropertyApi";
 
 const BASE_URL = "http://127.0.0.1:8000";
@@ -46,6 +48,13 @@ const AdminProperties = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Delete permanently?")) {
       await deleteProperty(id);
+      fetchProperties();
+    }
+  };
+
+  const handleRevertPending = async (id) => {
+    if (window.confirm("Revert property to pending?")) {
+      await revertPropertyPending(id);
       fetchProperties();
     }
   };
@@ -146,18 +155,28 @@ const AdminProperties = () => {
                       <>
                         <button
                           onClick={() => handleApprove(property.id)}
-                          className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-green-500"
                         >
                           <CheckCircle size={16} /> Approve
                         </button>
                         <button
                           onClick={() => handleReject(property.id)}
-                          className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                          className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
                         >
                           <XCircle size={16} /> Reject
                         </button>
                       </>
                     )}
+
+                    {(property.is_approved || property.is_rejected) && (
+                      <button
+                        onClick={() => handleRevertPending(property.id)}
+                        className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-yellow-600"
+                      >
+                        <CornerUpLeft size={16} /> Revert
+                      </button>
+                    )}
+
                     <button
                       onClick={() => setSelectedProperty(property)}
                       className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"

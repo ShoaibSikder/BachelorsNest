@@ -17,6 +17,11 @@ export const rejectProperty = (id) => {
   return api.patch(`${API}/reject/${id}/`);
 };
 
+// 🔹 Revert property to pending
+export const revertPropertyPending = (id) => {
+  return api.patch(`${API}/revert-pending/${id}/`);
+};
+
 // 🔹 Delete property
 export const deleteProperty = (id) => {
   return api.delete(`${API}/update-delete/${id}/`);
