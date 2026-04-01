@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Property
 from .serializers import PropertySerializer, PropertyCreateUpdateSerializer
-from accounts.permissions import IsOwner, IsAdmin
+from accounts.permissions import IsOwner, IsAdmin, IsOwnerOrAdmin
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from notifications.models import Notification
@@ -34,7 +34,7 @@ class OwnerPropertyListView(generics.ListAPIView):
 class PropertyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Property.objects.all()
     serializer_class = PropertyCreateUpdateSerializer  # Use create/update serializer to handle images
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
     parser_classes = [MultiPartParser, FormParser]  # handle images
 
     def perform_update(self, serializer):

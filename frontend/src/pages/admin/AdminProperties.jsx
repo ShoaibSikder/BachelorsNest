@@ -370,33 +370,36 @@ const EditModal = ({ property, onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-      <div className="bg-white text-black p-6 rounded w-96">
-        <h2 className="text-xl font-bold mb-4">Edit Property</h2>
-        <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-8 rounded-2xl w-full max-w-md shadow-2xl transform transition-all scale-95 animate-fadeIn max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-6 text-center">Edit Property</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
             name="title"
             value={form.title}
             onChange={handleChange}
-            className="w-full border p-2"
+            placeholder="Property Title"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             name="location"
             value={form.location}
             onChange={handleChange}
-            className="w-full border p-2"
+            placeholder="Location"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             name="rent"
             value={form.rent}
             onChange={handleChange}
-            className="w-full border p-2"
+            placeholder="Rent"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <select
             name="property_type"
             value={form.property_type}
             onChange={handleChange}
-            className="w-full border p-2"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="flat">Flat</option>
             <option value="seat">Seat</option>
@@ -405,20 +408,27 @@ const EditModal = ({ property, onClose, onSuccess }) => {
             name="description"
             value={form.description}
             onChange={handleChange}
-            className="w-full border p-2"
+            placeholder="Description"
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input type="file" multiple onChange={handleImageChange} />
-          <div className="flex justify-between">
+          <input
+            type="file"
+            multiple
+            onChange={handleImageChange}
+            className="text-gray-700 dark:text-gray-200"
+          />
+
+          <div className="flex justify-between mt-4">
             <button
               type="submit"
-              className="bg-blue-500 text-white px-3 py-1 rounded"
+              className="w-1/2 bg-blue-500 hover:bg-blue-600 transition text-white font-semibold px-4 py-3 rounded-lg shadow-md"
             >
               Update
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-400 px-3 py-1 rounded"
+              className="w-1/2 ml-2 bg-gray-400 hover:bg-gray-500 transition text-white font-semibold px-4 py-3 rounded-lg shadow-md"
             >
               Cancel
             </button>
