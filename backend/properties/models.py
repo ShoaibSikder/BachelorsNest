@@ -14,6 +14,7 @@ class Property(models.Model):
     property_type = models.CharField(max_length=10, choices=PROPERTY_TYPE)
     description = models.TextField()
     is_approved = models.BooleanField(default=False)
+    is_rejected = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

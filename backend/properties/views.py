@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from notifications.models import Notification
 from .models import PropertyImage
+
 # Owner: Add property with images
 class PropertyCreateView(generics.CreateAPIView):
     serializer_class = PropertySerializer
@@ -40,6 +41,12 @@ class PropertyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
         serializer.save()
 
 
+# view all properties for admin
+class AdminPropertyListView(generics.ListAPIView):
+    queryset = Property.objects.all().order_by('-created_at')
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
+
 # Admin: Approve property
 class PropertyApproveView(generics.UpdateAPIView):
     queryset = Property.objects.all()
@@ -53,7 +60,14 @@ class PropertyApproveView(generics.UpdateAPIView):
             message="Your property has been approved by admin."
         )
 
+class PropertyRejectView(generics.UpdateAPIView):
+    queryset = Property.objects.all()
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated, IsAdmin]
 
+    def perform_update(self, serializer):
+        property_obj = serializer.save(is_rejected=True, is_approved=False)
+        
 # Public: View approved properties
 class PropertyListView(generics.ListAPIView):
     serializer_class = PropertySerializer

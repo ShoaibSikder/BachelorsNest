@@ -11,15 +11,8 @@ import {
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editUserData, setEditUserData] = useState(null);
+  const [filter, setFilter] = useState("all");
+  const [selectedUser, setSelectedUser] = useState(null);
   const [logsUserId, setLogsUserId] = useState(null);
   const [logs, setLogs] = useState([]);
 
@@ -30,45 +23,19 @@ const AdminUsers = () => {
     role: "bachelor",
   });
 
-  // Fetch all users
-  const fetchUsers = async () => {
-    try {
-      const res = await getUsers();
-      setUsers(res.data);
-      setFilteredUsers(res.data);
-    } catch (err) {
-      console.error("Failed to fetch users", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // Filter & search
-  useEffect(() => {
-    let data = users;
-    if (search) {
-      data = data.filter(
-        (u) =>
-          u.username.toLowerCase().includes(search.toLowerCase()) ||
-          u.email.toLowerCase().includes(search.toLowerCase()),
-      );
+  const fetchUsers = async () => {
+    try {
+      const res = await getUsers();
+      setUsers(res.data);
+    } catch (err) {
+      console.error("Failed to fetch users", err);
     }
-    if (roleFilter) {
-      data = data.filter((u) => u.role === roleFilter);
-    }
-    if (statusFilter) {
-      data = data.filter((u) =>
-        statusFilter === "active" ? !u.is_banned : u.is_banned,
-      );
-    }
-    setFilteredUsers(data);
-  }, [search, roleFilter, statusFilter, users]);
+  };
 
-  // Handlers
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this user?")) return;
     await deleteUser(id);
@@ -85,31 +52,14 @@ const AdminUsers = () => {
     fetchUsers();
   };
 
-  const openEditModal = (user) => {
-    setEditUserData(user);
-    setFormData({
-      username: user.username,
-      email: user.email,
-      password: "",
-      role: user.role,
-    });
-    setModalOpen(true);
-  };
-
-  const openAddModal = () => {
-    setEditUserData(null);
-    setFormData({ username: "", email: "", password: "", role: "bachelor" });
-    setModalOpen(true);
-  };
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (editUserData) {
-      await editUser(editUserData.id, formData);
+    if (selectedUser) {
+      await editUser(selectedUser.id, formData);
     } else {
       await addUser(formData);
     }
-    setModalOpen(false);
+    setSelectedUser(null);
     fetchUsers();
   };
 
@@ -119,57 +69,51 @@ const AdminUsers = () => {
     setLogs(res.data);
   };
 
-  if (loading) return <p>Loading users...</p>;
+  // Filtered users
+  const filteredUsers = users.filter((u) => {
+    if (filter === "active") return !u.is_banned;
+    if (filter === "banned") return u.is_banned;
+    return true;
+  });
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">User Management</h2>
+    <div className="text-gray-800 dark:text-white">
+      <h2 className="text-2xl font-bold mb-4">User Management</h2>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search users..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="p-2 border rounded-lg"
-        />
-
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="p-2 border rounded-lg"
-        >
-          <option value="">All Roles</option>
-          <option value="admin">Admin</option>
-          <option value="owner">Owner</option>
-          <option value="bachelor">Bachelor</option>
-        </select>
-
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="p-2 border rounded-lg"
-        >
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="banned">Banned</option>
-        </select>
-
+      <div className="mb-4 space-x-2">
         <button
-          onClick={openAddModal}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
+          onClick={() => setFilter("all")}
+          className="bg-gray-300 px-3 py-1 rounded"
+        >
+          All
+        </button>
+        <button
+          onClick={() => setFilter("active")}
+          className="bg-green-400 px-3 py-1 rounded"
+        >
+          Active
+        </button>
+        <button
+          onClick={() => setFilter("banned")}
+          className="bg-red-400 px-3 py-1 rounded"
+        >
+          Banned
+        </button>
+        <button
+          onClick={() => setSelectedUser({})}
+          className="bg-blue-500 px-3 py-1 rounded text-white"
         >
           Add User
         </button>
       </div>
 
       {/* Users Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow">
-        <table className="w-full text-left">
-          <thead className="bg-gray-500">
+      <div className="overflow-x-auto">
+        <table className="w-full border text-center">
+          <thead className="bg-gray-200 dark:bg-gray-700">
             <tr>
-              <th className="p-3">Username</th>
+              <th className="p-2">Username</th>
               <th>Email</th>
               <th>Role</th>
               <th>Status</th>
@@ -178,58 +122,53 @@ const AdminUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id} className="border-t text-gray-800">
-                <td className="p-3">{user.username}</td>
-                <td>{user.email}</td>
-
-                {/* Role */}
+            {filteredUsers.map((u) => (
+              <tr key={u.id} className="border-t">
+                <td className="p-2">{u.username}</td>
+                <td>{u.email}</td>
                 <td>
                   <select
-                    value={user.role}
-                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                    className="border rounded px-2 py-1 bg-blue-100"
+                    value={u.role}
+                    onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                    className="border rounded px-2 py-1 bg-gray-700"
                   >
                     <option value="admin">Admin</option>
                     <option value="owner">Owner</option>
                     <option value="bachelor">Bachelor</option>
                   </select>
                 </td>
-
-                {/* Status */}
                 <td>
-                  {user.is_banned ? (
-                    <span className="text-red-500">Banned</span>
+                  {u.is_banned ? (
+                    <span className="text-red-600 font-semibold">Banned</span>
                   ) : (
-                    <span className="text-green-600">Active</span>
+                    <span className="text-green-600 font-semibold">Active</span>
                   )}
                 </td>
-
-                <td>{new Date(user.date_joined).toLocaleDateString()}</td>
-
-                {/* Actions */}
+                <td>{new Date(u.date_joined).toLocaleDateString()}</td>
                 <td className="space-x-2">
                   <button
-                    onClick={() => openEditModal(user)}
-                    className="px-3 py-1 bg-yellow-500 text-white rounded"
+                    onClick={() => setSelectedUser(u)}
+                    className="bg-blue-500 px-2 py-1 rounded text-white"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleBan(user.id)}
-                    className="px-3 py-1 bg-orange-600 text-white rounded"
+                    onClick={() => handleBan(u.id)}
+                    className={`px-2 py-1 rounded text-white ${
+                      u.is_banned ? "bg-green-500" : "bg-red-600"
+                    }`}
                   >
-                    {user.is_banned ? "Unban" : "Ban"}
+                    {u.is_banned ? "Unban" : "Ban"}
                   </button>
                   <button
-                    onClick={() => handleDelete(user.id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded"
+                    onClick={() => handleDelete(u.id)}
+                    className="bg-red-700 px-2 py-1 rounded text-white"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => viewLogs(user.id)}
-                    className="px-3 py-1 bg-gray-700 text-white rounded"
+                    onClick={() => viewLogs(u.id)}
+                    className="bg-green-700 px-2 py-1 rounded text-white"
                   >
                     Logs
                   </button>
@@ -241,81 +180,79 @@ const AdminUsers = () => {
       </div>
 
       {/* Add / Edit Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <form
-            onSubmit={handleFormSubmit}
-            className="bg-white p-6 rounded shadow-lg w-96"
-          >
-            <h3 className="text-xl font-bold mb-4">
-              {editUserData ? "Edit User" : "Add User"}
-            </h3>
-
-            <input
-              type="text"
-              placeholder="Username"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              className="mb-2 p-2 w-full border rounded"
-              required
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="mb-2 p-2 w-full border rounded"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className="mb-2 p-2 w-full border rounded"
-              required={!editUserData}
-            />
-            <select
-              value={formData.role}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
-              className="mb-4 p-2 w-full border rounded"
-            >
-              <option value="admin">Admin</option>
-              <option value="owner">Owner</option>
-              <option value="bachelor">Bachelor</option>
-            </select>
-
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="px-3 py-1 border rounded"
+      {selectedUser !== null && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white text-black p-6 rounded w-96">
+            <h2 className="text-xl font-bold mb-4">
+              {selectedUser?.id ? "Edit User" : "Add User"}
+            </h2>
+            <form className="space-y-3" onSubmit={handleFormSubmit}>
+              <input
+                type="text"
+                placeholder="Username"
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                className="w-full border p-2"
+                required
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full border p-2"
+                required
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="w-full border p-2"
+                required={!selectedUser.id}
+              />
+              <select
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
+                className="w-full border p-2"
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-3 py-1 bg-blue-600 text-white rounded"
-              >
-                {editUserData ? "Save" : "Add"}
-              </button>
-            </div>
-          </form>
+                <option value="admin">Admin</option>
+                <option value="owner">Owner</option>
+                <option value="bachelor">Bachelor</option>
+              </select>
+
+              <div className="flex justify-between">
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-3 py-1 rounded"
+                >
+                  {selectedUser?.id ? "Save" : "Add"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedUser(null)}
+                  className="bg-gray-400 px-3 py-1 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
       {/* Logs Modal */}
       {logsUserId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96 max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white text-black p-6 rounded w-96 max-h-[80vh] overflow-y-auto">
             <h3 className="text-xl font-bold mb-4 text-black">User Logs</h3>
             {logs.length === 0 ? (
               <p className="text-black">No logs available for this user.</p>
