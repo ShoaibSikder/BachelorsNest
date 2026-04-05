@@ -10,6 +10,7 @@ import {
   revertPropertyPending,
 } from "../../api/adminPropertyApi";
 import ConfirmModal from "../../components/ConfirmModal";
+import PropertyCard from "../../components/PropertyCard";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -151,188 +152,103 @@ const AdminProperties = () => {
 
       {/* CARD GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProperties.map((property) => (
-          <div
-            key={property.id}
-            className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden flex flex-col"
-          >
-            {/* HEADER */}
-            <div className="flex justify-between items-center p-4 relative">
-              <div>
-                <h3 className="font-semibold text-gray-800 dark:text-white">
-                  {property.title}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {property.owner?.username}
-                </p>
-              </div>
-
-              {/* 3 DOT MENU */}
-              <div
-                ref={(el) => (menuRefs.current[property.id] = el)}
-                className="relative"
-              >
-                <button
-                  onClick={() =>
-                    setOpenMenuId(
-                      openMenuId === property.id ? null : property.id,
-                    )
-                  }
-                  className="text-xl px-2 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
-                >
-                  ⋯
-                </button>
-
-                {openMenuId === property.id && (
-                  <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
-                    {!property.is_approved && !property.is_rejected && (
-                      <>
-                        <button
-                          onClick={() => handleApprove(property.id)}
-                          className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-green-500"
-                        >
-                          <CheckCircle size={16} /> Approve
-                        </button>
-                        <button
-                          onClick={() => handleReject(property.id)}
-                          className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
-                        >
-                          <XCircle size={16} /> Reject
-                        </button>
-                      </>
-                    )}
-
-                    {(property.is_approved || property.is_rejected) && (
-                      <button
-                        onClick={() => handleRevertPending(property.id)}
-                        className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-yellow-600"
-                      >
-                        <CornerUpLeft size={16} /> Revert
-                      </button>
-                    )}
-
-                    <button
-                      onClick={() => setSelectedProperty(property)}
-                      className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <Edit size={16} /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(property.id)}
-                      className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
-                    >
-                      <Trash2 size={16} /> Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* IMAGES COLLAGE */}
-            {property.images?.length > 0 ? (
-              <div className="grid gap-1 w-full">
-                {property.images.length === 1 && (
-                  <img
-                    src={getImageUrl(property.images[0].image)}
-                    alt={`${property.title} 1`}
-                    className="w-full h-60 object-cover rounded cursor-pointer"
-                    onClick={() =>
-                      setModalImage(getImageUrl(property.images[0].image))
-                    }
-                  />
-                )}
-                {property.images.length === 2 && (
-                  <div className="grid grid-cols-2 gap-1">
-                    {property.images.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={getImageUrl(img.image)}
-                        alt={`${property.title} ${idx + 1}`}
-                        className="w-full h-40 object-cover rounded cursor-pointer"
-                        onClick={() => setModalImage(getImageUrl(img.image))}
-                      />
-                    ))}
-                  </div>
-                )}
-                {property.images.length === 3 && (
-                  <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60">
-                    <img
-                      src={getImageUrl(property.images[0].image)}
-                      alt={`${property.title} 1`}
-                      className="row-span-2 w-full h-full object-cover rounded cursor-pointer"
-                      onClick={() =>
-                        setModalImage(getImageUrl(property.images[0].image))
-                      }
-                    />
-                    <img
-                      src={getImageUrl(property.images[1].image)}
-                      alt={`${property.title} 2`}
-                      className="w-full h-full object-cover rounded cursor-pointer"
-                      onClick={() =>
-                        setModalImage(getImageUrl(property.images[1].image))
-                      }
-                    />
-                    <img
-                      src={getImageUrl(property.images[2].image)}
-                      alt={`${property.title} 3`}
-                      className="w-full h-full object-cover rounded cursor-pointer"
-                      onClick={() =>
-                        setModalImage(getImageUrl(property.images[2].image))
-                      }
-                    />
-                  </div>
-                )}
-                {property.images.length >= 4 && (
-                  <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60 relative">
-                    {property.images.slice(0, 4).map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={getImageUrl(img.image)}
-                        alt={`${property.title} ${idx + 1}`}
-                        className="w-full h-full object-cover rounded cursor-pointer"
-                        onClick={() => setModalImage(getImageUrl(img.image))}
-                      />
-                    ))}
-                    {property.images.length > 4 && (
-                      <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-2xl font-bold rounded">
-                        +{property.images.length - 4}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">
-                No image
-              </div>
-            )}
-
-            {/* CONTENT */}
-            <div className="p-4 flex flex-col flex-grow">
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                📍 {property.location}
-              </p>
-              <p className="mt-2 font-bold text-indigo-600">
-                ৳ {property.rent}
-              </p>
-              <span
-                className={`mt-2 text-xs px-3 py-1 rounded-full w-fit ${
-                  property.is_approved
-                    ? "bg-green-100 text-green-700"
-                    : property.is_rejected
-                      ? "bg-red-100 text-red-700"
-                      : "bg-yellow-100 text-yellow-700"
-                }`}
-              >
-                {property.is_approved
-                  ? "Approved"
+        {filteredProperties.map((property) => {
+          const badge = (
+            <span
+              className={`text-xs px-3 py-1 rounded-full font-medium ${
+                property.is_approved
+                  ? "bg-green-100 text-green-700"
                   : property.is_rejected
-                    ? "Rejected"
-                    : "Pending"}
-              </span>
-            </div>
-          </div>
-        ))}
+                    ? "bg-red-100 text-red-700"
+                    : "bg-yellow-100 text-yellow-700"
+              }`}
+            >
+              {property.is_approved
+                ? "Approved"
+                : property.is_rejected
+                  ? "Rejected"
+                  : "Pending"}
+            </span>
+          );
+
+          return (
+            <PropertyCard
+              key={property.id}
+              property={property}
+              onImageClick={(imgUrl) => setModalImage(imgUrl)}
+              badge={badge}
+              headerLeft={
+                <div>
+                  <h3 className="font-semibold text-gray-800 dark:text-white">
+                    {property.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {property.owner?.username}
+                  </p>
+                </div>
+              }
+              headerRight={
+                <div
+                  className="relative"
+                  ref={(el) => (menuRefs.current[property.id] = el)}
+                >
+                  <button
+                    onClick={() =>
+                      setOpenMenuId(
+                        openMenuId === property.id ? null : property.id,
+                      )
+                    }
+                    className="text-xl px-2 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"
+                  >
+                    ⋯
+                  </button>
+                  {openMenuId === property.id && (
+                    <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+                      {!property.is_approved && !property.is_rejected && (
+                        <>
+                          <button
+                            onClick={() => handleApprove(property.id)}
+                            className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-green-500"
+                          >
+                            <CheckCircle size={16} /> Approve
+                          </button>
+                          <button
+                            onClick={() => handleReject(property.id)}
+                            className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
+                          >
+                            <XCircle size={16} /> Reject
+                          </button>
+                        </>
+                      )}
+
+                      {(property.is_approved || property.is_rejected) && (
+                        <button
+                          onClick={() => handleRevertPending(property.id)}
+                          className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-yellow-600"
+                        >
+                          <CornerUpLeft size={16} /> Revert
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => setSelectedProperty(property)}
+                        className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <Edit size={16} /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(property.id)}
+                        className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-500"
+                      >
+                        <Trash2 size={16} /> Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              }
+            />
+          );
+        })}
       </div>
 
       {/* IMAGE MODAL */}
@@ -379,22 +295,51 @@ const EditModal = ({ property, onClose, onSuccess }) => {
     images: [],
   });
 
+  const [existingImages, setExistingImages] = useState(property.images || []);
+  const [imagesToRemove, setImagesToRemove] = useState([]);
+  const [replaceImages, setReplaceImages] = useState(false);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleImageChange = (e) => setForm({ ...form, images: e.target.files });
 
+  const handleRemoveExistingImage = (imageId) => {
+    setImagesToRemove([...imagesToRemove, imageId]);
+    setExistingImages(existingImages.filter(img => img.id !== imageId));
+  };
+
+  const handleReplaceImagesChange = (e) => {
+    setReplaceImages(e.target.checked);
+    if (e.target.checked) {
+      setImagesToRemove([]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      for (let key in form) {
-        if (key === "images") {
-          for (let img of form.images) formData.append("images", img);
-        } else {
-          formData.append(key, form[key]);
-        }
+      formData.append("title", form.title);
+      formData.append("location", form.location);
+      formData.append("rent", form.rent);
+      formData.append("property_type", form.property_type);
+      formData.append("description", form.description);
+
+      // Handle images
+      if (replaceImages) {
+        // Replace all images - send images field even if empty to trigger clearing
+        for (let img of form.images) formData.append("images", img);
+      } else if (form.images.length > 0) {
+        // Add new images to existing ones
+        for (let img of form.images) formData.append("images", img);
       }
+
+      // Send images to remove if any
+      if (imagesToRemove.length > 0) {
+        imagesToRemove.forEach((imageId) => formData.append("remove_images", imageId));
+      }
+
       await updateProperty(property.id, formData);
       onSuccess();
       onClose();
@@ -445,12 +390,83 @@ const EditModal = ({ property, onClose, onSuccess }) => {
             placeholder="Description"
             className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input
-            type="file"
-            multiple
-            onChange={handleImageChange}
-            className="text-gray-700 dark:text-gray-200"
-          />
+
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">Images</label>
+
+            {/* Replace images option */}
+            <div className="mb-3">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={replaceImages}
+                  onChange={handleReplaceImagesChange}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Replace all existing images with new ones
+                  {replaceImages && form.images.length === 0 && ' (will clear all images)'}
+                </span>
+              </label>
+            </div>
+
+            {/* New images input */}
+            <input
+              type="file"
+              multiple
+              onChange={handleImageChange}
+              className="w-full p-2 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 mb-3"
+            />
+
+            {/* Existing images */}
+            {existingImages.length > 0 && (
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Current Images:</p>
+                <div className="flex flex-wrap gap-2">
+                  {existingImages.map((img) => (
+                    <div key={img.id} className="relative">
+                      <img
+                        src={img.image}
+                        alt="Property"
+                        className="w-20 h-20 object-cover rounded"
+                      />
+                      {!replaceImages && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveExistingImage(img.id)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {replaceImages && (
+                  <p className="text-xs text-orange-600 mt-2">
+                    Warning: Checking "replace all" will remove all current images and replace them with the new ones.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Preview new images */}
+            {form.images.length > 0 && (
+              <div className="mt-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">New Images to {replaceImages ? 'Replace' : 'Add'}:</p>
+                <div className="flex flex-wrap gap-2">
+                  {Array.from(form.images).map((img, i) => (
+                    <img
+                      key={i}
+                      src={URL.createObjectURL(img)}
+                      alt={`New ${i + 1}`}
+                      className="w-20 h-20 object-cover rounded"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           <div className="flex justify-between mt-4">
             <button

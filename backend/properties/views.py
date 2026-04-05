@@ -33,9 +33,13 @@ class OwnerPropertyListView(generics.ListAPIView):
 # Owner/Admin: Update or Delete property
 class PropertyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Property.objects.all()
-    serializer_class = PropertyCreateUpdateSerializer  # Use create/update serializer to handle images
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
     parser_classes = [MultiPartParser, FormParser]  # handle images
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return PropertyCreateUpdateSerializer
+        return PropertySerializer
 
     def perform_update(self, serializer):
         serializer.save()

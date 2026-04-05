@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Search,
   X,
 } from "lucide-react";
 
@@ -23,6 +24,8 @@ const BachelorLayout = () => {
   const location = useLocation();
   const [open, setOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Handle responsive behavior
   useEffect(() => {
@@ -111,6 +114,37 @@ const BachelorLayout = () => {
             </button>
           </div>
 
+          <div className="px-4 pb-4">
+            {open ? (
+              <div className="flex items-center gap-3 p-3 rounded-lg w-full text-left transition hover:bg-white/20 focus-within:ring-2 focus-within:ring-white bg-white/10">
+                <Search
+                  size={18}
+                  className="text-white/90 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <input
+                  id="bachelor-search"
+                  type="text"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  placeholder="Search properties..."
+                  className="flex-1 bg-transparent text-white placeholder:text-white/70 focus:outline-none"
+                />
+              </div>
+            ) : (
+              <div className="flex justify-center mt-2">
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className="flex items-center justify-center gap-3 p-3 rounded-lg w-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
+                  aria-label="Open search"
+                >
+                  <Search size={20} aria-hidden="true" />
+                  <span className="sr-only">Search</span>
+                </button>
+              </div>
+            )}
+          </div>
+
           <nav>
             <ul className="mt-6 space-y-2 px-2" role="menu">
               {menuItems.map((item, index) => {
@@ -179,7 +213,39 @@ const BachelorLayout = () => {
           )}
         </header>
 
-        <Outlet />
+        {!open && isSearchOpen && (
+          <div className="fixed inset-x-4 top-24 z-50 rounded-3xl bg-white/95 p-4 shadow-2xl backdrop-blur-xl dark:bg-slate-900/95">
+            <div className="flex items-center justify-between gap-3">
+              <div className="relative flex-1">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                  aria-hidden="true"
+                />
+                <input
+                  type="text"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  placeholder="Search location, room, seat..."
+                  className="w-full rounded-2xl border border-slate-300 bg-white py-2 pl-10 pr-3 text-slate-700 placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                />
+              </div>
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="rounded-full bg-slate-100 p-2 text-slate-700 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                aria-label="Close search"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        <Outlet
+          context={{
+            searchText,
+          }}
+        />
       </main>
     </div>
   );

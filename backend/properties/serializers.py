@@ -52,13 +52,23 @@ class PropertyCreateUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         images_data = validated_data.pop('images', [])
+        remove_images = self.context['request'].data.getlist('remove_images', [])
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
         instance.save()
 
-        for img in images_data:
-            PropertyImage.objects.create(property=instance, image=img)
+        # Remove specified images
+        if remove_images:
+            PropertyImage.objects.filter(id__in=remove_images).delete()
+
+        # Handle images: if 'images' field is present in request, replace all existing images
+        if 'images' in self.context['request'].data:
+            # Delete all existing images first
+            instance.images.all().delete()
+            # Add new images if any
+            for img in images_data:
+                PropertyImage.objects.create(property=instance, image=img)
 
         return instance

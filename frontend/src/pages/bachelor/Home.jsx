@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { X } from "lucide-react";
 import { getApprovedProperties } from "../../api/propertyApi";
 import { sendRentRequest, getMyRentRequests } from "../../api/rentalApi";
 import MessageBox from "../../components/MessageBox";
-
+import PropertyCard from "../../components/PropertyCard";
 const BachelorHome = () => {
   const [properties, setProperties] = useState([]);
   const [myRequests, setMyRequests] = useState([]);
@@ -12,6 +12,25 @@ const BachelorHome = () => {
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState("info");
   const navigate = useNavigate();
+  const { searchText = "" } = useOutletContext() || {};
+
+  const normalizeString = (value) => String(value || "").toLowerCase();
+  const searchValue = searchText.trim().toLowerCase();
+
+  const filteredProperties = properties.filter((property) => {
+    const searchableText = [
+      property.title,
+      property.description,
+      property.location,
+      property.property_type,
+      property.owner?.username,
+    ]
+      .filter(Boolean)
+      .map(normalizeString)
+      .join(" ");
+
+    return !searchValue || searchableText.includes(searchValue);
+  });
 
   // 🔹 Time formatter (Facebook style)
   const formatTime = (dateString) => {
@@ -90,17 +109,32 @@ const BachelorHome = () => {
         className="mb-6"
       />
 
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-        Available Properties
-      </h2>
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            Available Properties
+          </h2>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            Search properties from the sidebar.
+          </p>
+        </div>
+
+        <p className="text-sm text-gray-600 dark:text-gray-300">
+          Showing {filteredProperties.length} of {properties.length} properties
+        </p>
+      </div>
 
       {properties.length === 0 ? (
         <p className="text-gray-600 dark:text-gray-300">
           No properties available.
         </p>
+      ) : filteredProperties.length === 0 ? (
+        <p className="text-gray-600 dark:text-gray-300">
+          No properties match your search or filter criteria.
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map((property) => {
+          {filteredProperties.map((property) => {
             const status = getRequestStatus(property.id);
             const request = getRequestObject(property.id);
 
