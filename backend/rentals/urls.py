@@ -3,6 +3,7 @@ from .views import CreateRentRequestView, DeleteRentRequestView
 from .views import UpdateRentRequestStatusView
 from .views import BachelorRequestListView
 from .views import OwnerRequestListView
+from .views import AdminRentRequestListView
 
 
 urlpatterns = [
@@ -10,5 +11,6 @@ urlpatterns = [
     path('update/<int:pk>/', UpdateRentRequestStatusView.as_view()),
     path('bachelor/', BachelorRequestListView.as_view(), name='bachelor-requests'),
     path('owner/', OwnerRequestListView.as_view(), name='owner-requests'),
+    path('admin/', AdminRentRequestListView.as_view(), name='admin-requests'),
     path('delete/<int:pk>/', DeleteRentRequestView.as_view()),
 ]

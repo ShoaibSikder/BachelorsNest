@@ -12,23 +12,17 @@ import {
   HelpCircle,
   LogOut,
   Menu,
-  User,
   X,
 } from "lucide-react";
 
-/**
- * AdminLayout component provides a responsive admin dashboard layout
- * with a collapsible sidebar navigation and main content area.
- * Features industry-standard accessibility, responsiveness, and UX improvements.
- */
 const AdminLayout = () => {
-  const { logout, user } = useContext(AuthContext); // Assuming user is available in context
+  const { logout, user } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
+
   const [open, setOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
@@ -41,13 +35,8 @@ const AdminLayout = () => {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-      // Optionally show a toast or alert
-    }
+    await logout();
+    navigate("/");
   };
 
   const getImageUrl = (img) =>
@@ -55,199 +44,121 @@ const AdminLayout = () => {
 
   const handleMenuClick = (path) => {
     navigate(path);
-    if (isMobile) setOpen(false); // Close sidebar on mobile after navigation
+    if (isMobile) setOpen(false);
   };
 
   const profilePath = "/admin/profile";
 
   const menuItems = [
-    {
-      name: "Users",
-      icon: Users,
-      path: "/admin/users",
-      ariaLabel: "Manage users",
-    },
-    {
-      name: "Properties",
-      icon: Building2,
-      path: "/admin/properties",
-      ariaLabel: "Manage properties",
-    },
-    {
-      name: "Requests",
-      icon: ClipboardList,
-      path: "/admin/requests",
-      ariaLabel: "View requests",
-    },
-    {
-      name: "Reports",
-      icon: BarChart3,
-      path: "/admin/reports",
-      ariaLabel: "View reports",
-    },
-    {
-      name: "Notifications",
-      icon: Bell,
-      path: "/admin/notifications",
-      ariaLabel: "Manage notifications",
-    },
-    {
-      name: "Security",
-      icon: Shield,
-      path: "/admin/security",
-      ariaLabel: "Security settings",
-    },
-    {
-      name: "Settings",
-      icon: Settings,
-      path: "/admin/settings",
-      ariaLabel: "Application settings",
-    },
-    {
-      name: "Support",
-      icon: HelpCircle,
-      path: "/admin/support",
-      ariaLabel: "Get support",
-    },
+    { name: "Users", icon: Users, path: "/admin/users" },
+    { name: "Properties", icon: Building2, path: "/admin/properties" },
+    { name: "Requests", icon: ClipboardList, path: "/admin/requests" },
+    { name: "Reports", icon: BarChart3, path: "/admin/reports" },
+    { name: "Notifications", icon: Bell, path: "/admin/notifications" },
+    { name: "Security", icon: Shield, path: "/admin/security" },
+    { name: "Settings", icon: Settings, path: "/admin/settings" },
+    { name: "Support", icon: HelpCircle, path: "/admin/support" },
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
-      {/* Overlay for mobile */}
+    <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {isMobile && open && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-black/50 z-40"
           onClick={() => setOpen(false)}
-          aria-hidden="true"
         />
       )}
 
-      {/* SIDEBAR */}
       <aside
         className={`${
           open ? "w-64" : "w-20"
-        } fixed top-0 left-0 h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all duration-300 flex flex-col justify-between z-50 ${
+        } fixed h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all flex flex-col justify-between z-50 ${
           isMobile ? (open ? "translate-x-0" : "-translate-x-full") : ""
         }`}
-        role="navigation"
-        aria-label="Admin sidebar navigation"
       >
         <div>
-          <div className="flex items-center justify-between p-4">
-            {open && <h2 className="text-xl font-extrabold">Admin Panel</h2>}
-            <button
-              onClick={() => setOpen(!open)}
-              className="p-1 rounded hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white"
-              aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
-            >
-              {open ? <X size={20} /> : <Menu size={20} />}
+          {/* HEADER */}
+          <div className="flex justify-between p-4">
+            {open && <h2 className="font-bold text-xl">Admin Panel</h2>}
+            <button onClick={() => setOpen(!open)}>
+              {open ? <X /> : <Menu />}
             </button>
           </div>
 
-          <div className="px-4 pb-4">
+          {/* PROFILE + DIVIDER */}
+          <div className="px-4 pb-4 flex flex-col gap-4">
             {user && (
               <button
                 onClick={() => handleMenuClick(profilePath)}
-                className={`flex items-center ${open ? "gap-3" : "justify-center"} p-3 rounded-lg w-full text-left transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white`}
-                aria-label="Open profile page"
+                className={`${
+                  open ? "flex gap-3 items-center" : "flex justify-center"
+                } p-3 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg hover:bg-white/20 transition`}
               >
-                <div className="h-11 w-11 rounded-full bg-white/20 overflow-hidden flex items-center justify-center text-lg font-semibold text-white">
+                <div className="h-11 w-11 rounded-full bg-white/20 overflow-hidden flex items-center justify-center">
                   {user.profile_image ? (
                     <img
                       src={getImageUrl(user.profile_image)}
-                      alt="Profile"
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <span>{user.username?.charAt(0).toUpperCase() || "U"}</span>
+                    <span>{user.username?.[0]?.toUpperCase()}</span>
                   )}
                 </div>
+
                 {open && (
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold truncate">
+                  <div>
+                    <p className="text-sm font-semibold">
                       {user.username || "Admin"}
                     </p>
-                    <p className="text-xs text-white/80 capitalize truncate">
+                    <p className="text-xs text-white/70">
                       {user.role || "Admin"}
                     </p>
-                    <p className="text-xs text-white/70 truncate">My Profile</p>
                   </div>
                 )}
               </button>
             )}
+
+            {open && <div className="h-px bg-white/20 rounded-full" />}
           </div>
 
-          <nav>
-            <ul className="mt-6 space-y-2 px-2" role="menu">
-              {menuItems.map((item, index) => {
-                const isActive =
-                  item.path === "/admin"
-                    ? location.pathname === "/admin"
-                    : location.pathname.startsWith(item.path);
+          {/* MENU */}
+          <ul className="space-y-2 px-2">
+            {menuItems.map((item, i) => {
+              const isActive = location.pathname.startsWith(item.path);
 
-                return (
-                  <li key={index} role="none">
-                    <button
-                      onClick={() => handleMenuClick(item.path)}
-                      className={`flex items-center gap-3 p-3 rounded-lg w-full text-left transition focus:outline-none focus:ring-2 focus:ring-white ${
-                        isActive
-                          ? "bg-white text-blue-600 font-semibold shadow-md"
-                          : "hover:bg-white/20"
-                      }`}
-                      role="menuitem"
-                      aria-label={item.ariaLabel}
-                      aria-current={isActive ? "page" : undefined}
-                    >
-                      <item.icon size={20} aria-hidden="true" />
-                      {open && <span>{item.name}</span>}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+              return (
+                <li key={i}>
+                  <button
+                    onClick={() => handleMenuClick(item.path)}
+                    className={`flex items-center gap-3 p-3 rounded-lg w-full ${
+                      isActive
+                        ? "bg-white text-blue-600 font-semibold"
+                        : "hover:bg-white/20"
+                    }`}
+                  >
+                    <item.icon size={20} />
+                    {open && item.name}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
+        {/* FOOTER */}
         <div className="p-4">
-          {user && open && (
-            <div className="mb-4 text-center">
-              <p className="text-sm">Welcome, {user.username || "Admin"}</p>
-            </div>
-          )}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 w-full bg-white text-red-500 py-2 px-4 rounded-lg justify-center hover:scale-[1.03] transition focus:outline-none focus:ring-2 focus:ring-red-300"
-            aria-label="Logout from admin panel"
+            className="flex w-full justify-center gap-2 bg-white text-red-500 py-2 rounded-lg"
           >
-            <LogOut size={18} aria-hidden="true" />
+            <LogOut size={18} />
             {open && "Logout"}
           </button>
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
-      <main
-        className={`flex-1 overflow-y-auto p-6 transition-all duration-300 ${
-          open && !isMobile ? "ml-64" : "ml-20"
-        } ${isMobile ? "ml-0" : ""}`}
-        role="main"
-        aria-label="Main content"
-      >
-        <header className="mb-6">
-          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-            Admin Dashboard
-          </h1>
-          {isMobile && (
-            <button
-              onClick={() => setOpen(true)}
-              className="mt-2 p-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
-              aria-label="Open sidebar menu"
-            >
-              <Menu size={20} />
-            </button>
-          )}
-        </header>
-
+      <main className={`flex-1 p-6 ${open ? "ml-64" : "ml-20"}`}>
+        <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
         <Outlet />
       </main>
     </div>
