@@ -9,6 +9,7 @@ import {
   getUserLogs,
 } from "../../api/adminUserApi";
 import ConfirmModal from "../../components/ConfirmModal";
+import MessageBox from "../../components/MessageBox";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -16,6 +17,9 @@ const AdminUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [logsUserId, setLogsUserId] = useState(null);
   const [logs, setLogs] = useState([]);
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState("info");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -54,6 +58,8 @@ const AdminUsers = () => {
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users", err);
+      setNotification("Failed to load users. Please refresh.");
+      setNotificationType("error");
     }
   };
 
@@ -65,36 +71,70 @@ const AdminUsers = () => {
     if (!confirmDeleteUserId) return;
     try {
       await deleteUser(confirmDeleteUserId);
+      setNotification("User deleted successfully.");
+      setNotificationType("success");
       fetchUsers();
     } catch (err) {
       console.error("Failed to delete user", err);
+      setNotification("Failed to delete user. Please try again.");
+      setNotificationType("error");
     } finally {
       setConfirmDeleteUserId(null);
     }
   };
 
   const handleBan = async (id) => {
-    await toggleBanUser(id);
-    fetchUsers();
+    try {
+      await toggleBanUser(id);
+      setNotification("User ban state updated successfully.");
+      setNotificationType("success");
+      fetchUsers();
+    } catch (err) {
+      console.error("Failed to update ban state", err);
+      setNotification("Failed to update ban state. Please try again.");
+      setNotificationType("error");
+    }
   };
 
   const handleRoleChange = async (id, role) => {
-    await changeUserRole(id, role);
-    fetchUsers();
+    try {
+      await changeUserRole(id, role);
+      setNotification("User role updated successfully.");
+      setNotificationType("success");
+      fetchUsers();
+    } catch (err) {
+      console.error("Failed to update user role", err);
+      setNotification("Failed to update user role. Please try again.");
+      setNotificationType("error");
+    }
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        username: formData.username,
+        email: formData.email,
+        role: formData.role,
+        ...(formData.password ? { password: formData.password } : {}),
+      };
+
       if (selectedUser?.id) {
-        await editUser(selectedUser.id, formData);
+        await editUser(selectedUser.id, payload);
+        setNotification("User updated successfully.");
       } else {
-        await addUser(formData);
+        await addUser(payload);
+        setNotification("User added successfully.");
       }
+      setNotificationType("success");
       setSelectedUser(null);
       fetchUsers();
     } catch (err) {
       console.error("Error saving user:", err);
+      setNotification(
+        "Failed to save user. Please check the form and try again.",
+      );
+      setNotificationType("error");
     }
   };
 
@@ -116,6 +156,12 @@ const AdminUsers = () => {
 
   return (
     <div className="text-gray-800 dark:text-white">
+      <MessageBox
+        type={notificationType}
+        message={notification}
+        onClose={() => setNotification(null)}
+        className="mb-6"
+      />
       <ConfirmModal
         open={Boolean(confirmDeleteUserId)}
         title="Confirm delete"
@@ -264,20 +310,28 @@ const AdminUsers = () => {
 
               <div className="flex flex-col">
                 <label className="mb-1 font-semibold">Password</label>
-                <input
-                  type="password"
-                  placeholder={
-                    selectedUser?.id
-                      ? "Leave blank to keep current password"
-                      : "Enter password"
-                  }
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white transition"
-                  required={!selectedUser?.id}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder={
+                      selectedUser?.id
+                        ? "Leave blank to keep current password"
+                        : "Enter password"
+                    }
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    required={!selectedUser?.id}
+                  />
+                  <span
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 cursor-pointer text-sm text-gray-500 dark:text-gray-300"
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </span>
+                </div>
               </div>
 
               <div className="flex flex-col">

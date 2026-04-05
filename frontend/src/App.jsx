@@ -99,7 +99,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="/admin/users" />} />
+          <Route index element={<Navigate to="/admin/reports" />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="properties" element={<AdminProperties />} />
           <Route path="profile" element={<Profile />} />

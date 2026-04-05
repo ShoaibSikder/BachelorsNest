@@ -50,13 +50,13 @@ const AdminLayout = () => {
   const profilePath = "/admin/profile";
 
   const menuItems = [
+    { name: "Reports", icon: BarChart3, path: "/admin/reports" },
     { name: "Users", icon: Users, path: "/admin/users" },
     { name: "Properties", icon: Building2, path: "/admin/properties" },
     { name: "Requests", icon: ClipboardList, path: "/admin/requests" },
     { name: "Notifications", icon: Bell, path: "/admin/notifications" },
     { name: "Security", icon: Shield, path: "/admin/security" },
     { name: "Settings", icon: Settings, path: "/admin/settings" },
-    { name: "Reports", icon: BarChart3, path: "/admin/reports" },
   ];
 
   return (

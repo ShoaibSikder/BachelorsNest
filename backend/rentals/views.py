@@ -47,7 +47,9 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         rent_request = self.get_object()
 
-        if request.user != rent_request.owner and not request.user.is_staff:
+        if request.user != rent_request.owner and not (
+            request.user.is_staff or request.user.role == "admin"
+        ):
             return Response(
                 {"detail": "Only owner or admin can update this request"},
                 status=status.HTTP_403_FORBIDDEN
@@ -109,12 +111,12 @@ class AdminRentRequestListView(generics.ListAPIView):
 
     def get_queryset(self):
         # Only staff/admin users can access this
-        if not self.request.user.is_staff:
+        if not (self.request.user.is_staff or self.request.user.role == "admin"):
             raise PermissionDenied("Only admins can access this resource")
         return RentRequest.objects.all().select_related('property', 'bachelor', 'owner').order_by('-created_at')
 
     def list(self, request, *args, **kwargs):
-        if not request.user.is_staff:
+        if not (request.user.is_staff or request.user.role == "admin"):
             return Response(
                 {"detail": "Only admins can access this resource"},
                 status=status.HTTP_403_FORBIDDEN
@@ -127,6 +129,8 @@ class DeleteRentRequestView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
-        if self.request.user != instance.bachelor and not self.request.user.is_staff:
+        if self.request.user != instance.bachelor and not (
+            self.request.user.is_staff or self.request.user.role == "admin"
+        ):
             raise PermissionDenied("You can only delete your own request")
         instance.delete()

@@ -13,3 +13,24 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.user.email}"
+
+
+class SystemLog(models.Model):
+    LOG_LEVELS = (
+        ('info', 'Info'),
+        ('warning', 'Warning'),
+        ('error', 'Error'),
+        ('critical', 'Critical'),
+    )
+
+    level = models.CharField(max_length=20, choices=LOG_LEVELS, default='info')
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='system_logs')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"[{self.level.upper()}] {self.title} at {self.timestamp}"

@@ -8,9 +8,11 @@ import {
   Settings,
   Clock,
 } from "lucide-react";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const AdminSecurity = () => {
   const [activeTab, setActiveTab] = useState("password-policy");
+  const [showConfirm, setShowConfirm] = useState(false);
   const [settings, setSettings] = useState({
     // Password Policy
     passwordMinLength: 8,
@@ -48,6 +50,8 @@ const AdminSecurity = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   const handleSettingChange = (key, value) => {
     setSettings((prev) => ({
@@ -56,15 +60,25 @@ const AdminSecurity = () => {
     }));
   };
 
-  const handleSaveSettings = async () => {
+  const handleSaveSettingsClick = () => {
+    setShowConfirm(true);
+  };
+
+  const handleConfirmSave = async () => {
     setLoading(true);
+    setShowConfirm(false);
+    setError("");
+    setSuccess("");
     try {
       // TODO: Implement API call to save settings
       await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-      alert("Security settings saved successfully!");
+      setError(
+        "Backend not implemented. This feature will be available in a future update.",
+      );
+      setTimeout(() => setError(""), 5000);
     } catch (err) {
       console.error(err);
-      alert("Failed to save settings. Please try again.");
+      setError("Failed to save settings. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -87,6 +101,18 @@ const AdminSecurity = () => {
           Configure security policies and monitor system access
         </p>
       </div>
+
+      {success && (
+        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+          {success}
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Tab Navigation */}
       <div className="mb-6">
@@ -116,6 +142,19 @@ const AdminSecurity = () => {
         {/* Password Policy Tab */}
         {activeTab === "password-policy" && (
           <div className="space-y-6">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <span className="text-yellow-800 dark:text-yellow-200 font-medium">
+                  Feature Not Available
+                </span>
+              </div>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
+                This feature will be implemented in a future update. Backend
+                logic is currently not available.
+              </p>
+            </div>
+
             <div className="flex items-center gap-2 mb-4">
               <Key className="w-5 h-5 text-blue-500" />
               <h3 className="text-xl font-semibold">
@@ -233,6 +272,19 @@ const AdminSecurity = () => {
         {/* Two-Factor Authentication Tab */}
         {activeTab === "two-factor" && (
           <div className="space-y-6">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <span className="text-yellow-800 dark:text-yellow-200 font-medium">
+                  Feature Not Available
+                </span>
+              </div>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
+                This feature will be implemented in a future update. Backend
+                logic is currently not available.
+              </p>
+            </div>
+
             <div className="flex items-center gap-2 mb-4">
               <Shield className="w-5 h-5 text-green-500" />
               <h3 className="text-xl font-semibold">
@@ -318,6 +370,19 @@ const AdminSecurity = () => {
         {/* Session Management Tab */}
         {activeTab === "session-mgmt" && (
           <div className="space-y-6">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <span className="text-yellow-800 dark:text-yellow-200 font-medium">
+                  Feature Not Available
+                </span>
+              </div>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
+                This feature will be implemented in a future update. Backend
+                logic is currently not available.
+              </p>
+            </div>
+
             <div className="flex items-center gap-2 mb-4">
               <Clock className="w-5 h-5 text-purple-500" />
               <h3 className="text-xl font-semibold">Session Management</h3>
@@ -387,6 +452,19 @@ const AdminSecurity = () => {
         {/* Login Security Tab */}
         {activeTab === "login-security" && (
           <div className="space-y-6">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <span className="text-yellow-800 dark:text-yellow-200 font-medium">
+                  Feature Not Available
+                </span>
+              </div>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
+                This feature will be implemented in a future update. Backend
+                logic is currently not available.
+              </p>
+            </div>
+
             <div className="flex items-center gap-2 mb-4">
               <Lock className="w-5 h-5 text-red-500" />
               <h3 className="text-xl font-semibold">Login Security</h3>
@@ -475,6 +553,19 @@ const AdminSecurity = () => {
         {/* Security Alerts Tab */}
         {activeTab === "security-alerts" && (
           <div className="space-y-6">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <span className="text-yellow-800 dark:text-yellow-200 font-medium">
+                  Feature Not Available
+                </span>
+              </div>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
+                This feature will be implemented in a future update. Backend
+                logic is currently not available.
+              </p>
+            </div>
+
             <div className="flex items-center gap-2 mb-4">
               <AlertTriangle className="w-5 h-5 text-orange-500" />
               <h3 className="text-xl font-semibold">Security Alerts</h3>
@@ -566,6 +657,19 @@ const AdminSecurity = () => {
         {/* Audit Logging Tab */}
         {activeTab === "audit-logging" && (
           <div className="space-y-6">
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+                <span className="text-yellow-800 dark:text-yellow-200 font-medium">
+                  Feature Not Available
+                </span>
+              </div>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm mt-1">
+                This feature will be implemented in a future update. Backend
+                logic is currently not available.
+              </p>
+            </div>
+
             <div className="flex items-center gap-2 mb-4">
               <Eye className="w-5 h-5 text-indigo-500" />
               <h3 className="text-xl font-semibold">Audit Logging</h3>
@@ -652,7 +756,7 @@ const AdminSecurity = () => {
         {/* Save Button */}
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
           <button
-            onClick={handleSaveSettings}
+            onClick={handleSaveSettingsClick}
             disabled={loading}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 flex items-center gap-2 transition"
           >
@@ -661,6 +765,16 @@ const AdminSecurity = () => {
           </button>
         </div>
       </div>
+
+      <ConfirmModal
+        open={showConfirm}
+        title="Save Security Settings"
+        message="Are you sure you want to save these security settings? This will update security policies for all users and may affect existing sessions."
+        confirmLabel="Save Settings"
+        cancelLabel="Cancel"
+        onConfirm={handleConfirmSave}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 };
