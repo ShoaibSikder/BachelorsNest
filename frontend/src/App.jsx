@@ -33,7 +33,6 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSecurity from "./pages/admin/AdminSecurity";
 import AdminSettings from "./pages/admin/AdminSettings";
-import AdminSupport from "./pages/admin/AdminSupport";
 
 // Chat
 import ChatPage from "./pages/chat/ChatPage";
@@ -110,7 +109,6 @@ function App() {
           <Route path="notifications" element={<AdminNotifications />} />
           <Route path="security" element={<AdminSecurity />} />
           <Route path="settings" element={<AdminSettings />} />
-          <Route path="support" element={<AdminSupport />} />
         </Route>
 
         {/* CATCH-ALL - Redirect unmatched routes to login */}
