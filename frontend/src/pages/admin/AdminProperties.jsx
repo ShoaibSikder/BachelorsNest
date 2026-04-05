@@ -306,7 +306,7 @@ const EditModal = ({ property, onClose, onSuccess }) => {
 
   const handleRemoveExistingImage = (imageId) => {
     setImagesToRemove([...imagesToRemove, imageId]);
-    setExistingImages(existingImages.filter(img => img.id !== imageId));
+    setExistingImages(existingImages.filter((img) => img.id !== imageId));
   };
 
   const handleReplaceImagesChange = (e) => {
@@ -337,7 +337,9 @@ const EditModal = ({ property, onClose, onSuccess }) => {
 
       // Send images to remove if any
       if (imagesToRemove.length > 0) {
-        imagesToRemove.forEach((imageId) => formData.append("remove_images", imageId));
+        imagesToRemove.forEach((imageId) =>
+          formData.append("remove_images", imageId),
+        );
       }
 
       await updateProperty(property.id, formData);
@@ -392,7 +394,9 @@ const EditModal = ({ property, onClose, onSuccess }) => {
           />
 
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">Images</label>
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">
+              Images
+            </label>
 
             {/* Replace images option */}
             <div className="mb-3">
@@ -405,7 +409,9 @@ const EditModal = ({ property, onClose, onSuccess }) => {
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">
                   Replace all existing images with new ones
-                  {replaceImages && form.images.length === 0 && ' (will clear all images)'}
+                  {replaceImages &&
+                    form.images.length === 0 &&
+                    " (will clear all images)"}
                 </span>
               </label>
             </div>
@@ -421,7 +427,9 @@ const EditModal = ({ property, onClose, onSuccess }) => {
             {/* Existing images */}
             {existingImages.length > 0 && (
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Current Images:</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  Current Images:
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {existingImages.map((img) => (
                     <div key={img.id} className="relative">
@@ -444,7 +452,8 @@ const EditModal = ({ property, onClose, onSuccess }) => {
                 </div>
                 {replaceImages && (
                   <p className="text-xs text-orange-600 mt-2">
-                    Warning: Checking "replace all" will remove all current images and replace them with the new ones.
+                    Warning: Checking "replace all" will remove all current
+                    images and replace them with the new ones.
                   </p>
                 )}
               </div>
@@ -453,7 +462,9 @@ const EditModal = ({ property, onClose, onSuccess }) => {
             {/* Preview new images */}
             {form.images.length > 0 && (
               <div className="mt-3">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">New Images to {replaceImages ? 'Replace' : 'Add'}:</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                  New Images to {replaceImages ? "Replace" : "Add"}:
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {Array.from(form.images).map((img, i) => (
                     <img

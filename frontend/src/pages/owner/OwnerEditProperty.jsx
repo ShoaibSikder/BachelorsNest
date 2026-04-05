@@ -90,7 +90,9 @@ const OwnerEditProperty = () => {
     }
 
     if (imagesToRemove.length > 0) {
-      imagesToRemove.forEach((imageId) => data.append("remove_images", imageId));
+      imagesToRemove.forEach((imageId) =>
+        data.append("remove_images", imageId),
+      );
     }
 
     try {
