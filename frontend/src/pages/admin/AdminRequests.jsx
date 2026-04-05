@@ -107,7 +107,6 @@ const AdminRequests = () => {
     setFilteredRequests(filtered);
   }, [requests, filterStatus, searchTerm]);
 
-
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
@@ -249,7 +248,6 @@ const AdminRequests = () => {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 };

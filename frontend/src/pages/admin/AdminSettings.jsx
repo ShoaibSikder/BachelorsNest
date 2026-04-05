@@ -32,60 +32,61 @@ const AdminSettings = () => {
       { id: 3, name: "Condo", enabled: true, icon: "building-2" },
       { id: 4, name: "Townhouse", enabled: true, icon: "home" },
       { id: 5, name: "Studio", enabled: true, icon: "building" },
-      { id: 6, name: "Room", enabled: true, icon: "bed" }
+      { id: 6, name: "Room", enabled: true, icon: "bed" },
     ],
 
     // Email Templates
     emailTemplates: {
       welcome: {
         subject: "Welcome to BachelorsNest!",
-        content: "Welcome to our platform..."
+        content: "Welcome to our platform...",
       },
       passwordReset: {
         subject: "Reset Your Password",
-        content: "Click here to reset your password..."
+        content: "Click here to reset your password...",
       },
       propertyApproved: {
         subject: "Your Property Has Been Approved",
-        content: "Congratulations! Your property listing has been approved..."
-      }
+        content: "Congratulations! Your property listing has been approved...",
+      },
     },
 
     // Maintenance Mode
     maintenanceMode: false,
-    maintenanceMessage: "We are currently performing maintenance. Please check back soon.",
+    maintenanceMessage:
+      "We are currently performing maintenance. Please check back soon.",
     maintenanceEndTime: "",
-    allowAdminAccess: true
+    allowAdminAccess: true,
   });
 
   const [loading, setLoading] = useState(false);
 
   const handleSettingChange = (key, value) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
   const handleCategoryChange = (categoryId, field, value) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      categories: prev.categories.map(cat =>
-        cat.id === categoryId ? { ...cat, [field]: value } : cat
-      )
+      categories: prev.categories.map((cat) =>
+        cat.id === categoryId ? { ...cat, [field]: value } : cat,
+      ),
     }));
   };
 
   const handleEmailTemplateChange = (templateKey, field, value) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       emailTemplates: {
         ...prev.emailTemplates,
         [templateKey]: {
           ...prev.emailTemplates[templateKey],
-          [field]: value
-        }
-      }
+          [field]: value,
+        },
+      },
     }));
   };
 
@@ -93,10 +94,10 @@ const AdminSettings = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSettings(prev => ({
+        setSettings((prev) => ({
           ...prev,
           [fileType]: e.target.result,
-          [fileType.replace('Url', 'File')]: file
+          [fileType.replace("Url", "File")]: file,
         }));
       };
       reader.readAsDataURL(file);
@@ -123,7 +124,7 @@ const AdminSettings = () => {
     { id: "homepage", label: "Homepage Content", icon: Home },
     { id: "categories", label: "Property Categories", icon: Tag },
     { id: "email-templates", label: "Email Templates", icon: Mail },
-    { id: "maintenance", label: "Maintenance Mode", icon: Settings }
+    { id: "maintenance", label: "Maintenance Mode", icon: Settings },
   ];
 
   return (
@@ -170,51 +171,71 @@ const AdminSettings = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Site Name</label>
+                <label className="block text-sm font-medium mb-2">
+                  Site Name
+                </label>
                 <input
                   type="text"
                   value={settings.siteName}
-                  onChange={(e) => handleSettingChange("siteName", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("siteName", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Site URL</label>
+                <label className="block text-sm font-medium mb-2">
+                  Site URL
+                </label>
                 <input
                   type="url"
                   value={settings.siteUrl}
-                  onChange={(e) => handleSettingChange("siteUrl", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("siteUrl", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Contact Email</label>
+                <label className="block text-sm font-medium mb-2">
+                  Contact Email
+                </label>
                 <input
                   type="email"
                   value={settings.contactEmail}
-                  onChange={(e) => handleSettingChange("contactEmail", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("contactEmail", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Contact Phone</label>
+                <label className="block text-sm font-medium mb-2">
+                  Contact Phone
+                </label>
                 <input
                   type="tel"
                   value={settings.contactPhone}
-                  onChange={(e) => handleSettingChange("contactPhone", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("contactPhone", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Site Description</label>
+              <label className="block text-sm font-medium mb-2">
+                Site Description
+              </label>
               <textarea
                 value={settings.siteDescription}
-                onChange={(e) => handleSettingChange("siteDescription", e.target.value)}
+                onChange={(e) =>
+                  handleSettingChange("siteDescription", e.target.value)
+                }
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
               />
@@ -237,29 +258,43 @@ const AdminSettings = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleFileUpload("logoUrl", e.target.files[0])}
+                    onChange={(e) =>
+                      handleFileUpload("logoUrl", e.target.files[0])
+                    }
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                   />
                   {settings.logoUrl && (
                     <div className="mt-2">
-                      <img src={settings.logoUrl} alt="Logo preview" className="h-16 object-contain border rounded" />
+                      <img
+                        src={settings.logoUrl}
+                        alt="Logo preview"
+                        className="h-16 object-contain border rounded"
+                      />
                     </div>
                   )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Favicon</label>
+                <label className="block text-sm font-medium mb-2">
+                  Favicon
+                </label>
                 <div className="space-y-2">
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => handleFileUpload("faviconUrl", e.target.files[0])}
+                    onChange={(e) =>
+                      handleFileUpload("faviconUrl", e.target.files[0])
+                    }
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                   />
                   {settings.faviconUrl && (
                     <div className="mt-2">
-                      <img src={settings.faviconUrl} alt="Favicon preview" className="h-8 w-8 object-contain border rounded" />
+                      <img
+                        src={settings.faviconUrl}
+                        alt="Favicon preview"
+                        className="h-8 w-8 object-contain border rounded"
+                      />
                     </div>
                   )}
                 </div>
@@ -278,42 +313,61 @@ const AdminSettings = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Hero Title</label>
+                <label className="block text-sm font-medium mb-2">
+                  Hero Title
+                </label>
                 <input
                   type="text"
                   value={settings.heroTitle}
-                  onChange={(e) => handleSettingChange("heroTitle", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("heroTitle", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Hero Subtitle</label>
+                <label className="block text-sm font-medium mb-2">
+                  Hero Subtitle
+                </label>
                 <textarea
                   value={settings.heroSubtitle}
-                  onChange={(e) => handleSettingChange("heroSubtitle", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("heroSubtitle", e.target.value)
+                  }
                   rows={2}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Hero Image URL</label>
+                <label className="block text-sm font-medium mb-2">
+                  Hero Image URL
+                </label>
                 <input
                   type="url"
                   value={settings.heroImageUrl}
-                  onChange={(e) => handleSettingChange("heroImageUrl", e.target.value)}
+                  onChange={(e) =>
+                    handleSettingChange("heroImageUrl", e.target.value)
+                  }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Featured Properties Count</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Featured Properties Count
+                  </label>
                   <input
                     type="number"
                     value={settings.featuredPropertiesCount}
-                    onChange={(e) => handleSettingChange("featuredPropertiesCount", parseInt(e.target.value))}
+                    onChange={(e) =>
+                      handleSettingChange(
+                        "featuredPropertiesCount",
+                        parseInt(e.target.value),
+                      )
+                    }
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                     min="1"
                     max="20"
@@ -326,7 +380,9 @@ const AdminSettings = () => {
                   <input
                     type="checkbox"
                     checked={settings.showTestimonials}
-                    onChange={(e) => handleSettingChange("showTestimonials", e.target.checked)}
+                    onChange={(e) =>
+                      handleSettingChange("showTestimonials", e.target.checked)
+                    }
                     className="mr-2"
                   />
                   Show testimonials section
@@ -335,7 +391,9 @@ const AdminSettings = () => {
                   <input
                     type="checkbox"
                     checked={settings.showStats}
-                    onChange={(e) => handleSettingChange("showStats", e.target.checked)}
+                    onChange={(e) =>
+                      handleSettingChange("showStats", e.target.checked)
+                    }
                     className="mr-2"
                   />
                   Show statistics section
@@ -355,12 +413,21 @@ const AdminSettings = () => {
 
             <div className="space-y-4">
               {settings.categories.map((category) => (
-                <div key={category.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
+                <div
+                  key={category.id}
+                  className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-600 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
                       checked={category.enabled}
-                      onChange={(e) => handleCategoryChange(category.id, "enabled", e.target.checked)}
+                      onChange={(e) =>
+                        handleCategoryChange(
+                          category.id,
+                          "enabled",
+                          e.target.checked,
+                        )
+                      }
                       className="w-4 h-4"
                     />
                     <span className="font-medium">{category.name}</span>
@@ -368,7 +435,9 @@ const AdminSettings = () => {
                   <input
                     type="text"
                     value={category.name}
-                    onChange={(e) => handleCategoryChange(category.id, "name", e.target.value)}
+                    onChange={(e) =>
+                      handleCategoryChange(category.id, "name", e.target.value)
+                    }
                     className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-sm"
                   />
                 </div>
@@ -378,14 +447,14 @@ const AdminSettings = () => {
             <button
               onClick={() => {
                 const newCategory = {
-                  id: Math.max(...settings.categories.map(c => c.id)) + 1,
+                  id: Math.max(...settings.categories.map((c) => c.id)) + 1,
                   name: "New Category",
                   enabled: true,
-                  icon: "building"
+                  icon: "building",
                 };
-                setSettings(prev => ({
+                setSettings((prev) => ({
                   ...prev,
-                  categories: [...prev.categories, newCategory]
+                  categories: [...prev.categories, newCategory],
                 }));
               }}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
@@ -404,33 +473,56 @@ const AdminSettings = () => {
             </div>
 
             <div className="space-y-6">
-              {Object.entries(settings.emailTemplates).map(([key, template]) => (
-                <div key={key} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                  <h4 className="font-medium mb-3 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</h4>
+              {Object.entries(settings.emailTemplates).map(
+                ([key, template]) => (
+                  <div
+                    key={key}
+                    className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+                  >
+                    <h4 className="font-medium mb-3 capitalize">
+                      {key.replace(/([A-Z])/g, " $1").trim()}
+                    </h4>
 
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Subject</label>
-                      <input
-                        type="text"
-                        value={template.subject}
-                        onChange={(e) => handleEmailTemplateChange(key, "subject", e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
-                      />
-                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Subject
+                        </label>
+                        <input
+                          type="text"
+                          value={template.subject}
+                          onChange={(e) =>
+                            handleEmailTemplateChange(
+                              key,
+                              "subject",
+                              e.target.value,
+                            )
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                        />
+                      </div>
 
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Content</label>
-                      <textarea
-                        value={template.content}
-                        onChange={(e) => handleEmailTemplateChange(key, "content", e.target.value)}
-                        rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
-                      />
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Content
+                        </label>
+                        <textarea
+                          value={template.content}
+                          onChange={(e) =>
+                            handleEmailTemplateChange(
+                              key,
+                              "content",
+                              e.target.value,
+                            )
+                          }
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           </div>
         )}
@@ -448,7 +540,9 @@ const AdminSettings = () => {
                 <input
                   type="checkbox"
                   checked={settings.maintenanceMode}
-                  onChange={(e) => handleSettingChange("maintenanceMode", e.target.checked)}
+                  onChange={(e) =>
+                    handleSettingChange("maintenanceMode", e.target.checked)
+                  }
                   className="mr-3 w-5 h-5"
                 />
                 <div>
@@ -462,21 +556,35 @@ const AdminSettings = () => {
               {settings.maintenanceMode && (
                 <div className="space-y-4 ml-8">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Maintenance Message</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Maintenance Message
+                    </label>
                     <textarea
                       value={settings.maintenanceMessage}
-                      onChange={(e) => handleSettingChange("maintenanceMessage", e.target.value)}
+                      onChange={(e) =>
+                        handleSettingChange(
+                          "maintenanceMessage",
+                          e.target.value,
+                        )
+                      }
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">Expected End Time (Optional)</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Expected End Time (Optional)
+                    </label>
                     <input
                       type="datetime-local"
                       value={settings.maintenanceEndTime}
-                      onChange={(e) => handleSettingChange("maintenanceEndTime", e.target.value)}
+                      onChange={(e) =>
+                        handleSettingChange(
+                          "maintenanceEndTime",
+                          e.target.value,
+                        )
+                      }
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                     />
                   </div>
@@ -485,7 +593,12 @@ const AdminSettings = () => {
                     <input
                       type="checkbox"
                       checked={settings.allowAdminAccess}
-                      onChange={(e) => handleSettingChange("allowAdminAccess", e.target.checked)}
+                      onChange={(e) =>
+                        handleSettingChange(
+                          "allowAdminAccess",
+                          e.target.checked,
+                        )
+                      }
                       className="mr-2"
                     />
                     Allow admin access during maintenance
@@ -498,10 +611,13 @@ const AdminSettings = () => {
               <div className="bg-yellow-50 dark:bg-yellow-900 p-4 rounded-lg border border-yellow-200 dark:border-yellow-700">
                 <div className="flex items-center gap-2">
                   <EyeOff className="w-5 h-5 text-yellow-600" />
-                  <span className="font-medium text-yellow-800 dark:text-yellow-200">Maintenance Mode Active</span>
+                  <span className="font-medium text-yellow-800 dark:text-yellow-200">
+                    Maintenance Mode Active
+                  </span>
                 </div>
                 <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                  The site is currently in maintenance mode. Only admins can access it.
+                  The site is currently in maintenance mode. Only admins can
+                  access it.
                 </p>
               </div>
             )}
