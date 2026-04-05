@@ -196,6 +196,8 @@ BachelorNest/
 
 ```bash
 git clone https://github.com/ShoaibSikder/BachelorsNest.git
+
+#then go to Project Root folder
 cd BachelorNest
 ```
 
@@ -205,10 +207,15 @@ cd BachelorNest
 <summary>Backend Setup (Django)</summary>
 
 ```bash
+#go to Backend folder
 cd backend
+
+#install vertual enviroment
 python -m venv venv
 venv\Scripts\activate  # Windows
 source venv/bin/activate  # macOS/Linux
+
+#install required dependencies
 pip install -r requirements.txt
 
 # Migrations
@@ -231,8 +238,13 @@ python -m daphne backend.asgi:application
 <summary>Frontend Setup (React)</summary>
 
 ```bash
+#go to Frontend folder
 cd frontend
+
+#install frontend dependencies
 npm install
+
+#run Frontend
 npm run dev
 ```
 
