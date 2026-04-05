@@ -2,11 +2,16 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash2, X } from "lucide-react";
 import { getOwnerProperties, deleteProperty } from "../../api/propertyApi";
+import MessageBox from "../../components/MessageBox";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const OwnerProperties = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState("info");
+  const [confirmDeletePropertyId, setConfirmDeletePropertyId] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const menuRefs = useRef({});
@@ -21,6 +26,8 @@ const OwnerProperties = () => {
       } catch (err) {
         console.error("Failed to load properties:", err);
         setError("Error getting properties.");
+        setNotification("Error loading your properties. Please refresh.");
+        setNotificationType("error");
       } finally {
         setLoading(false);
       }
@@ -29,15 +36,26 @@ const OwnerProperties = () => {
   }, []);
 
   // Handle delete
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this property?"))
-      return;
+  const handleDelete = (id) => {
+    setConfirmDeletePropertyId(id);
+  };
+
+  const confirmDeleteProperty = async () => {
+    if (!confirmDeletePropertyId) return;
+
     try {
-      await deleteProperty(id);
-      setProperties(properties.filter((p) => p.id !== id));
+      await deleteProperty(confirmDeletePropertyId);
+      setProperties((prev) =>
+        prev.filter((p) => p.id !== confirmDeletePropertyId),
+      );
+      setNotification("Property deleted successfully.");
+      setNotificationType("success");
     } catch (err) {
       console.error("Failed to delete property:", err);
-      alert("Failed to delete property. Please try again.");
+      setNotification("Failed to delete property. Please try again.");
+      setNotificationType("error");
+    } finally {
+      setConfirmDeletePropertyId(null);
     }
   };
 
@@ -73,121 +91,126 @@ const OwnerProperties = () => {
     return (
       <p className="text-gray-600 dark:text-gray-300">Loading properties...</p>
     );
-  if (error) return <p className="text-red-500 dark:text-red-400">{error}</p>;
+  if (error)
+    return (
+      <>
+        <MessageBox
+          type={notificationType}
+          message={notification || error}
+          onClose={() => setNotification(null)}
+          className="mb-6"
+        />
+        <p className="text-red-500 dark:text-red-400">{error}</p>
+      </>
+    );
   if (!properties.length)
     return (
-      <p className="text-gray-600 dark:text-gray-300">
-        You have no properties yet.
-      </p>
+      <>
+        <MessageBox
+          type={notificationType}
+          message={notification}
+          onClose={() => setNotification(null)}
+          className="mb-6"
+        />
+        <p className="text-gray-600 dark:text-gray-300">
+          You have no properties yet.
+        </p>
+      </>
     );
 
   return (
-    <div className="p-4 md:p-6">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-        My Properties
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {properties.map((property) => (
-          <div
-            key={property.id}
-            className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden flex flex-col"
-          >
-            {/* HEADER */}
-            <div className="flex items-center justify-between p-4 relative">
-              <div className="flex items-center gap-3">
-                {property.owner?.profile_image ? (
-                  <img
-                    src={
-                      property.owner.profile_image.startsWith("http")
-                        ? property.owner.profile_image
-                        : `http://127.0.0.1:8000${property.owner.profile_image}`
-                    }
-                    alt="owner"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">
-                    {property.owner?.username?.charAt(0) || "U"}
+    <div>
+      <MessageBox
+        type={notificationType}
+        message={notification}
+        onClose={() => setNotification(null)}
+        className="mb-6"
+      />
+      <ConfirmModal
+        open={Boolean(confirmDeletePropertyId)}
+        title="Confirm delete"
+        message="Are you sure you want to delete this property? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDeleteProperty}
+        onCancel={() => setConfirmDeletePropertyId(null)}
+      />
+      <div className="p-4 md:p-6">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
+          My Properties
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {properties.map((property) => (
+            <div
+              key={property.id}
+              className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden flex flex-col"
+            >
+              {/* HEADER */}
+              <div className="flex items-center justify-between p-4 relative">
+                <div className="flex items-center gap-3">
+                  {property.owner?.profile_image ? (
+                    <img
+                      src={
+                        property.owner.profile_image.startsWith("http")
+                          ? property.owner.profile_image
+                          : `http://127.0.0.1:8000${property.owner.profile_image}`
+                      }
+                      alt="owner"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">
+                      {property.owner?.username?.charAt(0) || "U"}
+                    </div>
+                  )}
+                  <div>
+                    <h2 className="text-sm font-semibold text-gray-800 dark:text-white">
+                      {property.owner?.username || "Unknown Owner"}
+                    </h2>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      📍 {property.location} • {formatTime(property.created_at)}
+                    </p>
                   </div>
-                )}
-                <div>
-                  <h2 className="text-sm font-semibold text-gray-800 dark:text-white">
-                    {property.owner?.username || "Unknown Owner"}
-                  </h2>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    📍 {property.location} • {formatTime(property.created_at)}
-                  </p>
+                </div>
+
+                {/* MENU */}
+                <div
+                  ref={(el) => (menuRefs.current[property.id] = el)}
+                  className="relative"
+                >
+                  <button
+                    onClick={() =>
+                      setOpenMenuId(
+                        openMenuId === property.id ? null : property.id,
+                      )
+                    }
+                    className="text-indigo-600 hover:text-indigo-700 dark:hover:text-indigo-400 font-bold text-xl px-2 py-1 rounded-full transition"
+                  >
+                    ⋯
+                  </button>
+                  {openMenuId === property.id && (
+                    <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
+                      <button
+                        onClick={() => handleEdit(property.id)}
+                        className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
+                      >
+                        <Edit size={16} /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(property.id)}
+                        className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
+                      >
+                        <Trash2 size={16} /> Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* MENU */}
-              <div
-                ref={(el) => (menuRefs.current[property.id] = el)}
-                className="relative"
-              >
-                <button
-                  onClick={() =>
-                    setOpenMenuId(
-                      openMenuId === property.id ? null : property.id,
-                    )
-                  }
-                  className="text-indigo-600 hover:text-indigo-700 dark:hover:text-indigo-400 font-bold text-xl px-2 py-1 rounded-full transition"
-                >
-                  ⋯
-                </button>
-                {openMenuId === property.id && (
-                  <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
-                    <button
-                      onClick={() => handleEdit(property.id)}
-                      className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
-                    >
-                      <Edit size={16} /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(property.id)}
-                      className="flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100"
-                    >
-                      <Trash2 size={16} /> Delete
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* IMAGES */}
-            {property.images?.length > 0 ? (
-              <div className="grid gap-1 w-full">
-                {property.images.length === 1 && (
-                  <img
-                    src={
-                      property.images[0].image.startsWith("http")
-                        ? property.images[0].image
-                        : `http://127.0.0.1:8000${property.images[0].image}`
-                    }
-                    alt={`${property.title} 1`}
-                    className="w-full h-60 object-cover rounded cursor-pointer"
-                    onClick={() => setModalImage(property.images[0].image)}
-                  />
-                )}
-                {property.images.length === 2 && (
-                  <div className="grid grid-cols-2 gap-1">
-                    {property.images.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={
-                          img.image.startsWith("http")
-                            ? img.image
-                            : `http://127.0.0.1:8000${img.image}`
-                        }
-                        alt={`${property.title} ${idx + 1}`}
-                        className="w-full h-40 object-cover rounded cursor-pointer"
-                        onClick={() => setModalImage(img.image)}
-                      />
-                    ))}
-                  </div>
-                )}
-                {property.images.length === 3 && (
-                  <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60">
+              {/* IMAGES */}
+              {property.images?.length > 0 ? (
+                <div className="grid gap-1 w-full">
+                  {property.images.length === 1 && (
                     <img
                       src={
                         property.images[0].image.startsWith("http")
@@ -195,82 +218,113 @@ const OwnerProperties = () => {
                           : `http://127.0.0.1:8000${property.images[0].image}`
                       }
                       alt={`${property.title} 1`}
-                      className="row-span-2 w-full h-full object-cover rounded cursor-pointer"
+                      className="w-full h-60 object-cover rounded cursor-pointer"
                       onClick={() => setModalImage(property.images[0].image)}
                     />
-                    <img
-                      src={
-                        property.images[1].image.startsWith("http")
-                          ? property.images[1].image
-                          : `http://127.0.0.1:8000${property.images[1].image}`
-                      }
-                      alt={`${property.title} 2`}
-                      className="w-full h-full object-cover rounded cursor-pointer"
-                      onClick={() => setModalImage(property.images[1].image)}
-                    />
-                    <img
-                      src={
-                        property.images[2].image.startsWith("http")
-                          ? property.images[2].image
-                          : `http://127.0.0.1:8000${property.images[2].image}`
-                      }
-                      alt={`${property.title} 3`}
-                      className="w-full h-full object-cover rounded cursor-pointer"
-                      onClick={() => setModalImage(property.images[2].image)}
-                    />
-                  </div>
-                )}
-                {property.images.length >= 4 && (
-                  <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60 relative">
-                    {property.images.slice(0, 4).map((img, idx) => (
+                  )}
+                  {property.images.length === 2 && (
+                    <div className="grid grid-cols-2 gap-1">
+                      {property.images.map((img, idx) => (
+                        <img
+                          key={idx}
+                          src={
+                            img.image.startsWith("http")
+                              ? img.image
+                              : `http://127.0.0.1:8000${img.image}`
+                          }
+                          alt={`${property.title} ${idx + 1}`}
+                          className="w-full h-40 object-cover rounded cursor-pointer"
+                          onClick={() => setModalImage(img.image)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {property.images.length === 3 && (
+                    <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60">
                       <img
-                        key={idx}
                         src={
-                          img.image.startsWith("http")
-                            ? img.image
-                            : `http://127.0.0.1:8000${img.image}`
+                          property.images[0].image.startsWith("http")
+                            ? property.images[0].image
+                            : `http://127.0.0.1:8000${property.images[0].image}`
                         }
-                        alt={`${property.title} ${idx + 1}`}
-                        className="w-full h-full object-cover rounded cursor-pointer"
-                        onClick={() => setModalImage(img.image)}
+                        alt={`${property.title} 1`}
+                        className="row-span-2 w-full h-full object-cover rounded cursor-pointer"
+                        onClick={() => setModalImage(property.images[0].image)}
                       />
-                    ))}
-                    {property.images.length > 4 && (
-                      <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-2xl font-bold rounded">
-                        +{property.images.length - 4}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">
-                No image
-              </div>
-            )}
+                      <img
+                        src={
+                          property.images[1].image.startsWith("http")
+                            ? property.images[1].image
+                            : `http://127.0.0.1:8000${property.images[1].image}`
+                        }
+                        alt={`${property.title} 2`}
+                        className="w-full h-full object-cover rounded cursor-pointer"
+                        onClick={() => setModalImage(property.images[1].image)}
+                      />
+                      <img
+                        src={
+                          property.images[2].image.startsWith("http")
+                            ? property.images[2].image
+                            : `http://127.0.0.1:8000${property.images[2].image}`
+                        }
+                        alt={`${property.title} 3`}
+                        className="w-full h-full object-cover rounded cursor-pointer"
+                        onClick={() => setModalImage(property.images[2].image)}
+                      />
+                    </div>
+                  )}
+                  {property.images.length >= 4 && (
+                    <div className="grid grid-cols-2 grid-rows-2 gap-1 h-60 relative">
+                      {property.images.slice(0, 4).map((img, idx) => (
+                        <img
+                          key={idx}
+                          src={
+                            img.image.startsWith("http")
+                              ? img.image
+                              : `http://127.0.0.1:8000${img.image}`
+                          }
+                          alt={`${property.title} ${idx + 1}`}
+                          className="w-full h-full object-cover rounded cursor-pointer"
+                          onClick={() => setModalImage(img.image)}
+                        />
+                      ))}
+                      {property.images.length > 4 && (
+                        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white text-2xl font-bold rounded">
+                          +{property.images.length - 4}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="w-full h-56 bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">
+                  No image
+                </div>
+              )}
 
-            {/* CONTENT */}
-            <div className="p-4 flex flex-col flex-grow">
-              <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
-                {property.description}
-              </p>
-              <div className="mt-3 flex items-center justify-between">
-                <p className="text-lg font-bold text-indigo-600">
-                  ৳ {property.rent}
+              {/* CONTENT */}
+              <div className="p-4 flex flex-col flex-grow">
+                <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-2">
+                  {property.description}
                 </p>
-                <span
-                  className={`text-xs px-3 py-1 rounded-full font-medium ${
-                    property.is_approved
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
-                  }`}
-                >
-                  {property.is_approved ? "Approved ✅" : "Pending ⏳"}
-                </span>
+                <div className="mt-3 flex items-center justify-between">
+                  <p className="text-lg font-bold text-indigo-600">
+                    ৳ {property.rent}
+                  </p>
+                  <span
+                    className={`text-xs px-3 py-1 rounded-full font-medium ${
+                      property.is_approved
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {property.is_approved ? "Approved ✅" : "Pending ⏳"}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* IMAGE MODAL */}

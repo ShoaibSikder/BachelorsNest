@@ -9,6 +9,7 @@ import {
   updateProperty,
   revertPropertyPending,
 } from "../../api/adminPropertyApi";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const BASE_URL = "http://127.0.0.1:8000";
 
@@ -18,6 +19,7 @@ const AdminProperties = () => {
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [modalImage, setModalImage] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
   const menuRefs = useRef({});
 
   useEffect(() => {
@@ -38,25 +40,37 @@ const AdminProperties = () => {
     fetchProperties();
   };
 
-  const handleReject = async (id) => {
-    if (window.confirm("Reject this property?")) {
-      await rejectProperty(id);
-      fetchProperties();
-    }
+  const handleReject = (id) => {
+    setConfirmAction({
+      title: "Reject property",
+      message: "Are you sure you want to reject this property?",
+      onConfirm: async () => {
+        await rejectProperty(id);
+        fetchProperties();
+      },
+    });
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete permanently?")) {
-      await deleteProperty(id);
-      fetchProperties();
-    }
+  const handleDelete = (id) => {
+    setConfirmAction({
+      title: "Delete property",
+      message: "Delete permanently? This cannot be undone.",
+      onConfirm: async () => {
+        await deleteProperty(id);
+        fetchProperties();
+      },
+    });
   };
 
-  const handleRevertPending = async (id) => {
-    if (window.confirm("Revert property to pending?")) {
-      await revertPropertyPending(id);
-      fetchProperties();
-    }
+  const handleRevertPending = (id) => {
+    setConfirmAction({
+      title: "Revert property",
+      message: "Revert property to pending status?",
+      onConfirm: async () => {
+        await revertPropertyPending(id);
+        fetchProperties();
+      },
+    });
   };
 
   const filteredProperties = properties.filter((p) => {
@@ -83,8 +97,28 @@ const AdminProperties = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleConfirm = async () => {
+    if (!confirmAction?.onConfirm) return;
+    try {
+      await confirmAction.onConfirm();
+    } catch (err) {
+      console.error("Failed to execute confirmed action", err);
+    } finally {
+      setConfirmAction(null);
+    }
+  };
+
   return (
     <div className="p-4 md:p-6 text-gray-800 dark:text-white">
+      <ConfirmModal
+        open={Boolean(confirmAction)}
+        title={confirmAction?.title}
+        message={confirmAction?.message}
+        confirmLabel="Confirm"
+        cancelLabel="Cancel"
+        onConfirm={handleConfirm}
+        onCancel={() => setConfirmAction(null)}
+      />
       <h2 className="text-2xl font-bold mb-6">Property Management</h2>
 
       {/* Filters */}

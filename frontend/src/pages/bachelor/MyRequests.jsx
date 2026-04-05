@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyRentRequests, cancelRentRequest } from "../../api/rentalApi";
+import MessageBox from "../../components/MessageBox";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const MyRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState("info");
+  const [confirmRequestId, setConfirmRequestId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,17 +27,23 @@ const MyRequests = () => {
     }
   };
 
-  const handleCancel = async (id) => {
-    const confirmCancel = window.confirm(
-      "Are you sure you want to cancel this request?",
-    );
-    if (!confirmCancel) return;
+  const handleCancel = (id) => {
+    setConfirmRequestId(id);
+  };
+
+  const confirmCancel = async () => {
+    if (!confirmRequestId) return;
 
     try {
-      await cancelRentRequest(id);
-      setRequests((prev) => prev.filter((req) => req.id !== id));
+      await cancelRentRequest(confirmRequestId);
+      setRequests((prev) => prev.filter((req) => req.id !== confirmRequestId));
+      setNotification("Request canceled successfully.");
+      setNotificationType("success");
     } catch {
-      alert("Failed to cancel request");
+      setNotification("Failed to cancel request");
+      setNotificationType("error");
+    } finally {
+      setConfirmRequestId(null);
     }
   };
 
@@ -57,6 +68,21 @@ const MyRequests = () => {
 
   return (
     <div className="min-h-screen p-6 bg-gray-100 dark:bg-gray-900 transition">
+      <MessageBox
+        type={notificationType}
+        message={notification}
+        onClose={() => setNotification(null)}
+        className="mb-6"
+      />
+      <ConfirmModal
+        open={Boolean(confirmRequestId)}
+        title="Confirm cancellation"
+        message="Are you sure you want to cancel this request?"
+        confirmLabel="Yes, cancel"
+        cancelLabel="No, keep it"
+        onConfirm={confirmCancel}
+        onCancel={() => setConfirmRequestId(null)}
+      />
       <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-white">
         My Rent Requests
       </h1>

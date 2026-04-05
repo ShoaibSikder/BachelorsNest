@@ -8,6 +8,7 @@ import {
   changeUserRole,
   getUserLogs,
 } from "../../api/adminUserApi";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -22,6 +23,7 @@ const AdminUsers = () => {
     password: "",
     role: "bachelor",
   });
+  const [confirmDeleteUserId, setConfirmDeleteUserId] = useState(null);
 
   useEffect(() => {
     fetchUsers();
@@ -55,10 +57,20 @@ const AdminUsers = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this user?")) return;
-    await deleteUser(id);
-    fetchUsers();
+  const handleDelete = (id) => {
+    setConfirmDeleteUserId(id);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!confirmDeleteUserId) return;
+    try {
+      await deleteUser(confirmDeleteUserId);
+      fetchUsers();
+    } catch (err) {
+      console.error("Failed to delete user", err);
+    } finally {
+      setConfirmDeleteUserId(null);
+    }
   };
 
   const handleBan = async (id) => {
@@ -104,6 +116,15 @@ const AdminUsers = () => {
 
   return (
     <div className="text-gray-800 dark:text-white">
+      <ConfirmModal
+        open={Boolean(confirmDeleteUserId)}
+        title="Confirm delete"
+        message="Delete this user? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        onConfirm={confirmDeleteUser}
+        onCancel={() => setConfirmDeleteUserId(null)}
+      />
       <h2 className="text-2xl font-bold mb-4">User Management</h2>
 
       {/* Filters */}

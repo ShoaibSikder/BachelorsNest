@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { getOwnerRequests, updateRentRequestStatus } from "../../api/rentalApi";
+import MessageBox from "../../components/MessageBox";
 
 const OwnerRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState(null);
+  const [notificationType, setNotificationType] = useState("info");
 
   const fetchRequests = async () => {
     try {
@@ -24,8 +27,13 @@ const OwnerRequests = () => {
     try {
       await updateRentRequestStatus(id, status);
       fetchRequests();
+      setNotification(
+        `Request ${status === "accepted" ? "accepted" : "rejected"} successfully.`,
+      );
+      setNotificationType("success");
     } catch {
-      alert("Failed to update request");
+      setNotification("Failed to update request");
+      setNotificationType("error");
     }
   };
 
@@ -37,6 +45,12 @@ const OwnerRequests = () => {
 
   return (
     <div>
+      <MessageBox
+        type={notificationType}
+        message={notification}
+        onClose={() => setNotification(null)}
+        className="mb-6"
+      />
       <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
         Incoming Requests
       </h2>

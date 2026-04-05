@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { getApprovedProperties } from "../../api/propertyApi";
 import { sendRentRequest, getMyRentRequests } from "../../api/rentalApi";
+import MessageBox from "../../components/MessageBox";
 
 const BachelorHome = () => {
   const [properties, setProperties] = useState([]);
   const [myRequests, setMyRequests] = useState([]);
   const [modalImage, setModalImage] = useState(null); // for lightbox
+  const [message, setMessage] = useState(null);
+  const [messageType, setMessageType] = useState("info");
   const navigate = useNavigate();
 
   // 🔹 Time formatter (Facebook style)
@@ -59,8 +62,11 @@ const BachelorHome = () => {
           status: "pending",
         },
       ]);
+      setMessage("Your request was sent successfully.");
+      setMessageType("success");
     } catch (error) {
-      alert(error.response?.data?.detail || "Failed to send request.");
+      setMessage(error.response?.data?.detail || "Failed to send request.");
+      setMessageType("error");
     }
   };
 
@@ -77,6 +83,13 @@ const BachelorHome = () => {
 
   return (
     <div className="p-4 md:p-6">
+      <MessageBox
+        type={messageType}
+        message={message}
+        onClose={() => setMessage(null)}
+        className="mb-6"
+      />
+
       <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
         Available Properties
       </h2>
