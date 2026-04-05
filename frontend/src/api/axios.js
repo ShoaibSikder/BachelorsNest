@@ -19,12 +19,20 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // If there's no response, it's a network error
+    if (!error.response) {
+      console.error("Network error:", error.message);
+      return Promise.reject(error);
+    }
+
+    // Handle 401 Unauthorized - try to refresh token
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem("refresh_token");
 
       if (!refreshToken) {
+        localStorage.clear();
         window.location.href = "/login";
         return Promise.reject(error);
       }
@@ -49,6 +57,7 @@ api.interceptors.response.use(
       }
     }
 
+    // For all other errors (including 400, 500, etc.), just pass them through
     return Promise.reject(error);
   },
 );

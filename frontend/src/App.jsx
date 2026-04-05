@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // Auth Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ForgetPassword from "./pages/auth/ForgetPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 // Bachelor
 import BachelorHome from "./pages/bachelor/Home";
@@ -40,9 +42,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* ROOT REDIRECT */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+
         {/* PUBLIC ROUTES */}
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* ================= BACHELOR ================= */}
         <Route
@@ -97,6 +104,9 @@ function App() {
           <Route path="settings" element={<AdminSettings />} />
           <Route path="support" element={<AdminSupport />} />
         </Route>
+
+        {/* CATCH-ALL - Redirect unmatched routes to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

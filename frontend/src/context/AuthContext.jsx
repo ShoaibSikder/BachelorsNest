@@ -1,5 +1,10 @@
 import { createContext, useState, useEffect } from "react";
-import { loginUser, getProfile } from "../api/authApi";
+import {
+  loginUser,
+  getProfile,
+  requestPasswordReset,
+  confirmPasswordReset,
+} from "../api/authApi";
 
 export const AuthContext = createContext();
 
@@ -26,6 +31,14 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const resetPasswordRequest = async (email) => {
+    return await requestPasswordReset({ email });
+  };
+
+  const resetPasswordConfirm = async (token, newPassword) => {
+    return await confirmPasswordReset({ token, new_password: newPassword });
+  };
+
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem("access_token");
@@ -43,7 +56,15 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        resetPasswordRequest,
+        resetPasswordConfirm,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

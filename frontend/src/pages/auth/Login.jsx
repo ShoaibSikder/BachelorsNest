@@ -138,6 +138,12 @@ const Login = () => {
               />
               Remember me
             </label>
+            <span
+              className="text-blue-600 cursor-pointer hover:underline"
+              onClick={() => navigate("/forget-password")}
+            >
+              Forgot Password?
+            </span>
           </div>
 
           {/* Button */}

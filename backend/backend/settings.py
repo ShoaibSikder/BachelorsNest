@@ -173,3 +173,13 @@ CHANNEL_LAYERS = {
 # ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, prints to console
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'your-email@gmail.com'
+# EMAIL_HOST_PASSWORD = 'your-password'
+DEFAULT_FROM_EMAIL = 'noreply@bachelorsnest.com'
+FRONTEND_URL = 'http://localhost:5173'  # Adjust for your frontend URL

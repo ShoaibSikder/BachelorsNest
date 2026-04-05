@@ -5,9 +5,12 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils import timezone
 
-from .models import UserLog
-from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer
+from .models import UserLog, PasswordResetToken
+from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer
 from .permissions import IsAdmin
 
 from rest_framework.views import APIView
@@ -96,6 +99,81 @@ class AdminUserAddView(generics.CreateAPIView):
     def perform_create(self, serializer):
         user = serializer.save()
         UserLog.objects.create(user=user, action="Added by admin")
+
+
+# --------------------- Password Reset ---------------------
+class PasswordResetRequestView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            try:
+                # Use .filter().first() instead of .get() to handle potential duplicates
+                user = User.objects.filter(email=email).first()
+                
+                if not user:
+                    return Response({"detail": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Delete any existing tokens for this user
+                PasswordResetToken.objects.filter(user=user).delete()
+                # Create new reset token
+                token = PasswordResetToken.objects.create(user=user)
+
+                # Send email
+                reset_url = f"{settings.FRONTEND_URL}/reset-password/{token.token}"
+                try:
+                    send_mail(
+                        'Password Reset Request',
+                        f'Click the link to reset your password: {reset_url}',
+                        settings.DEFAULT_FROM_EMAIL,
+                        [email],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    # Log the error but still return success to avoid leaking info
+                    print(f"Email sending failed: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    # For development, print the reset URL to console
+                    print(f"Password reset URL: {reset_url}")
+                
+                return Response({"detail": "Password reset email sent."}, status=status.HTTP_200_OK)
+            except Exception as e:
+                print(f"Unexpected error in password reset: {e}")
+                import traceback
+                traceback.print_exc()
+                return Response({"detail": "An error occurred. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        if serializer.is_valid():
+            token_value = serializer.validated_data['token']
+            new_password = serializer.validated_data['new_password']
+            try:
+                token = PasswordResetToken.objects.get(token=token_value)
+                if token.is_expired():
+                    token.delete()
+                    return Response({"detail": "Token has expired."}, status=status.HTTP_400_BAD_REQUEST)
+                user = token.user
+                user.set_password(new_password)
+                user.save()
+                token.delete()  # Delete token after use
+                return Response({"detail": "Password reset successfully."}, status=status.HTTP_200_OK)
+            except PasswordResetToken.DoesNotExist:
+                return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                print(f"Unexpected error in password reset confirm: {e}")
+                import traceback
+                traceback.print_exc()
+                return Response({"detail": "An error occurred. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AdminUserBanToggleView(APIView):

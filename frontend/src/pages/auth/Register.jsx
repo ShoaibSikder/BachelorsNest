@@ -41,8 +41,18 @@ const Register = () => {
     try {
       await registerUser(formData);
       navigate("/");
-    } catch {
-      setError("Registration failed ❌");
+    } catch (err) {
+      // Handle specific validation errors from backend
+      if (err.response?.data?.email) {
+        setError(err.response.data.email[0] || "Email already exists");
+      } else if (err.response?.data?.detail) {
+        setError(err.response.data.detail);
+      } else if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else {
+        setError("Registration failed ❌");
+      }
+      console.error("Registration error:", err.response?.data || err.message);
     } finally {
       setLoading(false);
     }
