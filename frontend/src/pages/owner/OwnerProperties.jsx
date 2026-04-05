@@ -158,6 +158,9 @@ const OwnerProperties = () => {
                 key={property.id}
                 property={property}
                 onImageClick={(imgUrl) => setModalImage(imgUrl)}
+                onOwnerClick={(owner) =>
+                  owner?.id && navigate(`/owner/profile/${owner.id}`)
+                }
                 badge={badge}
                 headerRight={
                   <div

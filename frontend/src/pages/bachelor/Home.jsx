@@ -145,7 +145,15 @@ const BachelorHome = () => {
               >
                 {/* 🔹 HEADER (Owner + Time) */}
                 <div className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      property.owner?.id &&
+                      navigate(`/bachelor/profile/${property.owner.id}`)
+                    }
+                    className="flex items-center gap-3 text-left rounded-xl p-2 transition hover:bg-slate-100 dark:hover:bg-slate-800"
+                    aria-label={`View profile of ${property.owner?.username || "owner"}`}
+                  >
                     {/* OWNER IMAGE */}
                     {property.owner?.profile_image ? (
                       <img
@@ -174,7 +182,7 @@ const BachelorHome = () => {
                         {formatTime(property.created_at)}
                       </p>
                     </div>
-                  </div>
+                  </button>
 
                   {/* THREE DOT MENU */}
                   <button className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">

@@ -1,6 +1,15 @@
 import Loader from "./Loader";
 
-const ChatList = ({ users = [], activeUser, onSelectUser, loadingUsers }) => {
+const getImageUrl = (image) =>
+  image?.startsWith("http") ? image : `http://127.0.0.1:8000${image}`;
+
+const ChatList = ({
+  users = [],
+  activeUser,
+  onSelectUser,
+  onUserProfileClick,
+  loadingUsers,
+}) => {
   // ✅ Sort users by latest message (newest first)
   const sortedUsers = [...users].sort((a, b) => {
     return new Date(b.last_timestamp || 0) - new Date(a.last_timestamp || 0);
@@ -31,9 +40,25 @@ const ChatList = ({ users = [], activeUser, onSelectUser, loadingUsers }) => {
               }`}
             >
               {/* ✅ Profile Icon */}
-              <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                {user?.username?.charAt(0)?.toUpperCase() || "U"}
-              </div>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUserProfileClick?.(user);
+                }}
+                className="w-10 h-10 rounded-full overflow-hidden bg-blue-500 flex items-center justify-center text-white font-bold focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label={`View profile of ${user?.username || "user"}`}
+              >
+                {user?.profile_image ? (
+                  <img
+                    src={getImageUrl(user.profile_image)}
+                    alt={user.username || "User"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span>{user?.username?.charAt(0)?.toUpperCase() || "U"}</span>
+                )}
+              </button>
 
               {/* ✅ User Info */}
               <div className="flex flex-col overflow-hidden">

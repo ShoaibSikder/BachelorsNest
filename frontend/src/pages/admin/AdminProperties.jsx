@@ -1,5 +1,6 @@
 import { CornerUpLeft } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Edit, Trash2, CheckCircle, XCircle, X } from "lucide-react";
 import {
   getAllProperties,
@@ -22,6 +23,7 @@ const AdminProperties = () => {
   const [modalImage, setModalImage] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
   const menuRefs = useRef({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProperties();
@@ -176,16 +178,46 @@ const AdminProperties = () => {
               key={property.id}
               property={property}
               onImageClick={(imgUrl) => setModalImage(imgUrl)}
+              onOwnerClick={(owner) =>
+                owner?.id && navigate(`/admin/profile/${owner.id}`)
+              }
               badge={badge}
               headerLeft={
-                <div>
-                  <h3 className="font-semibold text-gray-800 dark:text-white">
-                    {property.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {property.owner?.username}
-                  </p>
-                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    property.owner?.id &&
+                    navigate(`/admin/profile/${property.owner.id}`)
+                  }
+                  className="w-full text-left rounded-xl p-2 transition hover:bg-slate-100 dark:hover:bg-slate-800"
+                  aria-label={`View profile of ${property.owner?.username || "owner"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    {property.owner?.profile_image ? (
+                      <img
+                        src={
+                          property.owner.profile_image.startsWith("http")
+                            ? property.owner.profile_image
+                            : `http://127.0.0.1:8000${property.owner.profile_image}`
+                        }
+                        alt="owner"
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">
+                        {property.owner?.username?.charAt(0) || "U"}
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-semibold text-gray-800 dark:text-white">
+                        {property.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {property.owner?.username}
+                      </p>
+                    </div>
+                  </div>
+                </button>
               }
               headerRight={
                 <div

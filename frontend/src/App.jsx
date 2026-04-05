@@ -12,6 +12,9 @@ import MyRequests from "./pages/bachelor/MyRequests";
 import BachelorNotifications from "./pages/bachelor/Notifications";
 import BachelorLayout from "./layouts/BachelorLayout";
 
+// Profile
+import Profile from "./pages/Profile";
+
 // Owner
 import OwnerHome from "./pages/owner/Home";
 import OwnerRequests from "./pages/owner/OwnerRequests";
@@ -62,7 +65,8 @@ function App() {
         >
           <Route index element={<BachelorHome />} />
           <Route path="requests" element={<MyRequests />} />
-          <Route path="profile" element={<div>Profile Page</div>} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="profile/:userId" element={<Profile />} />
           <Route path="notifications" element={<BachelorNotifications />} />
           <Route path="chats" element={<ChatPage />} />
         </Route>
@@ -80,6 +84,8 @@ function App() {
           <Route path="requests" element={<OwnerRequests />} />
           <Route path="notifications" element={<OwnerNotifications />} />
           <Route path="properties" element={<OwnerProperties />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="profile/:userId" element={<Profile />} />
           <Route path="properties/add" element={<OwnerAddProperty />} />
           <Route path="properties/edit/:id" element={<OwnerEditProperty />} />
           <Route path="chats" element={<ChatPage />} />
@@ -97,6 +103,8 @@ function App() {
           <Route index element={<Navigate to="/admin/users" />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="properties" element={<AdminProperties />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="profile/:userId" element={<Profile />} />
           <Route path="requests" element={<AdminRequests />} />
           <Route path="reports" element={<AdminReports />} />
           <Route path="notifications" element={<AdminNotifications />} />

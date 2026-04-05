@@ -8,6 +8,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  User,
   X,
 } from "lucide-react";
 
@@ -45,10 +46,15 @@ const OwnerLayout = () => {
     }
   };
 
+  const getImageUrl = (img) =>
+    img?.startsWith("http") ? img : `http://127.0.0.1:8000${img}`;
+
   const handleMenuClick = (path) => {
     navigate(path);
     if (isMobile) setOpen(false); // Close sidebar on mobile after navigation
   };
+
+  const profilePath = "/owner/profile";
 
   const menuItems = [
     {
@@ -122,6 +128,39 @@ const OwnerLayout = () => {
             </button>
           </div>
 
+          <div className="px-4 pb-4">
+            {user && (
+              <button
+                onClick={() => handleMenuClick(profilePath)}
+                className={`flex items-center ${open ? "gap-3" : "justify-center"} p-3 rounded-lg w-full text-left transition hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white`}
+                aria-label="Open profile page"
+              >
+                <div className="h-11 w-11 rounded-full bg-white/20 overflow-hidden flex items-center justify-center text-lg font-semibold text-white">
+                  {user.profile_image ? (
+                    <img
+                      src={getImageUrl(user.profile_image)}
+                      alt="Profile"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span>{user.username?.charAt(0).toUpperCase() || "U"}</span>
+                  )}
+                </div>
+                {open && (
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold truncate">
+                      {user.username || "Owner"}
+                    </p>
+                    <p className="text-xs text-white/80 capitalize truncate">
+                      {user.role || "Owner"}
+                    </p>
+                    <p className="text-xs text-white/70 truncate">My Profile</p>
+                  </div>
+                )}
+              </button>
+            )}
+          </div>
+
           <nav>
             <ul className="mt-6 space-y-2 px-2" role="menu">
               {menuItems.map((item, index) => {
@@ -153,7 +192,7 @@ const OwnerLayout = () => {
         <div className="p-4">
           {user && open && (
             <div className="mb-4 text-center">
-              <p className="text-sm">Welcome, {user.name || "Owner"}</p>
+              <p className="text-sm">Welcome, {user.username || "Owner"}</p>
             </div>
           )}
           <button

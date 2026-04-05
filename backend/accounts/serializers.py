@@ -30,13 +30,13 @@ class RegisterSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role']
+        fields = ['id', 'username', 'email', 'role', 'profile_image']
         read_only_fields = ['role']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'role', 'is_staff', 'is_banned', 'date_joined']
+        fields = ['id', 'username', 'email', 'role', 'is_staff', 'is_banned', 'date_joined', 'profile_image']
 
 class UserLogSerializer(serializers.ModelSerializer):
     class Meta:

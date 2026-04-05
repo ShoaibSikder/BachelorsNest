@@ -4,6 +4,7 @@ import {
   getProfile,
   requestPasswordReset,
   confirmPasswordReset,
+  updateProfile as updateProfileApi,
 } from "../api/authApi";
 
 export const AuthContext = createContext();
@@ -41,6 +42,12 @@ export const AuthProvider = ({ children }) => {
     return await confirmPasswordReset({ token, new_password: newPassword });
   };
 
+  const updateProfile = async (data) => {
+    const response = await updateProfileApi(data);
+    setUser(response.data);
+    return response.data;
+  };
+
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem("access_token");
@@ -65,6 +72,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         login,
         logout,
+        updateProfile,
         resetPasswordRequest,
         resetPasswordConfirm,
       }}

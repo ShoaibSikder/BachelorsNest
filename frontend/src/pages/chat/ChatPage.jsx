@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ChatList from "../../components/chat/ChatList";
 import ChatBox from "../../components/chat/ChatBox";
 import { getChatUsers } from "../../api/chatApi";
@@ -12,6 +12,13 @@ const ChatPage = () => {
   const [users, setUsers] = useState([]);
   const [activeUser, setActiveUser] = useState(null);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const navigate = useNavigate();
+
+  const handleUserProfileClick = (targetUser) => {
+    if (!targetUser) return;
+    const baseRoute = `/${user?.role || "bachelor"}`;
+    navigate(`${baseRoute}/profile/${targetUser.id}`);
+  };
 
   // ✅ get selected user from navigation
   const selectedUser = location.state?.selectedUser;
@@ -43,6 +50,7 @@ const ChatPage = () => {
         users={users}
         activeUser={activeUser}
         onSelectUser={setActiveUser}
+        onUserProfileClick={handleUserProfileClick}
         loadingUsers={loadingUsers}
       />
 

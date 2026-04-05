@@ -44,6 +44,15 @@ class ProfileView(APIView):
         return Response(serializer.errors, status=400)
 
 
+class UserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        serializer = ProfileSerializer(user)
+        return Response(serializer.data)
+
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 

@@ -20,9 +20,10 @@ const PropertyCard = ({
   badge,
   footer,
   onImageClick,
+  onOwnerClick,
   className = "",
 }) => {
-  const defaultHeaderLeft = (
+  const ownerBlock = (
     <div className="flex items-center gap-3">
       {property.owner?.profile_image ? (
         <img
@@ -45,6 +46,20 @@ const PropertyCard = ({
       </div>
     </div>
   );
+
+  const defaultHeaderLeft =
+    onOwnerClick && property.owner ? (
+      <button
+        type="button"
+        onClick={() => onOwnerClick(property.owner)}
+        className="w-full text-left rounded-xl p-2 transition hover:bg-slate-100 dark:hover:bg-slate-800"
+        aria-label={`View profile of ${property.owner?.username || "owner"}`}
+      >
+        {ownerBlock}
+      </button>
+    ) : (
+      <div>{ownerBlock}</div>
+    );
 
   const renderImages = () => {
     if (!property.images?.length) {
