@@ -44,6 +44,18 @@ const ChatPage = () => {
     fetchUsers();
   }, []);
 
+  // ✅ auto set selected user as active when navigating from "Message Owner"
+  useEffect(() => {
+    if (selectedUser && users.length > 0) {
+      const foundUser = users.find((u) => u.id === selectedUser.id);
+      if (foundUser) {
+        setActiveUser(foundUser);
+      } else if (selectedUser.id) {
+        setActiveUser(selectedUser);
+      }
+    }
+  }, [selectedUser, users]);
+
   return (
     <div className="flex h-screen overflow-hidden">
       <ChatList
