@@ -60,7 +60,13 @@ const BachelorLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+    <div className="relative flex min-h-screen bg-gray-100 dark:bg-gray-900">
+      {/* Background for sidebar */}
+      <div
+        className={`absolute top-0 left-0 ${
+          open ? "w-64" : "w-20"
+        } h-full bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 -z-10`}
+      ></div>
       {/* Overlay */}
       {isMobile && open && (
         <div
@@ -81,7 +87,10 @@ const BachelorLayout = () => {
           {/* HEADER */}
           <div className="flex items-center justify-between p-4">
             {open && <h2 className="text-xl font-extrabold">Bachelor Panel</h2>}
-            <button onClick={() => setOpen(!open)}>
+            <button
+              onClick={() => setOpen(!open)}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-shadow shadow-sm hover:shadow-lg"
+            >
               {open ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
@@ -149,16 +158,19 @@ const BachelorLayout = () => {
           {/* MENU */}
           <ul className="mt-6 space-y-2 px-2">
             {menuItems.map((item, i) => {
-              const isActive = location.pathname.startsWith(item.path);
+              const isActive =
+                item.path === "/bachelor"
+                  ? location.pathname === item.path
+                  : location.pathname.startsWith(item.path);
 
               return (
                 <li key={i}>
                   <button
                     onClick={() => handleMenuClick(item.path)}
-                    className={`flex items-center gap-3 p-3 rounded-lg w-full ${
+                    className={`flex items-center ${open ? "gap-3 justify-start" : "justify-center"} p-3 rounded-2xl w-full text-sm transition-all duration-200 ${
                       isActive
-                        ? "bg-white text-blue-600 font-semibold"
-                        : "hover:bg-white/20"
+                        ? "bg-white/25 text-blue-200 shadow-lg shadow-white/10 ring-1 ring-white/10 font-semibold"
+                        : "bg-white/10 text-white/90 hover:bg-white/20 hover:text-white"
                     }`}
                   >
                     <item.icon size={20} />
@@ -184,7 +196,7 @@ const BachelorLayout = () => {
 
       {/* MAIN */}
       <main
-        className={`flex-1 overflow-y-auto p-6 ${
+        className={`flex-1 p-6 ${
           open && !isMobile ? "ml-64" : "ml-20"
         } ${isMobile ? "ml-0" : ""}`}
       >
