@@ -3,6 +3,7 @@ import {
   loginUser,
   getProfile,
   requestPasswordReset,
+  verifyPasswordResetToken,
   confirmPasswordReset,
   updateProfile as updateProfileApi,
 } from "../api/authApi";
@@ -16,11 +17,18 @@ export const AuthProvider = ({ children }) => {
   const login = async (data) => {
     const response = await loginUser(data);
 
+    console.log("Login response:", response.data);
+
     // Save tokens
     localStorage.setItem("access_token", response.data.access);
     localStorage.setItem("refresh_token", response.data.refresh);
 
-    // Fetch profile to get role
+    // Save user info from login response
+    localStorage.setItem("username", response.data.username);
+    localStorage.setItem("email", response.data.email);
+    localStorage.setItem("role", response.data.role);
+
+    // Fetch profile to get complete user data
     const profile = await getProfile();
     setUser(profile.data);
     setLoading(false);
@@ -36,6 +44,10 @@ export const AuthProvider = ({ children }) => {
 
   const resetPasswordRequest = async (email) => {
     return await requestPasswordReset({ email });
+  };
+
+  const resetPasswordVerifyToken = async (token) => {
+    return await verifyPasswordResetToken({ token });
   };
 
   const resetPasswordConfirm = async (token, newPassword) => {
@@ -74,6 +86,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         updateProfile,
         resetPasswordRequest,
+        resetPasswordVerifyToken,
         resetPasswordConfirm,
       }}
     >

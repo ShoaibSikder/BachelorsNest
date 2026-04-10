@@ -7,6 +7,7 @@ const ForgetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
 
   const { resetPasswordRequest } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -23,12 +24,27 @@ const ForgetPassword = () => {
       return;
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
     try {
       console.log("Sending password reset request for email:", email);
       const response = await resetPasswordRequest(email);
       console.log("Password reset response:", response);
-      setSuccess("Password reset email sent! Check your inbox.");
+
+      setSuccess("✅ Password reset email sent successfully!");
+      setEmailSent(true);
       setEmail(""); // Clear the form
+
+      // Show success message for 3 seconds then redirect
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     } catch (err) {
       console.error("Password reset error details:", {
         status: err.response?.status,
@@ -46,9 +62,14 @@ const ForgetPassword = () => {
         err.message ||
         "Failed to send reset email. Please try again.";
       setError(errorMsg);
+      setEmailSent(false);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBackToLogin = () => {
+    navigate("/login");
   };
 
   return (
@@ -58,6 +79,10 @@ const ForgetPassword = () => {
         <div className="text-center px-10 space-y-4">
           <h1 className="text-5xl font-extrabold">BachelorsNest</h1>
           <p className="text-lg opacity-90">Reset your password securely.</p>
+          <p className="text-sm opacity-75 mt-6">
+            Enter your email address and we'll send you a link to reset your
+            password.
+          </p>
         </div>
       </div>
 
@@ -70,60 +95,91 @@ const ForgetPassword = () => {
           {/* Header */}
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-              Forgot Password
+              Forgot Password?
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-              Enter your email to receive a reset link.
+              No worries! We'll help you reset it.
             </p>
           </div>
 
-          {/* Error */}
-          {error && (
-            <div className="bg-red-100 text-red-600 p-2 rounded text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* Success */}
+          {/* Success Message */}
           {success && (
-            <div className="bg-green-100 text-green-600 p-2 rounded text-sm">
+            <div className="bg-green-100 text-green-700 p-3 rounded-lg text-sm border border-green-300">
               {success}
+              <p className="text-xs mt-1 text-green-600">
+                Redirecting to login in 3 seconds...
+              </p>
             </div>
           )}
 
-          {/* Email */}
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm border border-red-300">
+              <p className="font-semibold">❌ Error</p>
+              <p>{error}</p>
+            </div>
+          )}
 
-          {/* Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-lg font-semibold flex justify-center items-center gap-2 hover:scale-[1.02] transition"
-          >
-            {loading ? (
-              <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
-            ) : (
-              "Send Reset Link"
-            )}
-          </button>
+          {/* Email Input */}
+          {!emailSent && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
 
-          {/* Footer */}
-          <p className="text-center text-sm text-gray-600 dark:text-gray-300">
-            Remember your password?{" "}
-            <span
-              className="text-blue-600 cursor-pointer hover:underline"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </span>
-          </p>
+              {/* Info Box */}
+              <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 p-3 rounded-lg text-sm text-blue-800 dark:text-blue-200">
+                <p className="flex items-start gap-2">
+                  <span className="text-lg">ℹ️</span>
+                  <span>
+                    Make sure you have access to this email address. We'll send
+                    you a link to reset your password.
+                  </span>
+                </p>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-lg font-semibold flex justify-center items-center gap-2 hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  "Send Reset Link"
+                )}
+              </button>
+            </>
+          )}
+
+          {/* Back to Login */}
+          <div className="text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Remember your password?{" "}
+              <button
+                type="button"
+                onClick={handleBackToLogin}
+                className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+              >
+                Back to Login
+              </button>
+            </p>
+          </div>
         </form>
       </div>
     </div>

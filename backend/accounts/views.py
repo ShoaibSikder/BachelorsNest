@@ -4,13 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
 
 from .models import UserLog, PasswordResetToken
-from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer
+from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, CustomTokenObtainPairSerializer
 from .permissions import IsAdmin
 
 from rest_framework.views import APIView
@@ -23,6 +24,13 @@ User = get_user_model()
 
 
 # --------------------- Auth ---------------------
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """
+    Custom token view that allows login with username or email
+    """
+    serializer_class = CustomTokenObtainPairSerializer
+
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
@@ -174,7 +182,10 @@ class PasswordResetConfirmView(APIView):
                 user.set_password(new_password)
                 user.save()
                 token.delete()  # Delete token after use
-                return Response({"detail": "Password reset successfully."}, status=status.HTTP_200_OK)
+                return Response({
+                    "detail": "Password reset successfully.",
+                    "username": user.username
+                }, status=status.HTTP_200_OK)
             except PasswordResetToken.DoesNotExist:
                 return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
@@ -183,6 +194,51 @@ class PasswordResetConfirmView(APIView):
                 traceback.print_exc()
                 return Response({"detail": "An error occurred. Please try again later."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetVerifyTokenView(APIView):
+    """
+    Verify password reset token and return username to display on reset page
+    """
+    permission_classes = []
+
+    def post(self, request):
+        token_value = request.data.get('token')
+        
+        if not token_value:
+            return Response({"detail": "Token is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            token = PasswordResetToken.objects.get(token=token_value)
+            
+            if token.is_expired():
+                token.delete()
+                return Response({
+                    "valid": False,
+                    "detail": "Token has expired."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            user = token.user
+            return Response({
+                "valid": True,
+                "username": user.username,
+                "email": user.email,
+                "detail": "Token is valid. You can now reset your password."
+            }, status=status.HTTP_200_OK)
+            
+        except PasswordResetToken.DoesNotExist:
+            return Response({
+                "valid": False,
+                "detail": "Invalid token."
+            }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"Unexpected error in password reset verify: {e}")
+            import traceback
+            traceback.print_exc()
+            return Response({
+                "valid": False,
+                "detail": "An error occurred. Please try again later."
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AdminUserBanToggleView(APIView):
@@ -195,6 +251,7 @@ class AdminUserBanToggleView(APIView):
         action_text = "Banned by admin" if user.is_banned else "Unbanned by admin"
         UserLog.objects.create(user=user, action=action_text)
         return Response({"is_banned": user.is_banned})
+
 
 
 class AdminUserRoleChangeView(APIView):

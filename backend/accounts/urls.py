@@ -3,7 +3,8 @@ from .views import (
     OwnerDashboardView, RegisterView, ProfileView, UserDetailView, LogoutView,
     AdminUserListView, AdminUserAddView, AdminUserDetailView,
     AdminUserBanToggleView, AdminUserRoleChangeView, UserLogsView,
-    PasswordResetRequestView, PasswordResetConfirmView
+    PasswordResetRequestView, PasswordResetConfirmView, PasswordResetVerifyTokenView,
+    CustomTokenObtainPairView
 )
 
 urlpatterns = [
@@ -12,10 +13,11 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('users/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('logout/', LogoutView.as_view(), name='logout'),
-     path('owner-dashboard/', OwnerDashboardView.as_view(), name='owner-dashboard'),
+    path('owner-dashboard/', OwnerDashboardView.as_view(), name='owner-dashboard'),
 
     # Password Reset
     path('password-reset/', PasswordResetRequestView.as_view(), name='password-reset-request'),
+    path('password-reset-verify/', PasswordResetVerifyTokenView.as_view(), name='password-reset-verify'),
     path('password-reset-confirm/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
 
     # Admin Users

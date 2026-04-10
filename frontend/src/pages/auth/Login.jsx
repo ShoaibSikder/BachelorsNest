@@ -4,7 +4,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    username_or_email: "",
     password: "",
   });
 
@@ -38,18 +38,57 @@ const Login = () => {
     setError("");
     setLoading(true);
 
+    // Validate inputs
+    if (!formData.username_or_email || !formData.password) {
+      setError("Please enter both email/username and password.");
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log("Login attempt with:", formData.username_or_email);
       const user = await login(formData);
 
       if (remember) {
         localStorage.setItem("user", JSON.stringify(user));
       }
 
-      if (user.role === "bachelor") navigate("/bachelor");
-      else if (user.role === "owner") navigate("/owner");
-      else if (user.role === "admin") navigate("/admin");
-    } catch {
-      setError("Invalid username or password ❌");
+      // Route based on role
+      if (user.role === "bachelor") {
+        navigate("/bachelor");
+      } else if (user.role === "owner") {
+        navigate("/owner");
+      } else if (user.role === "admin") {
+        navigate("/admin");
+      } else {
+        // Fallback if role is missing
+        console.warn("User role not found:", user);
+        navigate("/bachelor");
+      }
+    } catch (err) {
+      console.error("Login error details:", {
+        message: err.message,
+        status: err.response?.status,
+        data: err.response?.data,
+        url: err.config?.url,
+      });
+
+      // Get detailed error message from API
+      let errorMsg = "Login failed. Please try again.";
+
+      if (err.response?.data?.detail) {
+        errorMsg = err.response.data.detail;
+      } else if (err.response?.data?.non_field_errors?.[0]) {
+        errorMsg = err.response.data.non_field_errors[0];
+      } else if (err.response?.status === 400) {
+        errorMsg = "Invalid email/username or password.";
+      } else if (err.response?.status === 401) {
+        errorMsg = "Authentication failed. Please check your credentials.";
+      } else if (err.message === "Network Error") {
+        errorMsg = "Network error. Please check your connection.";
+      }
+
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -96,13 +135,13 @@ const Login = () => {
             </div>
           )}
 
-          {/* Username */}
+          {/* Username or Email */}
           <input
             type="text"
-            name="username"
-            placeholder="Username"
+            name="username_or_email"
+            placeholder="Email or Username"
             className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
-            value={formData.username}
+            value={formData.username_or_email}
             onChange={handleChange}
             required
             autoComplete="username"
@@ -135,6 +174,7 @@ const Login = () => {
                 type="checkbox"
                 checked={remember}
                 onChange={() => setRemember(!remember)}
+                className="w-4 h-4"
               />
               Remember me
             </label>

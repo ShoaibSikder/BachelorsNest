@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import UserLog, User, PasswordResetToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth.backends import ModelBackend
+from django.db.models import Q
 
 User = get_user_model()
 
@@ -60,6 +64,65 @@ class UserLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserLog
         fields = ['id', 'action', 'timestamp']
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Custom serializer that allows login with either username or email
+    """
+    # Override parent's username field with our custom field
+    username_or_email = serializers.CharField()
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Remove the parent's 'username' field and add our custom field
+        self.fields.pop('username', None)
+        self.fields['username_or_email'] = serializers.CharField()
+
+    def validate(self, attrs):
+        """
+        Override parent validate to support username OR email login
+        """
+        username_or_email = attrs.get('username_or_email')
+        password = attrs.get('password')
+
+        if not username_or_email or not password:
+            raise serializers.ValidationError("Both email/username and password are required.")
+
+        # Find user by username or email
+        user = User.objects.filter(
+            Q(username=username_or_email) | Q(email=username_or_email)
+        ).first()
+
+        if not user:
+            raise serializers.ValidationError("Invalid email/username or password.")
+
+        # Verify password
+        if not user.check_password(password):
+            raise serializers.ValidationError("Invalid email/username or password.")
+
+        # Check if user is active
+        if not user.is_active:
+            raise serializers.ValidationError("User account is inactive.")
+
+        # Check if user is banned
+        if hasattr(user, 'is_banned') and user.is_banned:
+            raise serializers.ValidationError("User account is banned.")
+
+        # Generate tokens directly
+        try:
+            refresh = self.get_token(user)
+            
+            return {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'username': user.username,
+                'email': user.email,
+                'role': user.role,
+            }
+        except Exception as e:
+            raise serializers.ValidationError(f"Failed to generate tokens: {str(e)}")
+
 
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
