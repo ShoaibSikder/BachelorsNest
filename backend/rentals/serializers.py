@@ -9,7 +9,7 @@ User = get_user_model()
 class PropertyMiniSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
-        fields = ['id', 'title', 'location', 'rent']
+        fields = ['id', 'title', 'location', 'rent', 'description']
 
 
 class UserMiniSerializer(serializers.ModelSerializer):
@@ -17,7 +17,7 @@ class UserMiniSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'phone']
+        fields = ['id', 'first_name', 'last_name', 'username', 'email', 'phone', 'profile_image']
     
     def get_phone(self, obj):
         # Try to get phone field if it exists, otherwise return N/A

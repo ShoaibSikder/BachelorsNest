@@ -189,7 +189,7 @@ const AdminProperties = () => {
                     property.owner?.id &&
                     navigate(`/admin/profile/${property.owner.id}`)
                   }
-                  className="w-full text-left rounded-xl p-2 transition hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="w-full text-left rounded-xl p-2 transition bg-white dark:bg-gray-900 hover:bg-slate-100 dark:hover:bg-slate-800"
                   aria-label={`View profile of ${property.owner?.username || "owner"}`}
                 >
                   <div className="flex items-center gap-3">
@@ -210,10 +210,10 @@ const AdminProperties = () => {
                     )}
                     <div>
                       <h3 className="font-semibold text-gray-800 dark:text-white">
-                        {property.title}
+                        {property.owner?.username}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {property.owner?.username}
+                        {property.owner?.email}
                       </p>
                     </div>
                   </div>
