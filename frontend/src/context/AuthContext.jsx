@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }) => {
     return await verifyPasswordResetToken({ token });
   };
 
-  const resetPasswordConfirm = async (token, newPassword) => {
-    return await confirmPasswordReset({ token, new_password: newPassword });
+  const resetPasswordConfirm = async (email, newPassword) => {
+    return await confirmPasswordReset({ email, new_password: newPassword });
   };
 
   const updateProfile = async (data) => {

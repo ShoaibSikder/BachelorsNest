@@ -34,7 +34,9 @@ const ResetPassword = () => {
 
         if (response.data.valid) {
           setTokenValid(true);
-          setUsername(response.data.username);
+          setUsername(
+            response.data.username || response.data.email || "Unknown user",
+          );
           setEmail(response.data.email);
           setError("");
         } else {
@@ -79,8 +81,8 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      console.log("Submitting password reset with token:", token);
-      const response = await resetPasswordConfirm(token, newPassword);
+      console.log("Submitting password reset for email:", email);
+      const response = await resetPasswordConfirm(email, newPassword);
       console.log("Password reset response:", response.data);
 
       setSuccess("✅ Password reset successfully! Redirecting to login...");
@@ -166,7 +168,7 @@ const ResetPassword = () => {
                   <span className="font-semibold">Resetting password for:</span>
                 </p>
                 <p className="text-blue-600 dark:text-blue-300 font-bold text-lg mt-1">
-                  {username}
+                  {username || "Unknown user"}
                 </p>
                 <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">
                   {email}
