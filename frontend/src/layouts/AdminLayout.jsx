@@ -166,7 +166,14 @@ const AdminLayout = () => {
       </aside>
 
       <main className={`flex-1 p-6 ${open ? "ml-64" : "ml-20"}`}>
-        <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
+        <div className="flex items-center mb-4">
+          <img
+            src="/Logo.png"
+            alt="BachelorsNest Logo"
+            className="w-12 h-12 mr-4"
+          />
+          <h1 className="text-3xl font-bold">Admin</h1>
+        </div>
         <Outlet />
       </main>
     </div>

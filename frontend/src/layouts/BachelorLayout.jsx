@@ -200,9 +200,14 @@ const BachelorLayout = () => {
           open && !isMobile ? "ml-64" : "ml-20"
         } ${isMobile ? "ml-0" : ""}`}
       >
-        <header className="mb-6">
+        <header className="mb-6 flex items-center">
+          <img
+            src="/Logo.png"
+            alt="BachelorsNest Logo"
+            className="w-12 h-12 mr-4"
+          />
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
-            Bachelor Home Page
+            Bachelor
           </h1>
 
           {isMobile && (

@@ -63,6 +63,11 @@ const Register = () => {
       {/* LEFT SIDE */}
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white items-center justify-center">
         <div className="text-center px-10 space-y-4">
+          <img
+            src="/Logo.png"
+            alt="BachelorsNest Logo"
+            className="w-24 h-28 mx-auto mb-4"
+          />
           <h1 className="text-5xl font-extrabold">BachelorsNest</h1>
           <p className="text-lg opacity-90">
             Create your account and start your journey 🚀
