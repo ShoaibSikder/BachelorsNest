@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../api/authApi";
+import { useTheme } from "../../context/ThemeContext";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { darkMode, toggleDarkMode } = useTheme();
 
   const [formData, setFormData] = useState({
     username: "",
@@ -15,16 +17,8 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [darkMode, setDarkMode] = useState(false);
 
-  // Dark mode toggle
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [darkMode]);
+  // Dark mode toggle is now handled by ThemeContext
 
   const handleChange = (e) => {
     setFormData({
@@ -90,10 +84,19 @@ const Register = () => {
             {/* Dark mode toggle */}
             <button
               type="button"
-              onClick={() => setDarkMode(!darkMode)}
-              className="text-sm px-3 py-1 border rounded dark:text-white"
+              onClick={toggleDarkMode}
+              className="relative w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {darkMode ? "☀️" : "🌙"}
+              <div
+                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
+                  darkMode ? "translate-x-6" : "translate-x-0"
+                }`}
+              >
+                <span className="absolute inset-0 flex items-center justify-center text-xs">
+                  {darkMode ? "☀️" : "🌙"}
+                </span>
+              </div>
             </button>
           </div>
 

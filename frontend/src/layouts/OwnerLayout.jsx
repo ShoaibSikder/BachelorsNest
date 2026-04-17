@@ -1,6 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import {
   Home,
   FileText,
@@ -13,6 +14,7 @@ import {
 
 const OwnerLayout = () => {
   const { logout, user } = useContext(AuthContext);
+  const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -158,13 +160,32 @@ const OwnerLayout = () => {
       </aside>
 
       <main className={`flex-1 p-6 ${open ? "ml-64" : "ml-20"}`}>
-        <div className="flex items-center mb-4">
-          <img
-            src="/Logo.png"
-            alt="BachelorsNest Logo"
-            className="w-12 h-12 mr-4"
-          />
-          <h1 className="text-3xl font-bold">Owner</h1>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <img
+              src="/Logo.png"
+              alt="BachelorsNest Logo"
+              className="w-12 h-12 mr-4"
+            />
+            <h1 className="text-3xl font-bold">Owner</h1>
+          </div>
+
+          {/* Dark mode toggle */}
+          <button
+            onClick={toggleDarkMode}
+            className="relative w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            <div
+              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
+                darkMode ? "translate-x-6" : "translate-x-0"
+              }`}
+            >
+              <span className="absolute inset-0 flex items-center justify-center text-xs">
+                {darkMode ? "☀️" : "🌙"}
+              </span>
+            </div>
+          </button>
         </div>
         <Outlet />
       </main>
