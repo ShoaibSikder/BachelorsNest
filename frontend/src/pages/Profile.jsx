@@ -153,12 +153,12 @@ const Profile = () => {
           </div>
 
           {message && (
-            <div className="rounded-2xl bg-green-100 text-green-800 p-3 mb-4">
+            <div className="mb-4 rounded-2xl border border-green-300 bg-green-100 p-3 text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-200">
               {message}
             </div>
           )}
           {error && (
-            <div className="rounded-2xl bg-red-100 text-red-800 p-3 mb-4">
+            <div className="mb-4 rounded-2xl border border-red-300 bg-red-100 p-3 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
               {error}
             </div>
           )}
@@ -230,7 +230,7 @@ const Profile = () => {
           </div>
 
           {error && (
-            <div className="rounded-2xl bg-red-100 text-red-800 p-3 mb-4">
+            <div className="mb-4 rounded-2xl border border-red-300 bg-red-100 p-3 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
               {error}
             </div>
           )}

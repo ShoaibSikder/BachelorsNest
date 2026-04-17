@@ -90,14 +90,14 @@ const ForgetPassword = () => {
 
           {/* Success Message */}
           {success && (
-            <div className="bg-green-100 text-green-700 p-3 rounded-lg text-sm border border-green-300">
+            <div className="rounded-lg border border-green-300 bg-green-100 p-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-200">
               {success}
             </div>
           )}
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm border border-red-300">
+            <div className="rounded-lg border border-red-300 bg-red-100 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
               <p className="font-semibold">❌ Error</p>
               <p>{error}</p>
             </div>
@@ -150,7 +150,7 @@ const ForgetPassword = () => {
           <p className="text-center text-sm text-gray-600 dark:text-gray-300">
             Remember your password?{" "}
             <span
-              className="text-blue-600 cursor-pointer hover:underline"
+              className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"
               onClick={handleBackToLogin}
             >
               Back to Login

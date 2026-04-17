@@ -81,7 +81,7 @@ const AdminReports = () => {
 
   if (error) {
     return (
-      <div className="text-red-700 bg-red-100 border border-red-300 rounded-lg p-4">
+      <div className="rounded-lg border border-red-300 bg-red-100 p-4 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
         {error}
       </div>
     );

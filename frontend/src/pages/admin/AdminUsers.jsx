@@ -177,25 +177,37 @@ const AdminUsers = () => {
       <div className="mb-4 space-x-2">
         <button
           onClick={() => setFilter("all")}
-          className="bg-gray-300 px-3 py-1 rounded"
+          className={`rounded px-3 py-1 transition ${
+            filter === "all"
+              ? "bg-slate-500 text-white dark:bg-slate-400 dark:text-slate-900"
+              : "bg-slate-200 text-slate-800 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+          }`}
         >
           All
         </button>
         <button
           onClick={() => setFilter("active")}
-          className="bg-green-400 px-3 py-1 rounded"
+          className={`rounded px-3 py-1 transition ${
+            filter === "active"
+              ? "bg-green-500 text-white"
+              : "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-200 dark:hover:bg-green-900/60"
+          }`}
         >
           Active
         </button>
         <button
           onClick={() => setFilter("banned")}
-          className="bg-red-400 px-3 py-1 rounded"
+          className={`rounded px-3 py-1 transition ${
+            filter === "banned"
+              ? "bg-red-500 text-white"
+              : "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60"
+          }`}
         >
           Banned
         </button>
         <button
           onClick={() => setSelectedUser({})}
-          className="bg-blue-500 px-3 py-1 rounded text-white"
+          className="rounded bg-blue-500 px-3 py-1 text-white transition hover:bg-blue-600"
         >
           Add User
         </button>
@@ -223,7 +235,7 @@ const AdminUsers = () => {
                   <select
                     value={u.role}
                     onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                    className="border rounded px-2 py-1 bg-gray-700"
+                    className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm transition focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   >
                     <option value="admin">Admin</option>
                     <option value="owner">Owner</option>
@@ -241,27 +253,29 @@ const AdminUsers = () => {
                 <td className="space-x-2">
                   <button
                     onClick={() => setSelectedUser(u)}
-                    className="bg-blue-500 px-2 py-1 rounded text-white"
+                    className="rounded bg-blue-500 px-2 py-1 text-white transition hover:bg-blue-600"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleBan(u.id)}
-                    className={`px-2 py-1 rounded text-white ${
-                      u.is_banned ? "bg-green-500" : "bg-red-600"
+                    className={`rounded px-2 py-1 text-white transition ${
+                      u.is_banned
+                        ? "bg-green-500 hover:bg-green-600"
+                        : "bg-red-600 hover:bg-red-700"
                     }`}
                   >
                     {u.is_banned ? "Unban" : "Ban"}
                   </button>
                   <button
                     onClick={() => handleDelete(u.id)}
-                    className="bg-red-700 px-2 py-1 rounded text-white"
+                    className="rounded bg-red-700 px-2 py-1 text-white transition hover:bg-red-800"
                   >
                     Delete
                   </button>
                   <button
                     onClick={() => viewLogs(u.id)}
-                    className="bg-green-700 px-2 py-1 rounded text-white"
+                    className="rounded bg-green-700 px-2 py-1 text-white transition hover:bg-green-800"
                   >
                     Logs
                   </button>
@@ -341,7 +355,7 @@ const AdminUsers = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, role: e.target.value })
                   }
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white transition"
+                  className="w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 transition focus:outline-none focus:ring-2 focus:ring-blue-400 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="admin">Admin</option>
                   <option value="owner">Owner</option>

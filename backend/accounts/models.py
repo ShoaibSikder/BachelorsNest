@@ -15,6 +15,9 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
     is_banned = models.BooleanField(default=False)
+    failed_login_attempts = models.PositiveIntegerField(default=0)
+    locked_until = models.DateTimeField(blank=True, null=True)
+    password_changed_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.username} ({self.role})"
@@ -42,3 +45,40 @@ class PasswordResetToken(models.Model):
 
     def is_expired(self):
         return timezone.now() > self.expires_at
+
+
+class SecuritySettings(models.Model):
+    password_min_length = models.PositiveSmallIntegerField(default=8)
+    password_require_uppercase = models.BooleanField(default=True)
+    password_require_lowercase = models.BooleanField(default=True)
+    password_require_numbers = models.BooleanField(default=True)
+    password_require_special = models.BooleanField(default=False)
+    password_expiry_days = models.PositiveIntegerField(default=90)
+
+    max_login_attempts = models.PositiveSmallIntegerField(default=5)
+    lockout_duration = models.PositiveIntegerField(default=15)
+    ip_whitelist = models.JSONField(default=list, blank=True)
+    ip_blacklist = models.JSONField(default=list, blank=True)
+
+    alert_on_failed_login = models.BooleanField(default=True)
+    alert_on_suspicious_activity = models.BooleanField(default=True)
+    alert_on_password_change = models.BooleanField(default=False)
+    alert_email = models.EmailField(blank=True, default="")
+
+    audit_enabled = models.BooleanField(default=True)
+    audit_retention_days = models.PositiveIntegerField(default=365)
+    log_sensitive_actions = models.BooleanField(default=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_solo(cls):
+        defaults = {
+            "pk": 1,
+        }
+        obj, _ = cls.objects.get_or_create(**defaults)
+        return obj

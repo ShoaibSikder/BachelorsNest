@@ -156,14 +156,14 @@ const AdminNotifications = () => {
       </div>
 
       {success && (
-        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center gap-2">
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-green-300 bg-green-100 p-4 text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-200">
           <CheckCircle size={20} />
           {success}
         </div>
       )}
 
       {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center gap-2">
+        <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-300 bg-red-100 p-4 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
           <AlertCircle size={20} />
           {error}
         </div>
@@ -174,7 +174,7 @@ const AdminNotifications = () => {
           onClick={() => setActiveTab("broadcast")}
           className={`px-4 py-3 font-semibold border-b-2 transition ${
             activeTab === "broadcast"
-              ? "border-blue-600 text-blue-600"
+              ? "border-blue-600 text-blue-600 dark:text-blue-400"
               : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           }`}
         >
@@ -185,7 +185,7 @@ const AdminNotifications = () => {
           onClick={() => setActiveTab("role")}
           className={`px-4 py-3 font-semibold border-b-2 transition ${
             activeTab === "role"
-              ? "border-blue-600 text-blue-600"
+              ? "border-blue-600 text-blue-600 dark:text-blue-400"
               : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           }`}
         >
@@ -196,7 +196,7 @@ const AdminNotifications = () => {
           onClick={() => setActiveTab("individual")}
           className={`px-4 py-3 font-semibold border-b-2 transition ${
             activeTab === "individual"
-              ? "border-blue-600 text-blue-600"
+              ? "border-blue-600 text-blue-600 dark:text-blue-400"
               : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           }`}
         >
@@ -207,7 +207,7 @@ const AdminNotifications = () => {
           onClick={() => setActiveTab("logs")}
           className={`px-4 py-3 font-semibold border-b-2 transition ${
             activeTab === "logs"
-              ? "border-blue-600 text-blue-600"
+              ? "border-blue-600 text-blue-600 dark:text-blue-400"
               : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
           }`}
         >

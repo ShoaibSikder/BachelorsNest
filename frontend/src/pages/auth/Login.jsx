@@ -138,7 +138,7 @@ const Login = () => {
 
           {/* Error */}
           {error && (
-            <div className="bg-red-100 text-red-600 p-2 rounded text-sm">
+            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
               {error}
             </div>
           )}
@@ -187,7 +187,7 @@ const Login = () => {
               Remember me
             </label>
             <span
-              className="text-blue-600 cursor-pointer hover:underline"
+              className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"
               onClick={() => navigate("/forget-password")}
             >
               Forgot Password?
@@ -211,7 +211,7 @@ const Login = () => {
           <p className="text-center text-sm text-gray-600 dark:text-gray-300">
             Don’t have an account?{" "}
             <span
-              className="text-blue-600 cursor-pointer hover:underline"
+              className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"
               onClick={() => navigate("/register")}
             >
               Register

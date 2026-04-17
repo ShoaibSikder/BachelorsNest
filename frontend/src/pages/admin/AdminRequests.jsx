@@ -116,7 +116,7 @@ const AdminRequests = () => {
       case "rejected":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
       default:
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200";
     }
   };
 
@@ -143,7 +143,7 @@ const AdminRequests = () => {
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="mb-4 rounded border border-red-300 bg-red-100 px-4 py-3 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
           {error}
         </div>
       )}
@@ -153,25 +153,41 @@ const AdminRequests = () => {
         <div className="space-x-2">
           <button
             onClick={() => setFilterStatus("all")}
-            className={`px-3 py-1 rounded ${filterStatus === "all" ? "bg-gray-400 dark:bg-gray-500" : "bg-gray-300 dark:bg-gray-600"}`}
+            className={`rounded px-3 py-1 transition ${
+              filterStatus === "all"
+                ? "bg-slate-500 text-white dark:bg-slate-400 dark:text-slate-900"
+                : "bg-slate-200 text-slate-800 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+            }`}
           >
             All
           </button>
           <button
             onClick={() => setFilterStatus("pending")}
-            className={`px-3 py-1 rounded ${filterStatus === "pending" ? "bg-yellow-400" : "bg-gray-300 dark:bg-gray-600"}`}
+            className={`rounded px-3 py-1 transition ${
+              filterStatus === "pending"
+                ? "bg-yellow-400 text-slate-900"
+                : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-200 dark:hover:bg-yellow-900/60"
+            }`}
           >
             Pending
           </button>
           <button
             onClick={() => setFilterStatus("accepted")}
-            className={`px-3 py-1 rounded ${filterStatus === "accepted" ? "bg-green-400" : "bg-gray-300 dark:bg-gray-600"}`}
+            className={`rounded px-3 py-1 transition ${
+              filterStatus === "accepted"
+                ? "bg-green-500 text-white"
+                : "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-200 dark:hover:bg-green-900/60"
+            }`}
           >
             Accepted
           </button>
           <button
             onClick={() => setFilterStatus("rejected")}
-            className={`px-3 py-1 rounded ${filterStatus === "rejected" ? "bg-red-400" : "bg-gray-300 dark:bg-gray-600"}`}
+            className={`rounded px-3 py-1 transition ${
+              filterStatus === "rejected"
+                ? "bg-red-500 text-white"
+                : "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60"
+            }`}
           >
             Rejected
           </button>
@@ -183,7 +199,7 @@ const AdminRequests = () => {
           placeholder="Search by user name, email, or property name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+          className="w-full rounded border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
 
         {/* Result Count */}

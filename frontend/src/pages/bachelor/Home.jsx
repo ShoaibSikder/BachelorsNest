@@ -155,9 +155,9 @@ const BachelorHome = () => {
             const badge = status ? (
               <span
                 className={`text-xs px-3 py-1 rounded-full font-medium
-                  ${status === "pending" && "bg-yellow-100 text-yellow-700"}
-                  ${status === "accepted" && "bg-green-100 text-green-700"}
-                  ${status === "rejected" && "bg-red-100 text-red-700"}
+                  ${status === "pending" && "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200"}
+                  ${status === "accepted" && "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200"}
+                  ${status === "rejected" && "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200"}
                 `}
               >
                 {status}

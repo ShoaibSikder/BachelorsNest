@@ -128,25 +128,41 @@ const AdminProperties = () => {
       <div className="mb-6 space-x-2">
         <button
           onClick={() => setFilter("all")}
-          className="bg-gray-300 px-3 py-1 rounded"
+          className={`rounded px-3 py-1 transition ${
+            filter === "all"
+              ? "bg-slate-500 text-white dark:bg-slate-400 dark:text-slate-900"
+              : "bg-slate-200 text-slate-800 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+          }`}
         >
           All
         </button>
         <button
           onClick={() => setFilter("approved")}
-          className="bg-green-400 px-3 py-1 rounded"
+          className={`rounded px-3 py-1 transition ${
+            filter === "approved"
+              ? "bg-green-500 text-white"
+              : "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-200 dark:hover:bg-green-900/60"
+          }`}
         >
           Approved
         </button>
         <button
           onClick={() => setFilter("pending")}
-          className="bg-yellow-400 px-3 py-1 rounded"
+          className={`rounded px-3 py-1 transition ${
+            filter === "pending"
+              ? "bg-yellow-400 text-slate-900"
+              : "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900/40 dark:text-yellow-200 dark:hover:bg-yellow-900/60"
+          }`}
         >
           Pending
         </button>
         <button
           onClick={() => setFilter("rejected")}
-          className="bg-red-400 px-3 py-1 rounded"
+          className={`rounded px-3 py-1 transition ${
+            filter === "rejected"
+              ? "bg-red-500 text-white"
+              : "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-200 dark:hover:bg-red-900/60"
+          }`}
         >
           Rejected
         </button>
@@ -159,10 +175,10 @@ const AdminProperties = () => {
             <span
               className={`text-xs px-3 py-1 rounded-full font-medium ${
                 property.is_approved
-                  ? "bg-green-100 text-green-700"
+                  ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200"
                   : property.is_rejected
-                    ? "bg-red-100 text-red-700"
-                    : "bg-yellow-100 text-yellow-700"
+                    ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200"
+                    : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200"
               }`}
             >
               {property.is_approved

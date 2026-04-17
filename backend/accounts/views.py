@@ -6,17 +6,14 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
-from django.conf import settings
 from django.utils import timezone
+from datetime import timedelta
 
-from .models import UserLog, PasswordResetToken
-from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, CustomTokenObtainPairSerializer
+from .models import UserLog, PasswordResetToken, SecuritySettings
+from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, CustomTokenObtainPairSerializer, SecuritySettingsSerializer, log_security_event
 from .permissions import IsAdmin
+from notifications.models import SystemLog
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from properties.models import Property  # your property model
 from rentals.models import RentRequest   # your rent request model
 
@@ -98,6 +95,15 @@ class AdminUserDetailView(APIView):
         if serializer.is_valid():
             serializer.save()
             UserLog.objects.create(user=user, action="Edited by admin")
+            settings_obj = SecuritySettings.get_solo()
+            if request.data.get("password") and settings_obj.log_sensitive_actions:
+                log_security_event(
+                    level="info",
+                    title="Password Changed By Admin",
+                    message=f"Password updated for {user.username} by admin",
+                    user=user,
+                    alert_enabled=settings_obj.alert_on_password_change,
+                )
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
 
@@ -164,7 +170,19 @@ class PasswordResetConfirmView(APIView):
                 if not user:
                     return Response({"detail": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
                 user.set_password(new_password)
+                user.password_changed_at = timezone.now()
+                user.failed_login_attempts = 0
+                user.locked_until = None
                 user.save()
+                settings_obj = SecuritySettings.get_solo()
+                if settings_obj.log_sensitive_actions:
+                    log_security_event(
+                        level="info",
+                        title="Password Reset Completed",
+                        message=f"{user.username} reset their password successfully",
+                        user=user,
+                        alert_enabled=settings_obj.alert_on_password_change,
+                    )
                 return Response({
                     "detail": "Password reset successfully.",
                     "username": user.username
@@ -256,6 +274,37 @@ class UserLogsView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return UserLog.objects.filter(user__id=user_id).order_by('-timestamp')
+
+
+class SecuritySettingsView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request):
+        settings_obj = SecuritySettings.get_solo()
+        self._prune_audit_logs(settings_obj)
+        serializer = SecuritySettingsSerializer(settings_obj)
+        return Response(serializer.data)
+
+    def put(self, request):
+        settings_obj = SecuritySettings.get_solo()
+        serializer = SecuritySettingsSerializer(settings_obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            self._prune_audit_logs(serializer.instance)
+            SystemLog.objects.create(
+                level="info",
+                title="Security Settings Updated",
+                message="Admin updated security settings.",
+                user=request.user,
+            )
+            refreshed = SecuritySettingsSerializer(serializer.instance)
+            return Response(refreshed.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def _prune_audit_logs(self, settings_obj):
+        if settings_obj.audit_retention_days:
+            cutoff = timezone.now() - timedelta(days=settings_obj.audit_retention_days)
+            SystemLog.objects.filter(timestamp__lt=cutoff).delete()
 
 class OwnerDashboardView(APIView):
     permission_classes = [IsAuthenticated]

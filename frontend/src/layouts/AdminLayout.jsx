@@ -159,7 +159,7 @@ const AdminLayout = () => {
         <div className="p-4">
           <button
             onClick={handleLogout}
-            className="flex w-full justify-center gap-2 bg-white text-red-500 py-2 rounded-lg"
+            className="flex w-full justify-center gap-2 rounded-lg bg-white py-2 text-red-600 transition hover:bg-red-50 hover:text-red-700"
           >
             <LogOut size={18} />
             {open && "Logout"}
@@ -175,7 +175,9 @@ const AdminLayout = () => {
               alt="BachelorsNest Logo"
               className="w-12 h-12 mr-4"
             />
-            <h1 className="text-3xl font-bold">Admin</h1>
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+              Admin
+            </h1>
           </div>
 
           {/* Dark mode toggle */}

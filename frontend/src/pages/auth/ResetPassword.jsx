@@ -146,7 +146,7 @@ const ResetPassword = () => {
           {/* Token Invalid Error */}
           {!verifying && !tokenValid && (
             <>
-              <div className="bg-red-100 text-red-600 p-3 rounded text-sm">
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
                 {error || "This password reset link is invalid or has expired."}
               </div>
               <button
@@ -164,7 +164,7 @@ const ResetPassword = () => {
             <>
               {/* Username Display */}
               <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 p-3 rounded text-sm">
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-slate-700 dark:text-slate-300">
                   <span className="font-semibold">Resetting password for:</span>
                 </p>
                 <p className="text-blue-600 dark:text-blue-300 font-bold text-lg mt-1">
@@ -177,14 +177,14 @@ const ResetPassword = () => {
 
               {/* Error */}
               {error && (
-                <div className="bg-red-100 text-red-600 p-2 rounded text-sm">
+                <div className="rounded-lg border border-red-200 bg-red-50 p-2 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
                   {error}
                 </div>
               )}
 
               {/* Success */}
               {success && (
-                <div className="bg-green-100 text-green-600 p-2 rounded text-sm">
+                <div className="rounded-lg border border-green-200 bg-green-50 p-2 text-sm text-green-700 dark:border-green-800 dark:bg-green-950/40 dark:text-green-200">
                   {success}
                 </div>
               )}
@@ -228,7 +228,7 @@ const ResetPassword = () => {
               <p className="text-center text-sm text-gray-600 dark:text-gray-300">
                 Remember your password?{" "}
                 <span
-                  className="text-blue-600 cursor-pointer hover:underline"
+                  className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"
                   onClick={() => navigate("/login")}
                 >
                   Login

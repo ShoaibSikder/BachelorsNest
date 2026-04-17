@@ -188,7 +188,7 @@ const BachelorLayout = () => {
         <div className="p-4">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 w-full bg-white text-red-500 py-2 px-4 rounded-lg justify-center hover:scale-[1.03] transition"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-red-600 transition hover:scale-[1.03] hover:bg-red-50 hover:text-red-700"
           >
             <LogOut size={18} />
             {open && "Logout"}

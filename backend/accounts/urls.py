@@ -3,6 +3,7 @@ from .views import (
     OwnerDashboardView, RegisterView, ProfileView, UserDetailView, LogoutView,
     AdminUserListView, AdminUserAddView, AdminUserDetailView,
     AdminUserBanToggleView, AdminUserRoleChangeView, UserLogsView,
+    SecuritySettingsView,
     PasswordResetRequestView, PasswordResetConfirmView, PasswordResetVerifyTokenView,
     CustomTokenObtainPairView
 )
@@ -27,4 +28,5 @@ urlpatterns = [
     path('admin/users/<int:pk>/ban/', AdminUserBanToggleView.as_view(), name='admin-user-ban'),
     path('admin/users/<int:pk>/role/', AdminUserRoleChangeView.as_view(), name='admin-user-role'),
     path('admin/users/<int:user_id>/logs/', UserLogsView.as_view(), name='user-logs'),
+    path('admin/security-settings/', SecuritySettingsView.as_view(), name='security-settings'),
 ]

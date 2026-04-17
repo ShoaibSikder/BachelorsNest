@@ -160,13 +160,13 @@ const AdminSettings = () => {
       </div>
 
       {success && (
-        <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+        <div className="mb-4 rounded-lg border border-green-300 bg-green-100 p-4 text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-200">
           {success}
         </div>
       )}
 
       {error && (
-        <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+        <div className="mb-4 rounded-lg border border-red-300 bg-red-100 p-4 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
           {error}
         </div>
       )}
