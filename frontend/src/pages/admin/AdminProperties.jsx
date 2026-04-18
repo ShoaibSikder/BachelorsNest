@@ -340,6 +340,10 @@ const EditModal = ({ property, onClose, onSuccess }) => {
     rent: property.rent,
     property_type: property.property_type,
     description: property.description,
+    available_from: property.available_from || "",
+    is_available: property.is_available,
+    total_seats: property.total_seats ?? 1,
+    occupied_seats: property.occupied_seats ?? 0,
     images: [],
   });
 
@@ -348,7 +352,20 @@ const EditModal = ({ property, onClose, onSuccess }) => {
   const [replaceImages, setReplaceImages] = useState(false);
 
   const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => {
+      const nextForm = {
+        ...prev,
+        [e.target.name]:
+          e.target.type === "checkbox" ? e.target.checked : e.target.value,
+      };
+
+      if (e.target.name === "property_type" && e.target.value === "flat") {
+        nextForm.total_seats = 1;
+        nextForm.occupied_seats = 0;
+      }
+
+      return nextForm;
+    });
 
   const handleImageChange = (e) => setForm({ ...form, images: e.target.files });
 
@@ -373,6 +390,12 @@ const EditModal = ({ property, onClose, onSuccess }) => {
       formData.append("rent", form.rent);
       formData.append("property_type", form.property_type);
       formData.append("description", form.description);
+      formData.append("available_from", form.available_from);
+      formData.append("is_available", form.is_available);
+      if (form.property_type === "seat") {
+        formData.append("total_seats", form.total_seats);
+        formData.append("occupied_seats", form.occupied_seats);
+      }
 
       // Handle images
       if (replaceImages) {
@@ -440,6 +463,44 @@ const EditModal = ({ property, onClose, onSuccess }) => {
             placeholder="Description"
             className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <input
+            type="date"
+            name="available_from"
+            value={form.available_from}
+            onChange={handleChange}
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {form.property_type === "seat" && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <input
+                type="number"
+                min="1"
+                name="total_seats"
+                value={form.total_seats}
+                onChange={handleChange}
+                placeholder="Total seats"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <input
+                type="number"
+                min="0"
+                name="occupied_seats"
+                value={form.occupied_seats}
+                onChange={handleChange}
+                placeholder="Occupied seats"
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )}
+          <label className="flex items-center gap-2 text-sm text-gray-900 dark:text-gray-100">
+            <input
+              type="checkbox"
+              name="is_available"
+              checked={form.is_available}
+              onChange={handleChange}
+            />
+            Property is currently available
+          </label>
 
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-gray-100">

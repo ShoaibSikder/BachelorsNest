@@ -9,6 +9,7 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Heart,
   Search,
   X,
 } from "lucide-react";
@@ -57,6 +58,7 @@ const BachelorLayout = () => {
   const menuItems = [
     { name: "Home Feed", icon: Home, path: "/bachelor" },
     { name: "My Requests", icon: FileText, path: "/bachelor/requests" },
+    { name: "Saved", icon: Heart, path: "/bachelor/saved" },
     { name: "Notifications", icon: Bell, path: "/bachelor/notifications" },
     { name: "Chats", icon: MessageSquare, path: "/bachelor/chats" },
   ];

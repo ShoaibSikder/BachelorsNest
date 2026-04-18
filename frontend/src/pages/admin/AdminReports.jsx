@@ -49,6 +49,10 @@ const AdminReports = () => {
         const approvedRentals = rentals.filter(
           (request) => request.status === "accepted",
         ).length;
+        const totalWishlistSaves = properties.reduce(
+          (sum, property) => sum + (property.saved_count || 0),
+          0,
+        );
 
         setStats({
           totalUsers,
@@ -59,6 +63,7 @@ const AdminReports = () => {
           rejectedProperties,
           totalRequests,
           approvedRentals,
+          totalWishlistSaves,
         });
       } catch (err) {
         console.error("Failed to load reports", err);
@@ -96,6 +101,7 @@ const AdminReports = () => {
     { title: "Rejected Properties", value: stats.rejectedProperties },
     { title: "Total Rental Requests", value: stats.totalRequests },
     { title: "Approved Rentals", value: stats.approvedRentals },
+    { title: "Wishlist Saves", value: stats.totalWishlistSaves },
   ];
 
   return (

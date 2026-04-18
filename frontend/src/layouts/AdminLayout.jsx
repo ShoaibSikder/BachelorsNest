@@ -175,7 +175,7 @@ const AdminLayout = () => {
               alt="BachelorsNest Logo"
               className="w-12 h-12 mr-4"
             />
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
               Admin
             </h1>
           </div>

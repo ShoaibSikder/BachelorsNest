@@ -10,6 +10,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import BachelorHome from "./pages/bachelor/Home";
 import MyRequests from "./pages/bachelor/MyRequests";
 import BachelorNotifications from "./pages/bachelor/Notifications";
+import SavedProperties from "./pages/bachelor/SavedProperties";
 import BachelorLayout from "./layouts/BachelorLayout";
 
 // Profile
@@ -64,6 +65,7 @@ function App() {
         >
           <Route index element={<BachelorHome />} />
           <Route path="requests" element={<MyRequests />} />
+          <Route path="saved" element={<SavedProperties />} />
           <Route path="profile" element={<Profile />} />
           <Route path="profile/:userId" element={<Profile />} />
           <Route path="notifications" element={<BachelorNotifications />} />

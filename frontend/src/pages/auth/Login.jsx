@@ -113,7 +113,7 @@ const Login = () => {
         >
           {/* Header */}
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+            <h2 className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
               Login
             </h2>
 

@@ -9,6 +9,10 @@ const OwnerAddProperty = () => {
     rent: "",
     property_type: "",
     description: "",
+    available_from: "",
+    is_available: true,
+    total_seats: 1,
+    occupied_seats: 0,
   });
 
   const [images, setImages] = useState([]);
@@ -18,7 +22,18 @@ const OwnerAddProperty = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    const nextFormData = {
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    };
+
+    if (name === "property_type" && value === "flat") {
+      nextFormData.total_seats = 1;
+      nextFormData.occupied_seats = 0;
+    }
+
+    setFormData(nextFormData);
   };
 
   const handleImageChange = (e) => {
@@ -32,6 +47,12 @@ const OwnerAddProperty = () => {
 
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
+      if (
+        formData.property_type === "flat" &&
+        ["total_seats", "occupied_seats"].includes(key)
+      ) {
+        return;
+      }
       data.append(key, formData[key]);
     });
     for (let i = 0; i < images.length; i++) {
@@ -104,6 +125,50 @@ const OwnerAddProperty = () => {
           onChange={handleChange}
           className="w-full p-2 border rounded-lg"
         />
+
+        <input
+          type="date"
+          name="available_from"
+          value={formData.available_from}
+          onChange={handleChange}
+          className="w-full p-2 border rounded-lg"
+        />
+
+        {formData.property_type === "seat" && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <input
+              type="number"
+              name="total_seats"
+              min="1"
+              placeholder="Total seats"
+              value={formData.total_seats}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+
+            <input
+              type="number"
+              name="occupied_seats"
+              min="0"
+              placeholder="Occupied seats"
+              value={formData.occupied_seats}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border rounded-lg"
+            />
+          </div>
+        )}
+
+        <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
+          <input
+            type="checkbox"
+            name="is_available"
+            checked={formData.is_available}
+            onChange={handleChange}
+          />
+          Property is currently available
+        </label>
 
         <input
           type="file"

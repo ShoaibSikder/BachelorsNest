@@ -1,7 +1,6 @@
+from django.conf import settings
 from django.db import models
 
-# Create your models here.
-from django.conf import settings
 from properties.models import Property
 
 User = settings.AUTH_USER_MODEL
@@ -12,6 +11,7 @@ class RentRequest(models.Model):
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
+        ('cancelled', 'Cancelled'),
     )
 
     property = models.ForeignKey(
@@ -36,5 +36,8 @@ class RentRequest(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
-        return f"{self.bachelor} → {self.property}"
+        return f"{self.bachelor} -> {self.property}"

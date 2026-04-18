@@ -15,7 +15,7 @@ from .permissions import IsAdmin
 from notifications.models import SystemLog
 
 from properties.models import Property  # your property model
-from rentals.models import RentRequest   # your rent request model
+from rentals.models import RentRequest
 
 User = get_user_model()
 
@@ -321,7 +321,7 @@ class OwnerDashboardView(APIView):
 
             # Rent requests counts
             total_rent_requests = RentRequest.objects.filter(property__owner=user).count()
-            approved_rent_requests = RentRequest.objects.filter(property__owner=user, status='approved').count()
+            approved_rent_requests = RentRequest.objects.filter(property__owner=user, status='accepted').count()
         except Exception as e:
             print("Dashboard error:", e)
             return Response({"error": "Failed to fetch dashboard"}, status=500)

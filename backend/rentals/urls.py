@@ -1,9 +1,12 @@
 from django.urls import path
-from .views import CreateRentRequestView, DeleteRentRequestView
-from .views import UpdateRentRequestStatusView
-from .views import BachelorRequestListView
-from .views import OwnerRequestListView
-from .views import AdminRentRequestListView
+from .views import (
+    AdminRentRequestListView,
+    BachelorRequestListView,
+    CreateRentRequestView,
+    DeleteRentRequestView,
+    OwnerRequestListView,
+    UpdateRentRequestStatusView,
+)
 
 
 urlpatterns = [

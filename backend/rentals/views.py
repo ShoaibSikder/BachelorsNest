@@ -1,18 +1,23 @@
-from django.shortcuts import render
-
-# Create your views here.
-from rest_framework import generics
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from notifications.models import Notification
+from properties.models import Property
+
 from .models import RentRequest
 from .serializers import RentRequestSerializer
-from properties.models import Property
-from rest_framework.response import Response
-from rest_framework import status
-from notifications.models import Notification
-from rest_framework.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
-from rest_framework.generics import DestroyAPIView
 
+
+def sync_property_capacity(property_obj):
+    property_obj.occupied_seats = min(property_obj.occupied_seats, property_obj.total_seats)
+    if property_obj.vacancy_count == 0:
+        property_obj.is_available = False
+    elif property_obj.occupied_seats < property_obj.total_seats:
+        property_obj.is_available = True
+    property_obj.save(update_fields=['occupied_seats', 'is_available'])
 
 
 class CreateRentRequestView(generics.CreateAPIView):
@@ -26,24 +31,40 @@ class CreateRentRequestView(generics.CreateAPIView):
             raise PermissionDenied("Only bachelors can send rent requests")
 
         property_id = self.request.data.get("property")
-        property = get_object_or_404(Property, id=property_id)
+        property_obj = get_object_or_404(Property, id=property_id)
 
-        # ✅ Prevent duplicate requests
-        if RentRequest.objects.filter(bachelor=user, property=property).exists():
-            raise PermissionDenied("You already sent a request for this property.")
+        if not property_obj.is_approved or property_obj.is_rejected:
+            raise PermissionDenied("This property is not available for requests.")
+
+        if not property_obj.is_available or property_obj.vacancy_count <= 0:
+            raise PermissionDenied("This property is currently full or unavailable.")
+
+        if RentRequest.objects.filter(
+            bachelor=user,
+            property=property_obj,
+            status__in=["pending", "accepted"]
+        ).exists():
+            raise PermissionDenied("You already have an active request for this property.")
 
         serializer.save(
             bachelor=user,
-            owner=property.owner,
-            property=property,
+            owner=property_obj.owner,
+            property=property_obj,
             status="pending"
         )
-        
+
+        Notification.objects.create(
+            user=property_obj.owner,
+            message=f"{user.username} sent a rent request for {property_obj.title}."
+        )
+
+
 class UpdateRentRequestStatusView(generics.UpdateAPIView):
-    queryset = RentRequest.objects.all()
+    queryset = RentRequest.objects.select_related('property', 'bachelor', 'owner')
     serializer_class = RentRequestSerializer
     permission_classes = [IsAuthenticated]
 
+    @transaction.atomic
     def update(self, request, *args, **kwargs):
         rent_request = self.get_object()
 
@@ -56,27 +77,48 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
             )
 
         new_status = request.data.get("status")
+        old_status = rent_request.status
 
-        if new_status not in ["accepted", "rejected"]:
+        if new_status not in ["accepted", "rejected", "cancelled"]:
             return Response(
                 {"detail": "Invalid status"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        property_obj = rent_request.property
+
+        if new_status == "accepted" and old_status != "accepted":
+            if not property_obj.is_available or property_obj.vacancy_count <= 0:
+                return Response(
+                    {"detail": "No vacancy left for this property."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            property_obj.occupied_seats += 1
+            sync_property_capacity(property_obj)
+
+        if old_status == "accepted" and new_status != "accepted":
+            property_obj.occupied_seats = max(property_obj.occupied_seats - 1, 0)
+            sync_property_capacity(property_obj)
+
         rent_request.status = new_status
-        rent_request.save()
+        rent_request.save(update_fields=['status'])
 
-        # ✅ If accepted, reject all other pending requests
-        if new_status == "accepted":
-            RentRequest.objects.filter(
-                property=rent_request.property,
+        if property_obj.vacancy_count == 0:
+            pending_requests = RentRequest.objects.filter(
+                property=property_obj,
                 status="pending"
-            ).exclude(id=rent_request.id).update(status="rejected")
+            ).exclude(id=rent_request.id)
+            pending_bachelors = [req.bachelor for req in pending_requests.select_related('bachelor')]
+            pending_requests.update(status="rejected")
+            for bachelor in pending_bachelors:
+                Notification.objects.create(
+                    user=bachelor,
+                    message=f"{property_obj.title} is now full, so your pending request was rejected."
+                )
 
-        # ✅ Send notification
         Notification.objects.create(
             user=rent_request.bachelor,
-            message=f"Your rent request has been {new_status}."
+            message=f"Your rent request for {property_obj.title} has been {new_status}."
         )
 
         return Response(
@@ -92,8 +134,9 @@ class BachelorRequestListView(generics.ListAPIView):
     def get_queryset(self):
         return RentRequest.objects.filter(
             bachelor=self.request.user
-        ).select_related('property', 'bachelor', 'owner')
-    
+        ).select_related('property', 'property__owner', 'bachelor', 'owner')
+
+
 class OwnerRequestListView(generics.ListAPIView):
     serializer_class = RentRequestSerializer
     permission_classes = [IsAuthenticated]
@@ -101,19 +144,22 @@ class OwnerRequestListView(generics.ListAPIView):
     def get_queryset(self):
         return RentRequest.objects.filter(
             owner=self.request.user
-        ).select_related('property', 'bachelor', 'owner')
+        ).select_related('property', 'property__owner', 'bachelor', 'owner')
 
 
 class AdminRentRequestListView(generics.ListAPIView):
-    """Admin view to see all rent requests"""
     serializer_class = RentRequestSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        # Only staff/admin users can access this
         if not (self.request.user.is_staff or self.request.user.role == "admin"):
             raise PermissionDenied("Only admins can access this resource")
-        return RentRequest.objects.all().select_related('property', 'bachelor', 'owner').order_by('-created_at')
+        return RentRequest.objects.all().select_related(
+            'property',
+            'property__owner',
+            'bachelor',
+            'owner',
+        )
 
     def list(self, request, *args, **kwargs):
         if not (request.user.is_staff or request.user.role == "admin"):
@@ -124,8 +170,8 @@ class AdminRentRequestListView(generics.ListAPIView):
         return super().list(request, *args, **kwargs)
 
 
-class DeleteRentRequestView(DestroyAPIView):
-    queryset = RentRequest.objects.all()
+class DeleteRentRequestView(generics.DestroyAPIView):
+    queryset = RentRequest.objects.select_related('property', 'bachelor', 'owner')
     permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
@@ -133,4 +179,10 @@ class DeleteRentRequestView(DestroyAPIView):
             self.request.user.is_staff or self.request.user.role == "admin"
         ):
             raise PermissionDenied("You can only delete your own request")
+
+        if instance.status == 'accepted':
+            property_obj = instance.property
+            property_obj.occupied_seats = max(property_obj.occupied_seats - 1, 0)
+            sync_property_capacity(property_obj)
+
         instance.delete()

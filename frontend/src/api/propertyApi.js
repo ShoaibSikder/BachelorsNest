@@ -3,6 +3,10 @@ import api from "./axios";
 // Get all approved properties (public)
 export const getApprovedProperties = () => api.get("properties/approved/");
 
+export const getSavedProperties = () => api.get("properties/saved/");
+
+export const toggleWishlist = (id) => api.post(`properties/${id}/wishlist/`);
+
 // Get all properties of the logged-in owner
 export const getOwnerProperties = () => api.get("properties/owner/");
 

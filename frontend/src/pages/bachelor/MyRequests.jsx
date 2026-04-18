@@ -53,6 +53,8 @@ const MyRequests = () => {
         return "text-green-500";
       case "rejected":
         return "text-red-500";
+      case "cancelled":
+        return "text-slate-500";
       default:
         return "text-yellow-500";
     }

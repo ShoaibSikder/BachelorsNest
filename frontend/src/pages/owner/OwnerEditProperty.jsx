@@ -11,8 +11,12 @@ const OwnerEditProperty = () => {
     title: "",
     location: "",
     rent: "",
-    property_type: "flat", // default value
+    property_type: "flat",
     description: "",
+    available_from: "",
+    is_available: true,
+    total_seats: 1,
+    occupied_seats: 0,
   });
 
   const [images, setImages] = useState([]);
@@ -35,6 +39,10 @@ const OwnerEditProperty = () => {
           rent: data.rent,
           property_type: data.property_type,
           description: data.description,
+          available_from: data.available_from || "",
+          is_available: data.is_available,
+          total_seats: data.total_seats ?? 1,
+          occupied_seats: data.occupied_seats ?? 0,
         });
 
         // If property has existing images
@@ -51,8 +59,18 @@ const OwnerEditProperty = () => {
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    const nextFormData = {
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    };
+
+    if (name === "property_type" && value === "flat") {
+      nextFormData.total_seats = 1;
+      nextFormData.occupied_seats = 0;
+    }
+
+    setFormData(nextFormData);
   };
 
   const handleImageChange = (e) => {
@@ -81,6 +99,12 @@ const OwnerEditProperty = () => {
     data.append("rent", formData.rent);
     data.append("property_type", formData.property_type);
     data.append("description", formData.description);
+    data.append("available_from", formData.available_from);
+    data.append("is_available", formData.is_available);
+    if (formData.property_type === "seat") {
+      data.append("total_seats", formData.total_seats);
+      data.append("occupied_seats", formData.occupied_seats);
+    }
 
     // Handle images
     if (replaceImages) {
@@ -173,6 +197,57 @@ const OwnerEditProperty = () => {
             required
           />
         </div>
+
+        <div>
+          <label className="block text-sm font-medium">Available From</label>
+          <input
+            type="date"
+            name="available_from"
+            value={formData.available_from}
+            onChange={handleChange}
+            className="w-full p-2 rounded border border-gray-300"
+          />
+        </div>
+
+        {formData.property_type === "seat" && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium">Total Seats</label>
+              <input
+                type="number"
+                min="1"
+                name="total_seats"
+                value={formData.total_seats}
+                onChange={handleChange}
+                className="w-full p-2 rounded border border-gray-300"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium">Occupied Seats</label>
+              <input
+                type="number"
+                min="0"
+                name="occupied_seats"
+                value={formData.occupied_seats}
+                onChange={handleChange}
+                className="w-full p-2 rounded border border-gray-300"
+                required
+              />
+            </div>
+          </div>
+        )}
+
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            name="is_available"
+            checked={formData.is_available}
+            onChange={handleChange}
+          />
+          Property is currently available
+        </label>
 
         <div>
           <label className="block text-sm font-medium">Images</label>

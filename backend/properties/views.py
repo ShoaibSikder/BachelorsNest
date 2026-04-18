@@ -1,40 +1,44 @@
-from rest_framework import generics
+from django.core.exceptions import PermissionDenied
+from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
-from .models import Property
-from .serializers import PropertySerializer, PropertyCreateUpdateSerializer
-from accounts.permissions import IsOwner, IsAdmin, IsOwnerOrAdmin
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from accounts.permissions import IsAdmin, IsOwner, IsOwnerOrAdmin
 from notifications.models import Notification
-from .models import PropertyImage
 
-# Owner: Add property with images
+from .models import Property, PropertyImage, Wishlist
+from .serializers import PropertyCreateUpdateSerializer, PropertySerializer
+
+
+def property_queryset():
+    return Property.objects.select_related('owner').prefetch_related(
+        'wishlists',
+        Prefetch('images', queryset=PropertyImage.objects.order_by('uploaded_at'))
+    )
+
+
 class PropertyCreateView(generics.CreateAPIView):
-    serializer_class = PropertySerializer
+    serializer_class = PropertyCreateUpdateSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+    parser_classes = [MultiPartParser, FormParser]
 
-    def perform_create(self, serializer):
-        property_instance = serializer.save(owner=self.request.user)
 
-        images = self.request.FILES.getlist('images')
-
-        for img in images:
-            PropertyImage.objects.create(property=property_instance, image=img)
-
-# Owner: List own properties
 class OwnerPropertyListView(generics.ListAPIView):
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Property.objects.filter(owner=self.request.user)
+        return property_queryset().filter(owner=self.request.user)
 
 
-# Owner/Admin: Update or Delete property
 class PropertyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Property.objects.all()
+    queryset = property_queryset()
     permission_classes = [IsAuthenticated, IsOwnerOrAdmin]
-    parser_classes = [MultiPartParser, FormParser]  # handle images
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -45,36 +49,40 @@ class PropertyUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
         serializer.save()
 
 
-# view all properties for admin
 class AdminPropertyListView(generics.ListAPIView):
-    queryset = Property.objects.all().order_by('-created_at')
+    queryset = property_queryset()
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
-# Admin: Approve property
+
 class PropertyApproveView(generics.UpdateAPIView):
-    queryset = Property.objects.all()
+    queryset = property_queryset()
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def perform_update(self, serializer):
-        property_obj = serializer.save(is_approved=True)
+        property_obj = serializer.save(is_approved=True, is_rejected=False)
         Notification.objects.create(
             user=property_obj.owner,
             message="Your property has been approved by admin."
         )
 
+
 class PropertyRejectView(generics.UpdateAPIView):
-    queryset = Property.objects.all()
+    queryset = property_queryset()
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
     def perform_update(self, serializer):
         property_obj = serializer.save(is_rejected=True, is_approved=False)
-        
-# Admin: Revert approved/rejected property to pending
+        Notification.objects.create(
+            user=property_obj.owner,
+            message="Your property has been rejected by admin."
+        )
+
+
 class PropertyRevertPendingView(generics.UpdateAPIView):
-    queryset = Property.objects.all()
+    queryset = property_queryset()
     serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated, IsAdmin]
 
@@ -84,11 +92,58 @@ class PropertyRevertPendingView(generics.UpdateAPIView):
             user=property_obj.owner,
             message="Your property has been reverted to pending by admin."
         )
-        
-# Public: View approved properties
+
+
 class PropertyListView(generics.ListAPIView):
     serializer_class = PropertySerializer
     permission_classes = []
 
     def get_queryset(self):
-        return Property.objects.filter(is_approved=True)
+        queryset = property_queryset().filter(is_approved=True, is_rejected=False)
+        availability = self.request.query_params.get('available')
+        if availability == 'true':
+            queryset = queryset.filter(is_available=True)
+        return queryset
+
+
+class WishlistToggleView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        if request.user.role != 'bachelor':
+            raise PermissionDenied("Only bachelors can save properties.")
+
+        property_obj = get_object_or_404(
+            Property.objects.filter(is_approved=True, is_rejected=False),
+            pk=pk
+        )
+        wishlist, created = Wishlist.objects.get_or_create(
+            bachelor=request.user,
+            property=property_obj
+        )
+
+        if created:
+            Notification.objects.create(
+                user=property_obj.owner,
+                message=f"{request.user.username} saved your property to their wishlist."
+            )
+            return Response(
+                {"saved": True, "detail": "Property saved to wishlist."},
+                status=status.HTTP_201_CREATED
+            )
+
+        wishlist.delete()
+        return Response({"saved": False, "detail": "Property removed from wishlist."})
+
+
+class SavedPropertyListView(generics.ListAPIView):
+    serializer_class = PropertySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.role != 'bachelor':
+            raise PermissionDenied("Only bachelors can access saved properties.")
+
+        return property_queryset().filter(
+            wishlists__bachelor=self.request.user
+        ).distinct()

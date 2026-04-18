@@ -10,4 +10,4 @@ export const getOwnerRequests = () => api.get("rentals/owner/");
 export const updateRentRequestStatus = (id, status) =>
   api.patch(`rentals/update/${id}/`, { status });
 
-export const cancelRentRequest = (id) => api.delete(`/rentals/delete/${id}/`);
+export const cancelRentRequest = (id) => api.delete(`rentals/delete/${id}/`);
