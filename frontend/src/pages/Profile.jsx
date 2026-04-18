@@ -13,6 +13,11 @@ const Profile = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    first_name: "",
+    last_name: "",
+    phone_number: "",
+    address: "",
+    bio: "",
   });
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState("");
@@ -32,6 +37,11 @@ const Profile = () => {
         setFormData({
           username: user.username || "",
           email: user.email || "",
+          first_name: user.first_name || "",
+          last_name: user.last_name || "",
+          phone_number: user.phone_number || "",
+          address: user.address || "",
+          bio: user.bio || "",
         });
         setPreview(user.profile_image ? getImageUrl(user.profile_image) : "");
         setProfileImage(null);
@@ -46,6 +56,11 @@ const Profile = () => {
         setFormData({
           username: response.data.username || "",
           email: response.data.email || "",
+          first_name: response.data.first_name || "",
+          last_name: response.data.last_name || "",
+          phone_number: response.data.phone_number || "",
+          address: response.data.address || "",
+          bio: response.data.bio || "",
         });
         setPreview(
           response.data.profile_image
@@ -86,6 +101,11 @@ const Profile = () => {
       const data = new FormData();
       data.append("username", formData.username);
       data.append("email", formData.email);
+      data.append("first_name", formData.first_name);
+      data.append("last_name", formData.last_name);
+      data.append("phone_number", formData.phone_number);
+      data.append("address", formData.address);
+      data.append("bio", formData.bio);
       if (profileImage) {
         data.append("profile_image", profileImage);
       }
@@ -127,14 +147,31 @@ const Profile = () => {
           </div>
           <div className="min-w-0">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-              {displayUser.username}
+              {[displayUser.first_name, displayUser.last_name]
+                .filter(Boolean)
+                .join(" ") || displayUser.username}
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 capitalize">
-              {displayUser.role}
+              {displayUser.role} • @{displayUser.username}
             </p>
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               {displayUser.email}
             </p>
+            {displayUser.phone_number && (
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {displayUser.phone_number}
+              </p>
+            )}
+            {displayUser.address && (
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                {displayUser.address}
+              </p>
+            )}
+            {displayUser.bio && (
+              <p className="mt-3 max-w-2xl text-sm text-slate-600 dark:text-slate-300">
+                {displayUser.bio}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -179,6 +216,30 @@ const Profile = () => {
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                  First Name
+                </label>
+                <input
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
+                  className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Last Name
+                </label>
+                <input
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
+                  className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
                   Username
                 </label>
                 <input
@@ -203,6 +264,43 @@ const Profile = () => {
                   required
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Phone Number
+                </label>
+                <input
+                  name="phone_number"
+                  value={formData.phone_number}
+                  onChange={handleChange}
+                  className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                  Address
+                </label>
+                <input
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                Bio
+              </label>
+              <textarea
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
+                rows={4}
+                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              />
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -238,6 +336,17 @@ const Profile = () => {
           <div className="grid gap-5 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                Full Name
+              </label>
+              <div className="mt-2 rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+                {[displayUser.first_name, displayUser.last_name]
+                  .filter(Boolean)
+                  .join(" ") || "Not provided"}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
                 Username
               </label>
               <div className="mt-2 rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
@@ -252,6 +361,33 @@ const Profile = () => {
               <div className="mt-2 rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
                 {displayUser.email}
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                Phone Number
+              </label>
+              <div className="mt-2 rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+                {displayUser.phone_number || "Not provided"}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                Address
+              </label>
+              <div className="mt-2 rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white">
+                {displayUser.address || "Not provided"}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+              Bio
+            </label>
+            <div className="mt-2 rounded-2xl border border-slate-300 bg-slate-50 p-3 text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-white whitespace-pre-wrap">
+              {displayUser.bio || "No bio added yet."}
             </div>
           </div>
         </div>

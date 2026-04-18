@@ -1,7 +1,16 @@
 import Loader from "./Loader";
 
-const getImageUrl = (image) =>
-  image?.startsWith("http") ? image : `http://127.0.0.1:8000${image}`;
+const getImageUrl = (image) => {
+  if (!image) {
+    return "";
+  }
+
+  if (image.startsWith("http")) {
+    return image;
+  }
+
+  return `http://127.0.0.1:8000/${image.replace(/^\/+/, "")}`;
+};
 
 const ChatList = ({
   users = [],
@@ -14,6 +23,11 @@ const ChatList = ({
   const sortedUsers = [...users].sort((a, b) => {
     return new Date(b.last_timestamp || 0) - new Date(a.last_timestamp || 0);
   });
+
+  const getDisplayName = (user) => {
+    const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
+    return fullName || user?.username || "Unknown User";
+  };
 
   return (
     <div className="w-1/3 border-r border-gray-300 dark:border-gray-700 overflow-y-auto">
@@ -63,13 +77,23 @@ const ChatList = ({
               {/* ✅ User Info */}
               <div className="flex flex-col overflow-hidden">
                 <span className="text-gray-800 dark:text-white truncate">
-                  {user?.username || "Unknown User"}
+                  {getDisplayName(user)}
                 </span>
 
-                {/* Optional: show last message */}
+                <span className="text-xs text-gray-500 dark:text-gray-400 truncate capitalize">
+                  {user?.role || "user"}
+                  {user?.phone_number ? ` • ${user.phone_number}` : ""}
+                </span>
+
                 {user?.last_message && (
                   <span className="text-sm text-gray-500 truncate">
                     {user.last_message}
+                  </span>
+                )}
+
+                {!user?.last_message && user?.bio && (
+                  <span className="text-sm text-gray-500 truncate">
+                    {user.bio}
                   </span>
                 )}
               </div>

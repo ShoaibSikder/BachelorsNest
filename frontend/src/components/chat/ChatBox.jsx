@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getConversation } from "../../api/chatApi";
+import API_BASE_URL from "../../config";
 
 const ChatBox = ({ activeUser, currentUser }) => {
   const [messages, setMessages] = useState([]);
@@ -32,8 +33,10 @@ const ChatBox = ({ activeUser, currentUser }) => {
     fetchMessages();
 
     const token = localStorage.getItem("access_token");
+    const backendUrl = new URL(API_BASE_URL);
+    const wsProtocol = backendUrl.protocol === "https:" ? "wss:" : "ws:";
     const ws = new WebSocket(
-      `ws://127.0.0.1:8000/ws/chat/${activeUser.id}/?token=${token}`,
+      `${wsProtocol}//${backendUrl.host}/ws/chat/${activeUser.id}/?token=${token}`,
     );
 
     ws.onopen = () => setWsConnected(true);

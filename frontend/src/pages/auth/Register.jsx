@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../api/authApi";
 import { useTheme } from "../../context/ThemeContext";
@@ -17,8 +17,40 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [errorList, setErrorList] = useState([]);
 
-  // Dark mode toggle is now handled by ThemeContext
+  const normalizeErrors = (data) => {
+    if (!data) {
+      return ["Registration failed."];
+    }
+
+    if (typeof data === "string") {
+      return [data];
+    }
+
+    if (Array.isArray(data)) {
+      return data.filter(Boolean);
+    }
+
+    const messages = [];
+
+    ["username", "email", "password", "role", "detail", "error"].forEach(
+      (field) => {
+        const value = data[field];
+        if (!value) {
+          return;
+        }
+
+        if (Array.isArray(value)) {
+          messages.push(...value.filter(Boolean));
+        } else if (typeof value === "string") {
+          messages.push(value);
+        }
+      },
+    );
+
+    return messages.length ? [...new Set(messages)] : ["Registration failed."];
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -30,22 +62,16 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setErrorList([]);
     setLoading(true);
 
     try {
       await registerUser(formData);
       navigate("/");
     } catch (err) {
-      // Handle specific validation errors from backend
-      if (err.response?.data?.email) {
-        setError(err.response.data.email[0] || "Email already exists");
-      } else if (err.response?.data?.detail) {
-        setError(err.response.data.detail);
-      } else if (err.response?.data?.error) {
-        setError(err.response.data.error);
-      } else {
-        setError("Registration failed ❌");
-      }
+      const messages = normalizeErrors(err.response?.data);
+      setError(messages[0] || "Registration failed.");
+      setErrorList(messages);
       console.error("Registration error:", err.response?.data || err.message);
     } finally {
       setLoading(false);
@@ -54,7 +80,6 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex dark:bg-gray-900 transition">
-      {/* LEFT SIDE */}
       <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white items-center justify-center">
         <div className="text-center px-10 space-y-4">
           <img
@@ -64,24 +89,21 @@ const Register = () => {
           />
           <h1 className="text-5xl font-extrabold">BachelorsNest</h1>
           <p className="text-lg opacity-90">
-            Create your account and start your journey 🚀
+            Create your account and start your journey
           </p>
         </div>
       </div>
 
-      {/* RIGHT SIDE */}
       <div className="w-full md:w-1/2 flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
         <form
           onSubmit={handleSubmit}
           className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-5"
         >
-          {/* Header */}
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
               Register
             </h2>
 
-            {/* Dark mode toggle */}
             <button
               type="button"
               onClick={toggleDarkMode}
@@ -94,20 +116,26 @@ const Register = () => {
                 }`}
               >
                 <span className="absolute inset-0 flex items-center justify-center text-xs">
-                  {darkMode ? "☀️" : "🌙"}
+                  {darkMode ? "L" : "D"}
                 </span>
               </div>
             </button>
           </div>
 
-          {/* Error */}
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
-              {error}
+              {errorList.length > 1 ? (
+                <ul className="list-disc space-y-1 pl-5">
+                  {errorList.map((message) => (
+                    <li key={message}>{message}</li>
+                  ))}
+                </ul>
+              ) : (
+                error
+              )}
             </div>
           )}
 
-          {/* Username */}
           <input
             type="text"
             name="username"
@@ -118,7 +146,6 @@ const Register = () => {
             required
           />
 
-          {/* Email */}
           <input
             type="email"
             name="email"
@@ -129,7 +156,6 @@ const Register = () => {
             required
           />
 
-          {/* Password */}
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -145,11 +171,10 @@ const Register = () => {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-3 cursor-pointer text-sm text-gray-500 dark:text-gray-300"
             >
-              {showPassword ? "🙈" : "👁️"}
+              {showPassword ? "Hide" : "Show"}
             </span>
           </div>
 
-          {/* Role */}
           <select
             name="role"
             className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
@@ -160,7 +185,6 @@ const Register = () => {
             <option value="owner">Owner</option>
           </select>
 
-          {/* Button */}
           <button
             type="submit"
             disabled={loading}
@@ -173,7 +197,6 @@ const Register = () => {
             )}
           </button>
 
-          {/* Footer */}
           <p className="text-center text-sm text-gray-600 dark:text-gray-300">
             Already have an account?{" "}
             <span
