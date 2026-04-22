@@ -14,13 +14,20 @@ const AdminReports = () => {
       setError(null);
 
       try {
-        const [usersResponse, propertiesResponse, rentalsResponse] =
+        const [
+          dashboardResponse,
+          usersResponse,
+          propertiesResponse,
+          rentalsResponse,
+        ] =
           await Promise.all([
+            api.get("accounts/admin-dashboard/"),
             api.get("accounts/admin/users/"),
             getAllProperties(),
             api.get(API_ENDPOINTS.RENTALS_ADMIN),
           ]);
 
+        const dashboard = dashboardResponse.data || {};
         const users = usersResponse.data || [];
         const properties = propertiesResponse.data || [];
         const rentals = rentalsResponse.data || [];
@@ -35,34 +42,33 @@ const AdminReports = () => {
           return joined && joined >= sevenDaysAgo;
         }).length;
 
-        const activeProperties = properties.filter(
-          (property) => property.is_approved,
-        ).length;
-        const pendingProperties = properties.filter(
-          (property) => !property.is_approved && !property.is_rejected,
-        ).length;
+        const activeProperties =
+          dashboard.total_properties - dashboard.pending_properties;
         const rejectedProperties = properties.filter(
           (property) => property.is_rejected,
         ).length;
 
-        const totalRequests = rentals.length;
-        const approvedRentals = rentals.filter(
-          (request) => request.status === "accepted",
-        ).length;
         const totalWishlistSaves = properties.reduce(
           (sum, property) => sum + (property.saved_count || 0),
           0,
         );
 
         setStats({
-          totalUsers,
-          activeUsers,
+          totalUsers: dashboard.total_users ?? totalUsers,
+          activeUsers: dashboard.active_users ?? activeUsers,
           newRegistrations,
+          totalProperties: dashboard.total_properties ?? properties.length,
           activeProperties,
-          pendingProperties,
+          pendingProperties:
+            dashboard.pending_properties ??
+            properties.filter(
+              (property) => !property.is_approved && !property.is_rejected,
+            ).length,
           rejectedProperties,
-          totalRequests,
-          approvedRentals,
+          totalRequests: dashboard.total_requests ?? rentals.length,
+          approvedRentals:
+            dashboard.approved_requests ??
+            rentals.filter((request) => request.status === "accepted").length,
           totalWishlistSaves,
         });
       } catch (err) {
@@ -95,12 +101,13 @@ const AdminReports = () => {
   const cards = [
     { title: "Total Users", value: stats.totalUsers },
     { title: "Active Users", value: stats.activeUsers },
-    { title: "New Registrations (7d)", value: stats.newRegistrations },
-    { title: "Active Properties", value: stats.activeProperties },
+    { title: "Total Properties", value: stats.totalProperties },
     { title: "Pending Properties", value: stats.pendingProperties },
-    { title: "Rejected Properties", value: stats.rejectedProperties },
     { title: "Total Rental Requests", value: stats.totalRequests },
     { title: "Approved Rentals", value: stats.approvedRentals },
+    { title: "New Registrations (7d)", value: stats.newRegistrations },
+    { title: "Active Properties", value: stats.activeProperties },
+    { title: "Rejected Properties", value: stats.rejectedProperties },
     { title: "Wishlist Saves", value: stats.totalWishlistSaves },
   ];
 
@@ -109,7 +116,8 @@ const AdminReports = () => {
       <div className="mb-8">
         <h2 className="text-3xl font-bold mb-2">Reports & Analytics</h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Overview of users, properties, and rental activity.
+          Dashboard overview plus detailed admin analytics for users,
+          properties, and rental activity.
         </p>
       </div>
 

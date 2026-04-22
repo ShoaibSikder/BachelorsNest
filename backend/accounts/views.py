@@ -306,6 +306,32 @@ class SecuritySettingsView(APIView):
             cutoff = timezone.now() - timedelta(days=settings_obj.audit_retention_days)
             SystemLog.objects.filter(timestamp__lt=cutoff).delete()
 
+
+class AdminDashboardView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    def get(self, request):
+        try:
+            data = {
+                "total_users": User.objects.count(),
+                "active_users": User.objects.filter(is_active=True).count(),
+                "total_properties": Property.objects.count(),
+                "pending_properties": Property.objects.filter(
+                    is_approved=False,
+                    is_rejected=False,
+                ).count(),
+                "total_requests": RentRequest.objects.count(),
+                "approved_requests": RentRequest.objects.filter(
+                    status='accepted'
+                ).count(),
+            }
+        except Exception as e:
+            print("Admin dashboard error:", e)
+            return Response({"error": "Failed to fetch admin dashboard"}, status=500)
+
+        return Response(data)
+
+
 class OwnerDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 

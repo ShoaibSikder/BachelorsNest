@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    OwnerDashboardView, RegisterView, ProfileView, UserDetailView, LogoutView,
+    AdminDashboardView, OwnerDashboardView, RegisterView, ProfileView, UserDetailView, LogoutView,
     AdminUserListView, AdminUserAddView, AdminUserDetailView,
     AdminUserBanToggleView, AdminUserRoleChangeView, UserLogsView,
     SecuritySettingsView,
@@ -14,6 +14,7 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('users/<int:pk>/', UserDetailView.as_view(), name='user-detail'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('admin-dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
     path('owner-dashboard/', OwnerDashboardView.as_view(), name='owner-dashboard'),
 
     # Password Reset
