@@ -82,66 +82,64 @@
 
 ## 🚀 Features
 
-### 👤 Authentication & Roles
+---
 
-<div style="display: flex; gap: 10px; flex-wrap: wrap;">
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>JWT Authentication</h4>
-<p>Secure login and registration using JWT tokens.</p>
-</div>
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>Role-Based Access</h4>
-<ul>
-<li>🧑‍🎓 Bachelor</li>
-<li>🏠 Owner</li>
-<li>🛠️ Admin</li>
-</ul>
-</div>
-</div>
+<details>
+<summary>👤 Authentication & Roles</summary>
+
+- 🔐 JWT Authentication (secure login & registration)
+- 🧑‍🎓 Bachelor role
+- 🏠 Owner role
+- 🛠️ Admin role with full control
+
+</details>
 
 ---
 
-### 🧑‍🎓 Bachelor Features
+<details>
+<summary>🧑‍🎓 Bachelor Features</summary>
 
-<div style="display: flex; gap: 10px; flex-wrap: wrap;">
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>Browse Properties</h4>
-<p>View approved properties with detailed descriptions & image grids.</p>
-</div>
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>Rent Requests</h4>
-<p>Send, track, and cancel requests. Status: Pending / Accepted / Rejected.</p>
-</div>
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>Chat</h4>
-<p>Real-time messaging with property owners for faster communication.</p>
-</div>
-</div>
+- 📌 Browse approved properties with details & images  
+- 📝 Send, track, and cancel rent requests  
+- 💬 Real-time chat with property owners  
+- 📊 Request status tracking (Pending / Accepted / Rejected)
+
+</details>
 
 ---
 
-### 🏠 Owner Features
+<details>
+<summary>🏠 Owner Features</summary>
 
-<div style="display: flex; gap: 10px; flex-wrap: wrap;">
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>Property Management</h4>
-<p>Add, edit, delete, and view all properties.</p>
-</div>
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>Rent Requests</h4>
-<p>Accept or reject tenant requests directly from the dashboard.</p>
-</div>
-<div style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-<h4>Chat</h4>
-<p>One-to-one messaging with interested tenants in real-time.</p>
-</div>
-</div>
+- 🏡 Add, edit, and manage properties  
+- 📥 View and manage rent requests  
+- ✅ Accept or reject tenant requests  
+- 💬 Real-time chat with tenants  
+
+</details>
 
 ---
 
-### 🔔 Notifications (Planned)
+<details>
+<summary>🛠️ Admin Features</summary>
 
-* Real-time notifications for request status changes and new messages.
+- 🧾 Approve or reject property listings  
+- 👥 Manage users and roles  
+- 📊 Monitor platform activities  
+- 🔧 Full system control  
+
+</details>
+
+---
+
+<details>
+<summary>🔔 Notifications (Planned)</summary>
+
+- 📩 Real-time updates for rent requests  
+- 💬 Message notifications  
+- 📢 System alerts for important actions  
+
+</details>
 
 ---
 
@@ -191,65 +189,88 @@ BachelorNest/
 
 ## ⚙️ Installation & Setup
 
+---
+
 <details>
-<summary>Clone Repository</summary>
+<summary>📥 Clone Repository</summary>
 
-```bash
-git clone https://github.com/ShoaibSikder/BachelorsNest.git
-
-#then go to Project Root folder
-cd BachelorNest
-```
+| Step | Command |
+|------|--------|
+| Clone repo | `git clone https://github.com/ShoaibSikder/BachelorsNest.git` |
+| Go to project | `cd BachelorsNest` |
 
 </details>
 
+---
+
 <details>
-<summary>Backend Setup (Django)</summary>
+<summary>🛠️ Backend Setup (Django)</summary>
 
-```bash
-#go to Backend folder
-cd backend
+### ⚡ Environment Setup
 
-#install vertual enviroment
-python -m venv venv
-venv\Scripts\activate  # Windows
-source venv/bin/activate  # macOS/Linux
+| Step | Command |
+|------|--------|
+| Go to backend | `cd backend` |
+| Create virtual env | `python -m venv venv` |
+| Activate (Windows) | `venv\Scripts\activate` |
+| Activate (Linux/macOS) | `source venv/bin/activate` |
 
-#install required dependencies
-pip install -r requirements.txt
+---
 
-# Migrations
-python manage.py makemigrations
-python manage.py migrate
+### 📦 Install & Configure
 
-# Create superuser
-python manage.py createsuperuser
+| Step | Command |
+|------|--------|
+| Install dependencies | `pip install -r requirements.txt` |
+| Make migrations | `python manage.py makemigrations` |
+| Apply migrations | `python manage.py migrate` |
+| Create superuser | `python manage.py createsuperuser` |
 
-# Run server
-python manage.py runserver
+---
 
-# Optional: Use Daphne for WebSockets
-python -m daphne backend.asgi:application
-```
+### ▶️ Run Server
+
+| Step | Command |
+|------|--------|
+| Start server | `python manage.py runserver` |
+
+---
+
+### ⚡ Optional (WebSocket - Daphne)
+
+| Step | Command |
+|------|--------|
+| Run with Daphne | `python -m daphne backend.asgi:application` |
 
 </details>
 
+---
+
 <details>
-<summary>Frontend Setup (React)</summary>
+<summary>💻 Frontend Setup (React + Vite)</summary>
 
-```bash
-#go to Frontend folder
-cd frontend
+### 📦 Setup
 
-#install frontend dependencies
-npm install
+| Step | Command |
+|------|--------|
+| Go to frontend | `cd frontend` |
+| Install packages | `npm install` |
 
-#run Frontend
-npm run dev
-```
+---
 
-* Default URL: `http://localhost:5173`
-* .env Example:
+### ▶️ Run App
+
+| Step | Command |
+|------|--------|
+| Start dev server | `npm run dev` |
+
+- 🌐 Default URL: `http://localhost:5173`
+
+---
+
+### 🔑 Environment Variables
+
+Create a `.env` file in the **frontend** directory:
 
 ```env
 VITE_API_URL=http://127.0.0.1:8000/api
@@ -262,56 +283,100 @@ VITE_API_URL=http://127.0.0.1:8000/api
 ## 🔗 Backend APIs
 
 <details>
-<summary>Authentication</summary>
-- `POST /api/accounts/register/` – Register user  
-- `POST /api/token/` – Login user (JWT)  
+<summary>🔐 Authentication</summary>
+
+| Method | Endpoint                  | Description       |
+|--------|---------------------------|-------------------|
+| POST   | /api/accounts/register/   | Register user     |
+| POST   | /api/token/               | Login user (JWT)  |
+
 </details>
 
-<details>
-<summary>Properties</summary>
-- `GET /api/properties/approved/` – Approved properties  
-- `POST /api/properties/add/` – Add property  
-- `POST /api/properties/upload-images/` – Upload property images  
-- `GET /api/properties/owner/` – Owner properties  
-- `PATCH /api/properties/approve/<id>/` – Admin approve property  
-</details>
+---
 
 <details>
-<summary>Rentals</summary>
-- `POST /api/rentals/request/` – Send rent request  
-- `GET /api/rentals/bachelor/` – Bachelor requests  
-- `GET /api/rentals/owner/` – Owner requests  
-- `PATCH /api/rentals/update/<id>/` – Update request status  
+<summary>🏠 Properties</summary>
+
+| Method | Endpoint                               | Description              |
+|--------|----------------------------------------|--------------------------|
+| GET    | /api/properties/approved/              | Approved properties      |
+| POST   | /api/properties/add/                   | Add property             |
+| POST   | /api/properties/upload-images/         | Upload property images   |
+| GET    | /api/properties/owner/                 | Owner properties         |
+| PATCH  | /api/properties/approve/&lt;id&gt;/    | Admin approve property   |
+
 </details>
 
+---
+
 <details>
-<summary>Chat & Notifications</summary>
-- `POST /api/messages/send/` – Send message  
-- `GET /api/messages/conversation/` – Get conversation  
-- `GET /api/messages/unread-count/` – Unread message count  
-- `GET /api/notifications/` – Get notifications  
-- `PATCH /api/notifications/read/` – Mark notifications read  
+<summary>📄 Rentals</summary>
+
+| Method | Endpoint                          | Description               |
+|--------|-----------------------------------|---------------------------|
+| POST   | /api/rentals/request/             | Send rent request         |
+| GET    | /api/rentals/bachelor/            | Bachelor requests         |
+| GET    | /api/rentals/owner/               | Owner requests            |
+| PATCH  | /api/rentals/update/&lt;id&gt;/   | Update request status     |
+
+</details>
+
+---
+
+<details>
+<summary>💬 Chat & Notifications</summary>
+
+| Method | Endpoint                              | Description                     |
+|--------|---------------------------------------|---------------------------------|
+| POST   | /api/messages/send/                   | Send message                    |
+| GET    | /api/messages/conversation/           | Get conversation                |
+| GET    | /api/messages/unread-count/           | Unread message count            |
+| GET    | /api/notifications/                   | Get notifications               |
+| PATCH  | /api/notifications/read/              | Mark notifications as read      |
+
 </details>
 
 ---
 
 ## 🧪 Future Improvements
 
-* Real-time notifications 🔔
-* Mobile responsiveness improvements 📱
-* Smart property recommendations 🧠
-* Property reviews & ratings ⭐
-* Admin analytics dashboard 📊
+<details>
+<summary>🚀 Planned Features</summary>
+
+- 💳 **Integrated Payments**  
+  Direct rent and booking fee processing via SSLCommerz or Stripe.
+
+- 📄 **Legal Automation**  
+  Digital rental agreements and e-contract generation.
+
+- 🗺️ **Map-Based Search**  
+  Google Maps API integration for accurate property discovery.
+
+- 🤖 **AI Recommendations**  
+  Smart suggestions based on user behavior and preferences.
+
+- 🏡 **Virtual Tours**  
+  360° property viewing support.
+
+- 🔐 **Identity Verification**  
+  National database/API integration for trust and security.
+
+</details>
 
 ---
 
 ## 👨‍💻 Authors & Contributors
 
+<details>
+<summary>👥 Team Members</summary>
+
 | Name              | GitHub                                                         |
-| ----------------- | -------------------------------------------------------------- |
+|-------------------|----------------------------------------------------------------|
 | Shoaib Sikder     | [@shoaibsikder](https://github.com/shoaibsikder)               |
 | Arnob Chakraborty | [@arnobchakraborty102](https://github.com/arnobchakraborty102) |
 | Sharmin1219       | [@Sharmin1219](https://github.com/Sharmin1219)                 |
+
+</details>
 
 ---
 
