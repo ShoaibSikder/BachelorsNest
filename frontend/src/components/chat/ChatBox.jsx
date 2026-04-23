@@ -149,7 +149,7 @@ const ChatBox = ({ activeUser, currentUser }) => {
           value={input}
           onChange={handleTyping}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-1 p-2 border rounded"
+          className="flex-1 p-2 border rounded bg-white text-black"
           placeholder="Type message..."
         />
         <button
