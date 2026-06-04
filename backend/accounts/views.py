@@ -1,3 +1,7 @@
+import json
+import os
+
+from django.conf import settings
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -16,8 +20,74 @@ from notifications.models import SystemLog
 
 from properties.models import Property  # your property model
 from rentals.models import RentRequest
+import requests
 
 User = get_user_model()
+
+
+def get_resend_setting(key, default=""):
+    value = getattr(settings, key, "") or os.environ.get(key, "")
+    if value:
+        return value
+
+    env_file = settings.BASE_DIR / ".env"
+    if not env_file.exists():
+        return default
+
+    for raw_line in env_file.read_text().splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        name, raw_value = line.split("=", 1)
+        name = name.strip().lstrip("\ufeff")
+        if name == key:
+            return raw_value.strip().strip('"').strip("'")
+    return default
+
+
+def send_password_reset_email(user, reset_url):
+    resend_api_key = get_resend_setting("RESEND_API_KEY")
+    resend_from_email = get_resend_setting("RESEND_FROM_EMAIL", "onboarding@resend.dev")
+    if not resend_api_key:
+        raise RuntimeError("Resend API key is not configured.")
+
+    payload = {
+        "from": resend_from_email,
+        "to": [user.email],
+        "subject": "Reset your BachelorsNest password",
+        "html": (
+            f"<p>Hello {user.username or 'there'},</p>"
+            "<p>Use the link below to reset your BachelorsNest password.</p>"
+            f'<p><a href="{reset_url}">Reset password</a></p>'
+            "<p>This link expires in 1 hour. If you did not request this, you can ignore this email.</p>"
+        ),
+    }
+
+    try:
+        response = requests.post(
+            "https://api.resend.com/emails",
+            data=json.dumps(payload),
+            headers={
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json",
+                "User-Agent": "BachelorsNest/1.0",
+            },
+            timeout=15,
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.Timeout as exc:
+        raise RuntimeError("Email service timed out. Please try again.") from exc
+    except requests.HTTPError as exc:
+        error_message = "Unable to send reset email."
+        try:
+            payload = exc.response.json()
+            error_message = payload.get("message") or payload.get("error") or error_message
+        except ValueError:
+            pass
+        raise RuntimeError(error_message) from exc
+    except requests.RequestException as exc:
+        raise RuntimeError("Email service is unavailable. Please try again later.") from exc
 
 
 # --------------------- Auth ---------------------
@@ -131,23 +201,24 @@ class PasswordResetRequestView(APIView):
     def post(self, request):
         serializer = PasswordResetRequestSerializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.validated_data['email']
+            email = serializer.validated_data['email'].lower()
             try:
-                # Use .filter().first() instead of .get() to handle potential duplicates
-                user = User.objects.filter(email=email).first()
+                user = User.objects.filter(email__iexact=email, is_active=True).first()
                 
                 if not user:
                     return Response({"detail": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
                 
-                # Create password reset token
+                PasswordResetToken.objects.filter(user=user).delete()
                 reset_token = PasswordResetToken.objects.create(user=user)
+                reset_url = f"{settings.FRONTEND_URL.rstrip('/')}/reset-password/{reset_token.token}"
+
+                try:
+                    send_password_reset_email(user, reset_url)
+                except RuntimeError as exc:
+                    return Response({"detail": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
                 
-                # Return success with token (in a real app, you'd send this via email)
                 return Response({
-                    "detail": "Email verified. You can now reset your password.",
-                    "token": str(reset_token.token),
-                    "username": user.username,
-                    "email": user.email
+                    "detail": "Password reset link has been sent to your email."
                 }, status=status.HTTP_200_OK)
             except Exception as e:
                 print(f"Unexpected error in password reset request: {e}")
@@ -163,17 +234,21 @@ class PasswordResetConfirmView(APIView):
     def post(self, request):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         if serializer.is_valid():
-            email = serializer.validated_data['email']
+            token_value = serializer.validated_data['token']
             new_password = serializer.validated_data['new_password']
             try:
-                user = User.objects.filter(email=email).first()
-                if not user:
-                    return Response({"detail": "User with this email does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+                reset_token = PasswordResetToken.objects.select_related("user").get(token=token_value)
+                if reset_token.is_expired():
+                    reset_token.delete()
+                    return Response({"detail": "Token has expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+                user = reset_token.user
                 user.set_password(new_password)
                 user.password_changed_at = timezone.now()
                 user.failed_login_attempts = 0
                 user.locked_until = None
                 user.save()
+                reset_token.delete()
                 settings_obj = SecuritySettings.get_solo()
                 if settings_obj.log_sensitive_actions:
                     log_security_event(
@@ -187,6 +262,8 @@ class PasswordResetConfirmView(APIView):
                     "detail": "Password reset successfully.",
                     "username": user.username
                 }, status=status.HTTP_200_OK)
+            except PasswordResetToken.DoesNotExist:
+                return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 print(f"Unexpected error in password reset confirm: {e}")
                 import traceback

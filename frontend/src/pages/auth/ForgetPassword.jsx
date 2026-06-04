@@ -32,16 +32,13 @@ const ForgetPassword = () => {
     }
 
     try {
-      console.log("Verifying email:", email);
       const response = await resetPasswordRequest(email);
-      console.log("Email verification response:", response);
 
-      setSuccess("✅ Email verified! Redirecting to password reset...");
-      setTimeout(() => {
-        navigate(`/reset-password/${response.data.token}`);
-      }, 2000);
+      setSuccess(
+        response.data?.detail ||
+          "Password reset link has been sent to your email.",
+      );
     } catch (err) {
-      console.error("Email verification error:", err);
       const errorMsg =
         err.response?.data?.detail ||
         err.response?.data?.email?.[0] ||
@@ -98,7 +95,7 @@ const ForgetPassword = () => {
           {/* Error Message */}
           {error && (
             <div className="rounded-lg border border-red-300 bg-red-100 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
-              <p className="font-semibold">❌ Error</p>
+              <p className="font-semibold">Error</p>
               <p>{error}</p>
             </div>
           )}
@@ -122,10 +119,8 @@ const ForgetPassword = () => {
           {/* Info Box */}
           <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 p-3 rounded-lg text-sm text-blue-800 dark:text-blue-200">
             <p className="flex items-start gap-2">
-              <span className="text-lg">ℹ️</span>
               <span>
-                Enter your email address to verify your account and reset your
-                password.
+                Enter your email address and we will send a secure reset link.
               </span>
             </p>
           </div>
@@ -142,7 +137,7 @@ const ForgetPassword = () => {
                 <span>Verifying...</span>
               </>
             ) : (
-              "Verify Email"
+              "Send Reset Link"
             )}
           </button>
 

@@ -15,11 +15,11 @@ from datetime import timedelta
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from backend/.env no matter where the server is started.
+load_dotenv(BASE_DIR / '.env', encoding='utf-8-sig')
 
 
 # Quick-start development settings - unsuitable for production
@@ -195,5 +195,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bachelorsnest.com'
 
 # Frontend URL for password reset links
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
+RESEND_FROM_EMAIL = os.getenv('RESEND_FROM_EMAIL', 'onboarding@resend.dev')
 
 # =========================================================================

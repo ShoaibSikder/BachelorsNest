@@ -28,9 +28,7 @@ const ResetPassword = () => {
           return;
         }
 
-        console.log("Verifying reset token:", token);
         const response = await resetPasswordVerifyToken(token);
-        console.log("Token verification response:", response.data);
 
         if (response.data.valid) {
           setTokenValid(true);
@@ -81,11 +79,12 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
-      console.log("Submitting password reset for email:", email);
-      const response = await resetPasswordConfirm(email, newPassword);
-      console.log("Password reset response:", response.data);
+      const response = await resetPasswordConfirm(token, newPassword);
 
-      setSuccess("✅ Password reset successfully! Redirecting to login...");
+      setSuccess(
+        response.data?.detail ||
+          "Password reset successfully! Redirecting to login...",
+      );
 
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
