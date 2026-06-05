@@ -24,6 +24,8 @@ const OwnerEditProperty = () => {
   const [imagesToRemove, setImagesToRemove] = useState([]);
   const [replaceImages, setReplaceImages] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState("");
 
   // Fetch property details on mount
@@ -92,6 +94,9 @@ const OwnerEditProperty = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setUploadProgress(0);
+    setError("");
 
     const data = new FormData();
     data.append("title", formData.title);
@@ -108,6 +113,7 @@ const OwnerEditProperty = () => {
 
     // Handle images
     if (replaceImages) {
+      data.append("replace_images", "true");
       images.forEach((img) => data.append("images", img));
     } else if (images.length > 0) {
       images.forEach((img) => data.append("images", img));
@@ -120,11 +126,19 @@ const OwnerEditProperty = () => {
     }
 
     try {
-      await updateProperty(id, data);
+      await updateProperty(id, data, {
+        onUploadProgress: (event) => {
+          if (!event.total) return;
+          setUploadProgress(Math.round((event.loaded * 100) / event.total));
+        },
+      });
       navigate("/owner/properties");
     } catch (err) {
       console.error("Failed to save property:", err);
       setError("Failed to save property. Please try again.");
+    } finally {
+      setSaving(false);
+      setUploadProgress(0);
     }
   };
 
@@ -283,9 +297,10 @@ const OwnerEditProperty = () => {
         <div className="flex items-center gap-2">
           <button
             type="submit"
+            disabled={saving}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            Save Property
+            {saving ? "Saving..." : "Save Property"}
           </button>
           <button
             type="button"
@@ -295,6 +310,20 @@ const OwnerEditProperty = () => {
             Cancel
           </button>
         </div>
+
+        {saving && images.length > 0 && (
+          <div className="space-y-2">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                className="h-full rounded-full bg-blue-600 transition-all"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-300">
+              Uploading {uploadProgress}%
+            </p>
+          </div>
+        )}
       </form>
     </div>
   );

@@ -38,7 +38,9 @@ const OwnerLayout = () => {
   };
 
   const getImageUrl = (img) =>
-    img?.startsWith("http") ? img : `http://127.0.0.1:8000${img}`;
+    img?.startsWith("http")
+      ? img
+      : `http://127.0.0.1:8000/${img?.replace(/^\/+/, "")}`;
 
   const handleMenuClick = (path) => {
     navigate(path);

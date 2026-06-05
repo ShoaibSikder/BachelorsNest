@@ -85,7 +85,9 @@ const AdminProperties = () => {
 
   const getImageUrl = (img) => {
     if (!img) return null;
-    return img.startsWith("http") ? img : `${BASE_URL}${img}`;
+    return img.startsWith("http")
+      ? img
+      : `${BASE_URL}/${img.replace(/^\/+/, "")}`;
   };
 
   // Close menu on outside click
@@ -214,7 +216,7 @@ const AdminProperties = () => {
                         src={
                           property.owner.profile_image.startsWith("http")
                             ? property.owner.profile_image
-                            : `http://127.0.0.1:8000${property.owner.profile_image}`
+                            : getImageUrl(property.owner.profile_image)
                         }
                         alt="owner"
                         className="w-10 h-10 rounded-full object-cover"
@@ -350,6 +352,8 @@ const EditModal = ({ property, onClose, onSuccess }) => {
   const [existingImages, setExistingImages] = useState(property.images || []);
   const [imagesToRemove, setImagesToRemove] = useState([]);
   const [replaceImages, setReplaceImages] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleChange = (e) =>
     setForm((prev) => {
@@ -383,6 +387,8 @@ const EditModal = ({ property, onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setUploadProgress(0);
     try {
       const formData = new FormData();
       formData.append("title", form.title);
@@ -399,6 +405,7 @@ const EditModal = ({ property, onClose, onSuccess }) => {
 
       // Handle images
       if (replaceImages) {
+        formData.append("replace_images", "true");
         // Replace all images - send images field even if empty to trigger clearing
         for (let img of form.images) formData.append("images", img);
       } else if (form.images.length > 0) {
@@ -413,11 +420,19 @@ const EditModal = ({ property, onClose, onSuccess }) => {
         );
       }
 
-      await updateProperty(property.id, formData);
+      await updateProperty(property.id, formData, {
+        onUploadProgress: (event) => {
+          if (!event.total) return;
+          setUploadProgress(Math.round((event.loaded * 100) / event.total));
+        },
+      });
       onSuccess();
       onClose();
     } catch (err) {
       console.error("Update failed:", err);
+    } finally {
+      setSaving(false);
+      setUploadProgress(0);
     }
   };
 
@@ -591,9 +606,10 @@ const EditModal = ({ property, onClose, onSuccess }) => {
           <div className="flex justify-between mt-4">
             <button
               type="submit"
+              disabled={saving}
               className="w-1/2 bg-blue-500 hover:bg-blue-600 transition text-white font-semibold px-4 py-3 rounded-lg shadow-md"
             >
-              Update
+              {saving ? "Updating..." : "Update"}
             </button>
             <button
               type="button"
@@ -603,6 +619,20 @@ const EditModal = ({ property, onClose, onSuccess }) => {
               Cancel
             </button>
           </div>
+
+          {saving && form.images.length > 0 && (
+            <div className="space-y-2">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                <div
+                  className="h-full rounded-full bg-blue-600 transition-all"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-300">
+                Uploading {uploadProgress}%
+              </p>
+            </div>
+          )}
         </form>
       </div>
     </div>

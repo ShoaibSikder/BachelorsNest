@@ -1,5 +1,12 @@
 from django.db import models
 from accounts.models import User
+from accounts.models import user_media_folder
+
+
+def property_image_upload_to(instance, filename):
+    owner = instance.property.owner if instance.property_id else None
+    folder = user_media_folder(owner) if owner else "unknown-user"
+    return f"property_images/{folder}/{filename}"
 
 
 class Property(models.Model):
@@ -50,7 +57,7 @@ class PropertyImage(models.Model):
         on_delete=models.CASCADE,
         related_name='images'
     )
-    image = models.ImageField(upload_to='property_images/')
+    image = models.ImageField(upload_to=property_image_upload_to)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

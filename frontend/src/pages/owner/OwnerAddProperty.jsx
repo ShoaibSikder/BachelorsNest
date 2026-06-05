@@ -17,6 +17,7 @@ const OwnerAddProperty = () => {
 
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const OwnerAddProperty = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setUploadProgress(0);
     setError(null);
 
     const data = new FormData();
@@ -60,13 +62,19 @@ const OwnerAddProperty = () => {
     }
 
     try {
-      await addProperty(data);
+      await addProperty(data, {
+        onUploadProgress: (event) => {
+          if (!event.total) return;
+          setUploadProgress(Math.round((event.loaded * 100) / event.total));
+        },
+      });
       navigate("/owner/properties");
     } catch (err) {
       console.error("Failed to add property:", err);
       setError("Failed to add property. Please try again.");
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -185,6 +193,20 @@ const OwnerAddProperty = () => {
         >
           {loading ? "Adding..." : "Add Property"}
         </button>
+
+        {loading && images.length > 0 && (
+          <div className="space-y-2">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                className="h-full rounded-full bg-blue-600 transition-all"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-300">
+              Uploading {uploadProgress}%
+            </p>
+          </div>
+        )}
       </form>
     </div>
   );

@@ -4,7 +4,9 @@ import { AuthContext } from "../context/AuthContext";
 import { getUserProfile } from "../api/authApi";
 
 const getImageUrl = (img) =>
-  img?.startsWith("http") ? img : `http://127.0.0.1:8000${img}`;
+  img?.startsWith("http")
+    ? img
+    : `http://127.0.0.1:8000/${img?.replace(/^\/+/, "")}`;
 
 const Profile = () => {
   const { user, updateProfile } = useContext(AuthContext);
@@ -24,6 +26,7 @@ const Profile = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const isOwnProfile = !userId || (user && String(user.id) === String(userId));
@@ -94,6 +97,7 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
+    setUploadProgress(0);
     setMessage("");
     setError("");
 
@@ -110,13 +114,19 @@ const Profile = () => {
         data.append("profile_image", profileImage);
       }
 
-      await updateProfile(data);
+      await updateProfile(data, {
+        onUploadProgress: (event) => {
+          if (!event.total) return;
+          setUploadProgress(Math.round((event.loaded * 100) / event.total));
+        },
+      });
       setMessage("Profile updated successfully.");
     } catch (err) {
       console.error("Profile update failed:", err);
       setError("Failed to update profile. Please try again.");
     } finally {
       setSaving(false);
+      setUploadProgress(0);
     }
   };
 
@@ -312,6 +322,20 @@ const Profile = () => {
                 {saving ? "Saving..." : "Save Changes"}
               </button>
             </div>
+
+            {saving && profileImage && (
+              <div className="space-y-2">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                  <div
+                    className="h-full rounded-full bg-blue-600 transition-all"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  Uploading {uploadProgress}%
+                </p>
+              </div>
+            )}
           </form>
         </div>
       ) : (

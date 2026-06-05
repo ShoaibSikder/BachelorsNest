@@ -118,6 +118,10 @@ class PropertyCreateUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         images_data = validated_data.pop('images', [])
         remove_images = self.context['request'].data.getlist('remove_images', [])
+        replace_images = (
+            self.context['request'].data.get('replace_images', 'false').lower()
+            == 'true'
+        )
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -127,9 +131,10 @@ class PropertyCreateUpdateSerializer(serializers.ModelSerializer):
         if remove_images:
             PropertyImage.objects.filter(id__in=remove_images).delete()
 
-        if 'images' in self.context['request'].data:
+        if replace_images:
             instance.images.all().delete()
-            for img in images_data:
-                PropertyImage.objects.create(property=instance, image=img)
+
+        for img in images_data:
+            PropertyImage.objects.create(property=instance, image=img)
 
         return instance

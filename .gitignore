@@ -4,3 +4,7 @@ backend/.env
 backend/.venv/
 frontend/node_modules/
 frontend/dist/
+backend/runserver-*.log
+backend/runserver-*.err
+frontend/vite-*.log
+frontend/vite-*.err

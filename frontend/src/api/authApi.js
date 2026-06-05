@@ -17,7 +17,8 @@ export const verifyPasswordResetToken = (data) =>
 export const confirmPasswordReset = (data) =>
   api.post("accounts/password-reset-confirm/", data);
 
-export const updateProfile = (data) =>
+export const updateProfile = (data, config = {}) =>
   api.patch("accounts/profile/", data, {
     headers: { "Content-Type": "multipart/form-data" },
+    ...config,
   });

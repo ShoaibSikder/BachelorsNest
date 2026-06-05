@@ -3,6 +3,16 @@ from django.db import models
 import uuid
 from django.utils import timezone
 from datetime import timedelta
+from django.utils.text import slugify
+
+
+def user_media_folder(user):
+    label = slugify(user.username or f"user-{user.pk}") or f"user-{user.pk}"
+    return label
+
+
+def profile_image_upload_to(instance, filename):
+    return f"profile_images/{user_media_folder(instance)}/{filename}"
 
 class User(AbstractUser):
     ROLE_CHOICES = (
@@ -13,7 +23,7 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
-    profile_image = models.ImageField(upload_to="profile_images/", blank=True, null=True)
+    profile_image = models.ImageField(upload_to=profile_image_upload_to, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, default="")
     bio = models.TextField(blank=True, default="")
     address = models.CharField(max_length=255, blank=True, default="")

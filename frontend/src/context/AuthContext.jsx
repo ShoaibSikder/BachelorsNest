@@ -54,8 +54,8 @@ export const AuthProvider = ({ children }) => {
     return await confirmPasswordReset({ token, new_password: newPassword });
   };
 
-  const updateProfile = async (data) => {
-    const response = await updateProfileApi(data);
+  const updateProfile = async (data, config = {}) => {
+    const response = await updateProfileApi(data, config);
     setUser(response.data);
     return response.data;
   };

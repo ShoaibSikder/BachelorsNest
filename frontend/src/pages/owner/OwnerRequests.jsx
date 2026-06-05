@@ -4,7 +4,9 @@ import { getOwnerRequests, updateRentRequestStatus } from "../../api/rentalApi";
 import MessageBox from "../../components/MessageBox";
 
 const getImageUrl = (image) =>
-  image?.startsWith("http") ? image : `http://127.0.0.1:8000${image}`;
+  image?.startsWith("http")
+    ? image
+    : `http://127.0.0.1:8000/${image?.replace(/^\/+/, "")}`;
 
 const formatTime = (dateString) => {
   if (!dateString) return "";
