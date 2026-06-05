@@ -11,6 +11,13 @@ class Notification(models.Model):
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', '-created_at'], name='notification_user_created_idx'),
+            models.Index(fields=['user', 'is_read', '-created_at'], name='notification_user_read_idx'),
+        ]
+
     def __str__(self):
         return f"Notification for {self.user.email}"
 
@@ -31,6 +38,11 @@ class SystemLog(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['-timestamp'], name='systemlog_timestamp_idx'),
+            models.Index(fields=['level', '-timestamp'], name='systemlog_level_time_idx'),
+            models.Index(fields=['user', '-timestamp'], name='systemlog_user_time_idx'),
+        ]
 
     def __str__(self):
         return f"[{self.level.upper()}] {self.title} at {self.timestamp}"

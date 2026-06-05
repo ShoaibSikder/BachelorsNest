@@ -1,6 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import SiteFooter from "../components/SiteFooter";
 import { useTheme } from "../context/ThemeContext";
 import {
   Users,
@@ -169,7 +170,7 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      <main className={`flex-1 p-6 ${open ? "ml-64" : "ml-20"}`}>
+      <main className={`flex min-h-screen flex-1 flex-col p-6 ${open ? "ml-64" : "ml-20"}`}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
             <img
@@ -199,7 +200,10 @@ const AdminLayout = () => {
             </div>
           </button>
         </div>
-        <Outlet />
+        <div className="flex-1">
+          <Outlet />
+        </div>
+        <SiteFooter />
       </main>
     </div>
   );

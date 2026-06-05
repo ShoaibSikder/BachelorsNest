@@ -4,6 +4,7 @@ import uuid
 from django.utils import timezone
 from datetime import timedelta
 from django.utils.text import slugify
+from django.db.models.functions import Lower
 
 
 def user_media_folder(user):
@@ -32,6 +33,21 @@ class User(AbstractUser):
     locked_until = models.DateTimeField(blank=True, null=True)
     password_changed_at = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['role', 'is_active'], name='user_role_active_idx'),
+            models.Index(fields=['is_active'], name='user_active_idx'),
+            models.Index(fields=['locked_until'], name='user_locked_until_idx'),
+        ]
+        constraints = [
+            models.UniqueConstraint(Lower('email'), name='unique_user_email_ci'),
+        ]
+
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.strip().lower()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.username} ({self.role})"
 
@@ -40,6 +56,12 @@ class UserLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="logs")
     action = models.CharField(max_length=255)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['user', '-timestamp'], name='userlog_user_time_idx'),
+        ]
 
     def __str__(self):
         return f"{self.user.username} - {self.action}"
@@ -50,6 +72,12 @@ class PasswordResetToken(models.Model):
     token = models.UUIDField(default=uuid.uuid4, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['user'], name='password_token_user_idx'),
+            models.Index(fields=['expires_at'], name='password_token_expires_idx'),
+        ]
 
     def save(self, *args, **kwargs):
         if not self.expires_at:

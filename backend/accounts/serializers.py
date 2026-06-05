@@ -17,7 +17,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'password', 'role')
 
     def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
+        value = value.strip().lower()
+        if User.objects.filter(email__iexact=value).exists():
             raise serializers.ValidationError("Email already exists")
         return value
 
@@ -78,6 +79,8 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        if validated_data.get('email'):
+            validated_data['email'] = validated_data['email'].strip().lower()
         password = validated_data.pop('password', None)
         if not password:
             raise serializers.ValidationError({'password': 'Password is required when creating a user.'})
@@ -89,6 +92,11 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+        if validated_data.get('email'):
+            email = validated_data['email'].strip().lower()
+            if User.objects.filter(email__iexact=email).exclude(pk=instance.pk).exists():
+                raise serializers.ValidationError({'email': 'Email already exists'})
+            validated_data['email'] = email
         password = validated_data.pop('password', None)
         user = super().update(instance, validated_data)
         if password:
@@ -153,7 +161,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Find user by username or email
         user = User.objects.filter(
-            Q(username=username_or_email) | Q(email=username_or_email)
+            Q(username=username_or_email) | Q(email__iexact=username_or_email)
         ).first()
 
         if not user:

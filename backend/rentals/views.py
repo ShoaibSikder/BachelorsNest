@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -66,7 +67,7 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
-        rent_request = self.get_object()
+        rent_request = self.get_queryset().select_for_update().get(pk=kwargs['pk'])
 
         if request.user != rent_request.owner and not (
             request.user.is_staff or request.user.role == "admin"
@@ -85,7 +86,7 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        property_obj = rent_request.property
+        property_obj = Property.objects.select_for_update().get(pk=rent_request.property_id)
 
         if new_status == "accepted" and old_status != "accepted":
             if not property_obj.is_available or property_obj.vacancy_count <= 0:

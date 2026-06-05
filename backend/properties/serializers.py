@@ -42,6 +42,8 @@ class PropertySerializer(serializers.ModelSerializer):
         }
 
     def get_saved_count(self, obj):
+        if hasattr(obj, '_prefetched_objects_cache') and 'wishlists' in obj._prefetched_objects_cache:
+            return len(obj._prefetched_objects_cache['wishlists'])
         return obj.wishlists.count()
 
     def get_is_saved(self, obj):
@@ -49,6 +51,8 @@ class PropertySerializer(serializers.ModelSerializer):
         user = getattr(request, 'user', None)
         if not user or not user.is_authenticated or getattr(user, 'role', None) != 'bachelor':
             return False
+        if hasattr(obj, '_prefetched_objects_cache') and 'wishlists' in obj._prefetched_objects_cache:
+            return any(wishlist.bachelor_id == user.id for wishlist in obj._prefetched_objects_cache['wishlists'])
         return obj.wishlists.filter(bachelor=user).exists()
 
 

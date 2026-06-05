@@ -1,6 +1,7 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import SiteFooter from "../components/SiteFooter";
 import { useTheme } from "../context/ThemeContext";
 import {
   Home,
@@ -204,7 +205,7 @@ const BachelorLayout = () => {
       <main
         className={`flex-1 p-6 ${
           open && !isMobile ? "ml-64" : "ml-20"
-        } ${isMobile ? "ml-0" : ""}`}
+        } ${isMobile ? "ml-0" : ""} flex min-h-screen flex-col`}
       >
         <header className="mb-6 flex items-center justify-between">
           <div className="flex items-center">
@@ -247,7 +248,10 @@ const BachelorLayout = () => {
           </div>
         </header>
 
-        <Outlet context={{ searchText }} />
+        <div className="flex-1">
+          <Outlet context={{ searchText }} />
+        </div>
+        <SiteFooter />
       </main>
     </div>
   );

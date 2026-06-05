@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F, Q
 from accounts.models import User
 from accounts.models import user_media_folder
 
@@ -31,6 +32,23 @@ class Property(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['owner', '-created_at'], name='property_owner_created_idx'),
+            models.Index(
+                fields=['is_approved', 'is_rejected', 'is_available', '-created_at'],
+                name='property_public_list_idx',
+            ),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(total_seats__gte=1),
+                name='property_total_seats_positive',
+            ),
+            models.CheckConstraint(
+                condition=Q(occupied_seats__gte=0) & Q(occupied_seats__lte=F('total_seats')),
+                name='property_occupied_within_total',
+            ),
+        ]
 
     @property
     def vacancy_count(self):
@@ -60,6 +78,12 @@ class PropertyImage(models.Model):
     image = models.ImageField(upload_to=property_image_upload_to)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['uploaded_at']
+        indexes = [
+            models.Index(fields=['property', 'uploaded_at'], name='property_image_order_idx'),
+        ]
+
     def __str__(self):
         return f"Image for {self.property.title}"
 
@@ -79,6 +103,10 @@ class Wishlist(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['bachelor', '-created_at'], name='wishlist_bachelor_created_idx'),
+            models.Index(fields=['property', '-created_at'], name='wishlist_property_created_idx'),
+        ]
         constraints = [
             models.UniqueConstraint(
                 fields=['bachelor', 'property'],

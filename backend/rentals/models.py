@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 from properties.models import Property
 
@@ -38,6 +39,18 @@ class RentRequest(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['bachelor', 'status', '-created_at'], name='rent_req_bachelor_status_idx'),
+            models.Index(fields=['owner', 'status', '-created_at'], name='rent_req_owner_status_idx'),
+            models.Index(fields=['property', 'status'], name='rent_req_property_status_idx'),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['bachelor', 'property'],
+                condition=Q(status__in=['pending', 'accepted']),
+                name='unique_active_rent_request',
+            ),
+        ]
 
     def __str__(self):
         return f"{self.bachelor} -> {self.property}"
