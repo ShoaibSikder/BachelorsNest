@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { getOwnerRequests, updateRentRequestStatus } from "../../api/rentalApi";
 import MessageBox from "../../components/MessageBox";
 
+import { getMediaUrl } from "../../config";
+
 const getImageUrl = (image) =>
-  image?.startsWith("http")
-    ? image
-    : `http://127.0.0.1:8000/${image?.replace(/^\/+/, "")}`;
+  getMediaUrl(image);
 
 const formatTime = (dateString) => {
   if (!dateString) return "";

@@ -1,5 +1,17 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/+$/, "");
+
+export const getMediaUrl = (path) => {
+  if (!path) return "";
+  if (/^(https?:)?\/\//i.test(path)) return path;
+  return `${API_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+};
+
+export const getWebSocketUrl = (path) => {
+  const backendUrl = new URL(API_BASE_URL);
+  const wsProtocol = backendUrl.protocol === "https:" ? "wss:" : "ws:";
+  return `${wsProtocol}//${backendUrl.host}/${String(path).replace(/^\/+/, "")}`;
+};
 
 export const API_ENDPOINTS = {
   // Rentals

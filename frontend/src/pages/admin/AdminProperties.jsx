@@ -12,8 +12,7 @@ import {
 } from "../../api/adminPropertyApi";
 import ConfirmModal from "../../components/ConfirmModal";
 import PropertyCard from "../../components/PropertyCard";
-
-const BASE_URL = "http://127.0.0.1:8000";
+import { getMediaUrl } from "../../config";
 
 const AdminProperties = () => {
   const [properties, setProperties] = useState([]);
@@ -85,9 +84,7 @@ const AdminProperties = () => {
 
   const getImageUrl = (img) => {
     if (!img) return null;
-    return img.startsWith("http")
-      ? img
-      : `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+    return getMediaUrl(img);
   };
 
   // Close menu on outside click

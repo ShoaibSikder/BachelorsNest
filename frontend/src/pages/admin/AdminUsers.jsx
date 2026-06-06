@@ -171,10 +171,10 @@ const AdminUsers = () => {
         onConfirm={confirmDeleteUser}
         onCancel={() => setConfirmDeleteUserId(null)}
       />
-      <h2 className="text-2xl font-bold mb-4">User Management</h2>
+      <h2 className="mb-4 text-2xl font-bold">User Management</h2>
 
       {/* Filters */}
-      <div className="mb-4 space-x-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         <button
           onClick={() => setFilter("all")}
           className={`rounded px-3 py-1 transition ${
@@ -214,8 +214,8 @@ const AdminUsers = () => {
       </div>
 
       {/* Users Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full border text-center">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+        <table className="min-w-[760px] w-full text-center">
           <thead className="bg-gray-200 dark:bg-gray-700">
             <tr>
               <th className="p-2">Username</th>
@@ -289,7 +289,7 @@ const AdminUsers = () => {
       {/* Add / Edit Modal */}
       {selectedUser !== null && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-8 rounded-2xl w-full max-w-md shadow-2xl transform transition-all scale-95 animate-fadeIn">
+          <div className="mx-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 text-gray-900 shadow-2xl transform transition-all scale-95 animate-fadeIn dark:bg-gray-800 dark:text-gray-100 sm:p-8">
             <h2 className="text-2xl font-bold mb-6 text-center">
               {selectedUser?.id ? "Edit User" : "Add User"}
             </h2>
@@ -363,17 +363,17 @@ const AdminUsers = () => {
                 </select>
               </div>
 
-              <div className="flex justify-between items-center mt-6">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 transition text-white font-semibold px-4 py-3 rounded-lg mr-2 shadow-md"
+                  className="flex-1 rounded-lg bg-blue-500 px-4 py-3 font-semibold text-white shadow-md transition hover:bg-blue-600"
                 >
                   {selectedUser?.id ? "Save" : "Add"}
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedUser(null)}
-                  className="flex-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 transition text-gray-900 dark:text-white font-semibold px-4 py-3 rounded-lg shadow-md"
+                  className="flex-1 rounded-lg bg-gray-300 px-4 py-3 font-semibold text-gray-900 shadow-md transition hover:bg-gray-400 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
                 >
                   Cancel
                 </button>
@@ -386,7 +386,7 @@ const AdminUsers = () => {
       {/* Logs Modal */}
       {logsUserId && (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-8 rounded-2xl w-full max-w-md shadow-2xl transform transition-all scale-95 animate-fadeIn max-h-[80vh] overflow-y-auto">
+          <div className="mx-4 max-h-[80vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-5 text-gray-900 shadow-2xl transform transition-all scale-95 animate-fadeIn dark:bg-gray-800 dark:text-gray-100 sm:p-8">
             <h3 className="text-2xl font-bold mb-6 text-center">User Logs</h3>
 
             {logs.length === 0 ? (

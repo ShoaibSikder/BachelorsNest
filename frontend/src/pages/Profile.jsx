@@ -3,10 +3,10 @@ import { useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { getUserProfile } from "../api/authApi";
 
+import { getMediaUrl } from "../config";
+
 const getImageUrl = (img) =>
-  img?.startsWith("http")
-    ? img
-    : `http://127.0.0.1:8000/${img?.replace(/^\/+/, "")}`;
+  getMediaUrl(img);
 
 const Profile = () => {
   const { user, updateProfile } = useContext(AuthContext);

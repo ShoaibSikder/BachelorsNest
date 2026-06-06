@@ -22,7 +22,6 @@ const OwnerEditProperty = () => {
   const [images, setImages] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const [imagesToRemove, setImagesToRemove] = useState([]);
-  const [replaceImages, setReplaceImages] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -84,14 +83,6 @@ const OwnerEditProperty = () => {
     setExistingImages(existingImages.filter((img) => img.id !== imageId));
   };
 
-  const handleReplaceImagesChange = (e) => {
-    setReplaceImages(e.target.checked);
-    if (e.target.checked) {
-      // If replacing, clear any images to remove
-      setImagesToRemove([]);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -112,10 +103,7 @@ const OwnerEditProperty = () => {
     }
 
     // Handle images
-    if (replaceImages) {
-      data.append("replace_images", "true");
-      images.forEach((img) => data.append("images", img));
-    } else if (images.length > 0) {
+    if (images.length > 0) {
       images.forEach((img) => data.append("images", img));
     }
 
@@ -145,7 +133,7 @@ const OwnerEditProperty = () => {
   if (loading) return <p className="text-gray-600">Loading property...</p>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+    <div className="w-full rounded-xl bg-white p-4 shadow-lg dark:bg-gray-800 sm:p-6 lg:mx-auto lg:max-w-2xl">
       <h2 className="text-2xl font-bold mb-6">Edit Property</h2>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -273,7 +261,7 @@ const OwnerEditProperty = () => {
           />
 
           {existingImages.length > 0 && (
-            <div className="flex gap-2 mt-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {existingImages.map((img) => (
                 <div key={img.id} className="relative">
                   <img
@@ -294,11 +282,11 @@ const OwnerEditProperty = () => {
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <button
             type="submit"
             disabled={saving}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:bg-gray-400"
           >
             {saving ? "Saving..." : "Save Property"}
           </button>

@@ -1,7 +1,7 @@
+import { getMediaUrl } from "../config";
+
 const getImageUrl = (image) =>
-  image?.startsWith("http")
-    ? image
-    : `http://127.0.0.1:8000/${image?.replace(/^\/+/, "")}`;
+  getMediaUrl(image);
 
 const formatAvailabilityDate = (dateString) => {
   if (!dateString) return "Available now";

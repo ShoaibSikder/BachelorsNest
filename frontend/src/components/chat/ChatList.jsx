@@ -1,15 +1,12 @@
 import Loader from "./Loader";
+import { getMediaUrl } from "../../config";
 
 const getImageUrl = (image) => {
   if (!image) {
     return "";
   }
 
-  if (image.startsWith("http")) {
-    return image;
-  }
-
-  return `http://127.0.0.1:8000/${image.replace(/^\/+/, "")}`;
+  return getMediaUrl(image);
 };
 
 const ChatList = ({
@@ -30,8 +27,8 @@ const ChatList = ({
   };
 
   return (
-    <div className="w-1/3 border-r border-gray-300 dark:border-gray-700 overflow-y-auto">
-      <h2 className="p-4 font-bold text-lg text-gray-800 dark:text-white">
+    <div className="h-full w-full shrink-0 overflow-y-auto border-gray-300 dark:border-gray-700 lg:w-80 lg:border-r xl:w-1/3">
+      <h2 className="p-4 text-lg font-bold text-gray-800 dark:text-white">
         Chats
       </h2>
 
@@ -47,7 +44,7 @@ const ChatList = ({
             <li
               key={user?.id}
               onClick={() => onSelectUser(user)}
-              className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-800 transition ${
+              className={`flex cursor-pointer items-center gap-3 p-4 transition hover:bg-gray-200 dark:hover:bg-gray-800 ${
                 activeUser?.id === user?.id
                   ? "bg-gray-300 dark:bg-gray-700 font-semibold"
                   : ""
@@ -75,7 +72,7 @@ const ChatList = ({
               </button>
 
               {/* ✅ User Info */}
-              <div className="flex flex-col overflow-hidden">
+              <div className="flex min-w-0 flex-col overflow-hidden">
                 <span className="text-gray-800 dark:text-white truncate">
                   {getDisplayName(user)}
                 </span>

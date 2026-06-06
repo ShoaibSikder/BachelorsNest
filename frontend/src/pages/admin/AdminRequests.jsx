@@ -132,10 +132,10 @@ const AdminRequests = () => {
   }
 
   return (
-    <div className="text-gray-800 dark:text-white p-6">
-      <div className="mb-8">
+    <div className="p-0 text-gray-800 dark:text-white sm:p-6">
+      <div className="mb-6">
         <div>
-          <h2 className="text-3xl font-bold mb-2">Rent Request Management</h2>
+          <h2 className="mb-2 text-2xl font-bold sm:text-3xl">Rent Request Management</h2>
           <p className="text-gray-600 dark:text-gray-400">
             Manage and track all rent requests from users
           </p>
@@ -149,8 +149,8 @@ const AdminRequests = () => {
       )}
 
       {/* Filter Section */}
-      <div className="mb-4 space-y-2">
-        <div className="space-x-2">
+      <div className="mb-4 space-y-3">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilterStatus("all")}
             className={`rounded px-3 py-1 transition ${
@@ -209,8 +209,8 @@ const AdminRequests = () => {
       </div>
 
       {/* Requests Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full border text-center">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+        <table className="min-w-[680px] w-full text-center">
           <thead className="bg-gray-200 dark:bg-gray-700">
             <tr>
               <th className="p-2 border-r">User</th>

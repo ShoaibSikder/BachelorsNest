@@ -1,3 +1,4 @@
+import { createElement } from "react";
 import { Facebook, Github, Instagram, Linkedin, Mail } from "lucide-react";
 
 const socialLinks = [
@@ -79,7 +80,7 @@ const SiteFooter = () => {
             title={value}
             className={`${footerLinkClasses} ${toneClasses[tone]}`}
           >
-            <Icon size={18} />
+            {createElement(Icon, { size: 18 })}
           </a>
         ))}
       </div>

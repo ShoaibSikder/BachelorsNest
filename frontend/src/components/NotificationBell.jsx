@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getWebSocketUrl } from "../config";
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState([]);
@@ -6,8 +7,10 @@ const NotificationBell = () => {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
 
+    if (!token) return undefined;
+
     const ws = new WebSocket(
-      `ws://127.0.0.1:8000/ws/notifications/?token=${token}`,
+      getWebSocketUrl(`ws/notifications/?token=${encodeURIComponent(token)}`),
     );
 
     ws.onmessage = (e) => {

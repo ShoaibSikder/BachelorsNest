@@ -3,6 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import SiteFooter from "../components/SiteFooter";
 import { useTheme } from "../context/ThemeContext";
+import { getMediaUrl } from "../config";
 import {
   Home,
   FileText,
@@ -13,6 +14,8 @@ import {
   Heart,
   Search,
   X,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 const BachelorLayout = () => {
@@ -24,13 +27,12 @@ const BachelorLayout = () => {
   const [open, setOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (mobile) setOpen(false);
+      const compact = window.innerWidth < 1024;
+      setIsMobile(compact);
+      if (compact) setOpen(false);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -47,9 +49,7 @@ const BachelorLayout = () => {
   };
 
   const getImageUrl = (img) =>
-    img?.startsWith("http")
-      ? img
-      : `http://127.0.0.1:8000/${img?.replace(/^\/+/, "")}`;
+    getMediaUrl(img);
 
   const handleMenuClick = (path) => {
     navigate(path);
@@ -66,29 +66,23 @@ const BachelorLayout = () => {
     { name: "Chats", icon: MessageSquare, path: "/bachelor/chats" },
   ];
 
+  const isRouteActive = (path) =>
+    path === "/bachelor" ? location.pathname === path : location.pathname.startsWith(path);
+
   return (
-    <div className="relative flex min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="relative flex min-h-screen w-full bg-gray-100 dark:bg-gray-900">
       {/* Background for sidebar */}
       <div
-        className={`absolute top-0 left-0 ${
+        className={`absolute top-0 left-0 hidden lg:block ${
           open ? "w-64" : "w-20"
         } h-full bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 -z-10`}
       ></div>
-      {/* Overlay */}
-      {isMobile && open && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={() => setOpen(false)}
-        />
-      )}
 
       {/* SIDEBAR */}
       <aside
         className={`${
           open ? "w-64" : "w-20"
-        } fixed top-0 left-0 h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all duration-300 flex flex-col justify-between z-50 ${
-          isMobile ? (open ? "translate-x-0" : "-translate-x-full") : ""
-        }`}
+        } fixed top-0 left-0 z-50 hidden h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all duration-300 lg:flex flex-col justify-between`}
       >
         <div>
           {/* HEADER */}
@@ -154,7 +148,8 @@ const BachelorLayout = () => {
               </div>
             ) : (
               <button
-                onClick={() => setIsSearchOpen(true)}
+                type="button"
+                aria-label="Search"
                 className="flex justify-center p-3 hover:bg-white/20 rounded-lg"
               >
                 <Search size={20} />
@@ -165,10 +160,7 @@ const BachelorLayout = () => {
           {/* MENU */}
           <ul className="mt-6 space-y-2 px-2">
             {menuItems.map((item, i) => {
-              const isActive =
-                item.path === "/bachelor"
-                  ? location.pathname === item.path
-                  : location.pathname.startsWith(item.path);
+              const isActive = isRouteActive(item.path);
 
               return (
                 <li key={i}>
@@ -201,20 +193,42 @@ const BachelorLayout = () => {
         </div>
       </aside>
 
+      <nav className="fixed bottom-0 left-0 right-0 z-50 w-screen border-t border-slate-200 bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-slate-900/10 backdrop-blur dark:border-slate-700 dark:bg-slate-950/95 lg:hidden">
+        <div className="flex items-center gap-1 overflow-x-auto py-2">
+          {menuItems.map((item) => {
+            const isActive = isRouteActive(item.path);
+            return (
+              <button
+                key={item.path}
+                onClick={() => handleMenuClick(item.path)}
+                className={`flex min-w-[4.75rem] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[11px] font-semibold transition ${
+                  isActive
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                }`}
+              >
+                <item.icon size={20} />
+                <span className="max-w-full truncate">{item.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
       {/* MAIN */}
       <main
-        className={`flex-1 p-6 ${
-          open && !isMobile ? "ml-64" : "ml-20"
-        } ${isMobile ? "ml-0" : ""} flex min-h-screen flex-col`}
+        className={`ml-0 flex min-h-screen w-full min-w-0 max-w-none flex-1 flex-col overflow-y-auto overflow-x-hidden p-3 pb-24 sm:p-5 sm:pb-24 lg:p-6 lg:pb-6 ${
+          open ? "lg:ml-64" : "lg:ml-20"
+        }`}
       >
-        <header className="mb-6 flex items-center justify-between">
-          <div className="flex items-center">
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center">
             <img
               src="/Logo.png"
               alt="BachelorsNest Logo"
-              className="w-12 h-12 mr-4"
+              className="mr-3 h-10 w-10 shrink-0 sm:mr-4 sm:h-12 sm:w-12"
             />
-            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="truncate text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent sm:text-4xl">
               Bachelor
             </h1>
           </div>
@@ -232,21 +246,23 @@ const BachelorLayout = () => {
                 }`}
               >
                 <span className="absolute inset-0 flex items-center justify-center text-xs">
-                  {darkMode ? "☀️" : "🌙"}
+                  {darkMode ? <Sun size={12} /> : <Moon size={12} />}
                 </span>
               </div>
             </button>
-
-            {isMobile && (
-              <button
-                onClick={() => setOpen(true)}
-                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Menu size={20} />
-              </button>
-            )}
           </div>
         </header>
+
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 lg:hidden">
+          <Search size={18} />
+          <input
+            type="text"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search properties..."
+            className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+          />
+        </div>
 
         <div className="flex-1">
           <Outlet context={{ searchText }} />

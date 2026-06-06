@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
         try {
           const profile = await getProfile();
           setUser(profile.data);
-        } catch (error) {
+        } catch {
           logout();
         }
       }

@@ -25,6 +25,7 @@ The application uses a Django REST backend and a React + Vite frontend. It is or
 - [Installation And Setup](#installation-and-setup)
 - [Testing And Verification](#testing-and-verification)
 - [Development Notes](#development-notes)
+- [Deployment](#deployment)
 - [License](#license)
 
 ## Screenshots
@@ -281,7 +282,7 @@ Protected by `allowedRole="admin"`:
 - Axios
 - JWT Decode
 - Lucide React icons
-- WebSocket client package
+- WebSocket client support
 
 ### Backend
 
@@ -292,9 +293,13 @@ Protected by `allowedRole="admin"`:
 - Django CORS Headers
 - Django Channels
 - Channels Redis
+- Daphne ASGI server
+- WhiteNoise static file serving
 - PostgreSQL
 - Pillow
 - Supabase storage integration
+- Render backend hosting
+- Vercel frontend hosting
 - python-dotenv
 - Requests
 
@@ -316,8 +321,12 @@ BachelorsNest/
     notifications/
     properties/
     rentals/
+    build.sh
     manage.py
     requirements.txt
+    runtime.txt
+    .env.development.example
+    .env.deployment.example
 
   frontend/
     src/
@@ -350,9 +359,14 @@ BachelorsNest/
         ProtectedRoute.jsx
       App.jsx
       main.jsx
+    vercel.json
+    .env.development.example
+    .env.deployment.example
     package.json
 
+  DEPLOYMENT.md
   README.md
+  render.yaml
 ```
 
 ## Backend Apps
@@ -506,24 +520,72 @@ VITE_API_URL=http://localhost:8000
 
 ## Environment Variables
 
-Backend `.env` example:
+Real `.env` files are ignored and should not be committed. Use `.env.development.example` for localhost and `.env.deployment.example` as the Render/Vercel variable template.
+
+### Backend Local Development
+
+Copy the development example:
+
+```powershell
+cd backend
+copy .env.development.example .env
+```
+
+Local backend `.env` values:
 
 ```env
-SECRET_KEY=change-me
 DEBUG=True
+SECRET_KEY=dev-only-secret-key
 ALLOWED_HOSTS=localhost,127.0.0.1
 
 POSTGRES_DB=BachelorsNest
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your-password
+POSTGRES_PASSWORD=your-local-password
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 
-SUPABASE_URL=https://your-project-id.supabase.co
+CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+CSRF_TRUSTED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+FRONTEND_URL=http://localhost:5173
+
+SECURE_SSL_REDIRECT=False
+SESSION_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE=False
+SECURE_HSTS_SECONDS=0
+
+SUPABASE_URL=
+SUPABASE_KEY=
+SUPABASE_MEDIA_BUCKET=StudyMaterials
+```
+
+### Backend Production
+
+Use `backend/.env.deployment.example` as the Render backend variable template. Render should use dashboard/Blueprint environment variables, not a committed `.env` file:
+
+```env
+DEBUG=False
+SECRET_KEY=replace-me-with-a-strong-secret
+ALLOWED_HOSTS=your-backend.onrender.com,.onrender.com
+
+DATABASE_URL=postgresql://user:password@host:5432/database
+REDIS_URL=redis://host:6379
+
+CORS_ALLOW_ALL_ORIGINS=False
+CORS_ALLOWED_ORIGINS=https://your-frontend.vercel.app
+CSRF_TRUSTED_ORIGINS=https://your-frontend.vercel.app
+FRONTEND_URL=https://your-frontend.vercel.app
+
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
+SECURE_SSL_REDIRECT=True
+SECURE_HSTS_SECONDS=31536000
+
+SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_KEY=your-supabase-key
 SUPABASE_MEDIA_BUCKET=StudyMaterials
 
-EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
@@ -531,16 +593,27 @@ EMAIL_HOST_USER=
 EMAIL_HOST_PASSWORD=
 DEFAULT_FROM_EMAIL=noreply@bachelorsnest.com
 
-FRONTEND_URL=http://localhost:5173
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
 ```
 
-Frontend `.env` example:
+When `DEBUG=False`, the backend requires `DATABASE_URL`. On Render this is injected from the Render PostgreSQL database defined in `render.yaml`; without it, the backend intentionally refuses to start.
+
+### Frontend
+
+Local frontend `.env`, copied from `frontend/.env.development.example`:
 
 ```env
 VITE_API_URL=http://localhost:8000
 ```
+
+Use `frontend/.env.deployment.example` as the Vercel variable template:
+
+```env
+VITE_API_URL=https://your-backend.onrender.com
+```
+
+The frontend derives WebSocket URLs from `VITE_API_URL`. Local HTTP uses `ws://`; production HTTPS uses `wss://`.
 
 ## Installation And Setup
 
@@ -549,13 +622,14 @@ VITE_API_URL=http://localhost:8000
 - Python 3.11+
 - Node.js 20+
 - PostgreSQL
-- Redis if switching Channels to Redis in production
+- Redis or Render Key Value for production WebSockets
 - Supabase project/bucket for media storage
 
 ### Backend Setup
 
-```bash
+```powershell
 cd backend
+copy .env.development.example .env
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
@@ -578,8 +652,9 @@ http://localhost:8000/admin/
 
 ### Frontend Setup
 
-```bash
+```powershell
 cd frontend
+copy .env.development.example .env
 npm install
 npm run dev
 ```
@@ -592,14 +667,14 @@ http://localhost:5173
 
 ### Production Build
 
-```bash
+```powershell
 cd frontend
 npm run build
 ```
 
 ### Optional ASGI/Daphne Run
 
-```bash
+```powershell
 cd backend
 python -m daphne backend.asgi:application
 ```
@@ -608,21 +683,30 @@ python -m daphne backend.asgi:application
 
 Backend system check:
 
-```bash
+```powershell
 cd backend
 python manage.py check
 ```
 
+Backend production checks:
+
+```powershell
+cd backend
+python manage.py check --deploy
+python manage.py makemigrations --check --dry-run
+python manage.py collectstatic --noinput --dry-run
+```
+
 Frontend build:
 
-```bash
+```powershell
 cd frontend
 npm run build
 ```
 
 Frontend lint:
 
-```bash
+```powershell
 cd frontend
 npm run lint
 ```
@@ -650,7 +734,50 @@ Useful route checks:
 - Property owners manage only their own listings.
 - Admins can moderate users and properties across the platform.
 - Supabase storage is used for uploaded media through the configured Django storage backend.
-- The current Channels configuration uses an in-memory channel layer by default.
+- Channels uses Redis when `REDIS_URL` is set and falls back to an in-memory layer for local development.
+
+## Deployment
+
+Production and local development are separated by environment variables and separate services. Localhost work does not affect the production app unless you intentionally point local `.env` files at production URLs or databases.
+
+### Backend On Render
+
+Render deploys only the Django backend. The repository root contains `render.yaml` because Render Blueprints are discovered from the root, but the service has `rootDir: backend`, so the React frontend is not built or deployed by Render.
+
+Backend service settings:
+
+```text
+Root directory: backend
+Build command: bash build.sh
+Start command: daphne backend.asgi:application -b 0.0.0.0 -p $PORT
+Health check path: /health/
+```
+
+Required production services:
+
+- Render Postgres, exposed as `DATABASE_URL`.
+- Render Key Value/Redis, exposed as `REDIS_URL`, for Django Channels WebSocket support.
+
+### Frontend On Vercel
+
+Vercel deploys only the React frontend. Set the Vercel project root directory to `frontend`; then Vercel reads `frontend/vercel.json` for SPA routing.
+
+Frontend service settings:
+
+```text
+Framework preset: Vite
+Root directory: frontend
+Build command: npm run build
+Output directory: dist
+```
+
+Production frontend env:
+
+```env
+VITE_API_URL=https://your-backend.onrender.com
+```
+
+For a more detailed checklist, see `DEPLOYMENT.md`.
 
 ## Future Improvements
 
@@ -660,7 +787,6 @@ Useful route checks:
 - Advanced property filtering and recommendations.
 - Owner verification and bachelor identity verification.
 - Real-time notification transport.
-- Production Redis channel layer.
 - More detailed admin analytics.
 
 ## License

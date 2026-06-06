@@ -62,19 +62,6 @@ const OwnerProperties = () => {
   // Handle edit
   const handleEdit = (id) => navigate(`/owner/properties/edit/${id}`);
 
-  // Format date
-  const formatTime = (dateString) => {
-    if (!dateString) return "";
-    const now = new Date();
-    const posted = new Date(dateString);
-    const diff = Math.floor((now - posted) / 1000);
-    if (diff < 60) return "Just now";
-    if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)} days ago`;
-    return posted.toLocaleDateString();
-  };
-
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {

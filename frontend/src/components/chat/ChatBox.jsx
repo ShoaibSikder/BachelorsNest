@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { getConversation } from "../../api/chatApi";
-import API_BASE_URL from "../../config";
+import { getWebSocketUrl } from "../../config";
 
-const ChatBox = ({ activeUser, currentUser }) => {
+const ChatBox = ({ activeUser, currentUser, onBack }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [typingUser, setTypingUser] = useState(false);
@@ -12,31 +13,24 @@ const ChatBox = ({ activeUser, currentUser }) => {
   const wsRef = useRef(null);
   const [wsConnected, setWsConnected] = useState(false);
 
-  if (!currentUser) {
-    return (
-      <div className="flex-1 flex items-center justify-center">Loading...</div>
-    );
-  }
-
   // Scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   useEffect(() => {
-    if (!activeUser) return;
+    if (!activeUser || !currentUser) return;
 
     const fetchMessages = async () => {
+      setMessages([]);
       const res = await getConversation(activeUser.id);
       setMessages(res.data || []);
     };
     fetchMessages();
 
     const token = localStorage.getItem("access_token");
-    const backendUrl = new URL(API_BASE_URL);
-    const wsProtocol = backendUrl.protocol === "https:" ? "wss:" : "ws:";
     const ws = new WebSocket(
-      `${wsProtocol}//${backendUrl.host}/ws/chat/${activeUser.id}/?token=${token}`,
+      getWebSocketUrl(`ws/chat/${activeUser.id}/?token=${encodeURIComponent(token || "")}`),
     );
 
     ws.onopen = () => setWsConnected(true);
@@ -66,11 +60,20 @@ const ChatBox = ({ activeUser, currentUser }) => {
     ws.onclose = () => setWsConnected(false);
 
     wsRef.current = ws;
-    return () => ws.close();
-  }, [activeUser]);
+    return () => {
+      wsRef.current = null;
+      ws.close();
+    };
+  }, [activeUser, currentUser]);
 
   const sendMessage = () => {
-    if (!input.trim()) return;
+    if (
+      !input.trim() ||
+      !wsRef.current ||
+      wsRef.current.readyState !== WebSocket.OPEN
+    ) {
+      return;
+    }
 
     wsRef.current.send(JSON.stringify({ message: input }));
     setInput("");
@@ -79,26 +82,49 @@ const ChatBox = ({ activeUser, currentUser }) => {
   const handleTyping = (e) => {
     setInput(e.target.value);
 
+    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
+
     wsRef.current.send(JSON.stringify({ typing: true }));
 
     setTimeout(() => {
+      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
       wsRef.current.send(JSON.stringify({ typing: false }));
     }, 1000);
   };
 
+  if (!currentUser) {
+    return (
+      <div className="flex min-h-[18rem] flex-1 items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
+
   if (!activeUser) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex min-h-[18rem] flex-1 items-center justify-center">
         Select a user
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-gray-100 dark:bg-gray-900">
+    <div className="flex min-h-0 flex-1 flex-col bg-gray-100 dark:bg-gray-900 lg:h-full">
       {/* Header */}
-      <div className="p-4 font-bold border-b flex justify-between">
-        <span>Chat with {activeUser.username}</span>
+      <div className="flex items-center justify-between gap-3 border-b p-3 font-bold sm:p-4">
+        <div className="flex min-w-0 items-center gap-2">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="rounded-full p-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-800 lg:hidden"
+              aria-label="Back to chats"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          )}
+          <span className="min-w-0 truncate">Chat with {activeUser.username}</span>
+        </div>
         <span className={online ? "text-green-500" : "text-gray-400"}>
           {online ? "Online" : "Offline"}
         </span>
@@ -115,7 +141,7 @@ const ChatBox = ({ activeUser, currentUser }) => {
               className={`flex ${isMe ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`p-2 rounded max-w-xs ${
+                className={`max-w-[85%] rounded p-2 sm:max-w-xs ${
                   isMe ? "bg-blue-700 text-white" : "bg-blue-400 text-white"
                 }`}
               >
@@ -144,18 +170,18 @@ const ChatBox = ({ activeUser, currentUser }) => {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t flex gap-2 bg-gray-200 dark:bg-gray-800">
+      <div className="flex gap-2 border-t bg-gray-200 p-3 dark:bg-gray-800 sm:p-4">
         <input
           value={input}
           onChange={handleTyping}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="flex-1 p-2 border rounded bg-white text-black"
+          className="min-w-0 flex-1 rounded border bg-white p-2 text-black"
           placeholder="Type message..."
         />
         <button
           onClick={sendMessage}
           disabled={!wsConnected}
-          className="bg-blue-500 text-white px-4 rounded"
+          className="rounded bg-blue-500 px-4 text-white disabled:bg-gray-400"
         >
           Send
         </button>

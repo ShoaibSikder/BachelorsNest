@@ -84,7 +84,7 @@ const OwnerAddProperty = () => {
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+      <form onSubmit={handleSubmit} className="w-full space-y-4 lg:max-w-lg">
         <input
           type="text"
           name="title"

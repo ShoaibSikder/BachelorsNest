@@ -3,6 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import SiteFooter from "../components/SiteFooter";
 import { useTheme } from "../context/ThemeContext";
+import { getMediaUrl } from "../config";
 import {
   Home,
   FileText,
@@ -10,6 +11,8 @@ import {
   LogOut,
   Menu,
   MessageSquare,
+  Moon,
+  Sun,
   X,
 } from "lucide-react";
 
@@ -24,9 +27,9 @@ const OwnerLayout = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      const mobile = window.innerWidth < 768;
-      setIsMobile(mobile);
-      if (mobile) setOpen(false);
+      const compact = window.innerWidth < 1024;
+      setIsMobile(compact);
+      if (compact) setOpen(false);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -39,9 +42,7 @@ const OwnerLayout = () => {
   };
 
   const getImageUrl = (img) =>
-    img?.startsWith("http")
-      ? img
-      : `http://127.0.0.1:8000/${img?.replace(/^\/+/, "")}`;
+    getMediaUrl(img);
 
   const handleMenuClick = (path) => {
     navigate(path);
@@ -59,25 +60,30 @@ const OwnerLayout = () => {
     { name: "Chats", icon: MessageSquare, path: "/owner/chats" },
   ];
 
+  const isRouteActive = (path) => {
+    if (path === "/owner") return location.pathname === path;
+    if (path === "/owner/properties") {
+      return (
+        location.pathname === path ||
+        location.pathname.startsWith("/owner/properties/edit")
+      );
+    }
+    return location.pathname === path;
+  };
+
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+    <div className="relative flex min-h-screen w-full bg-gray-100 dark:bg-gray-900">
       {/* Background for sidebar */}
       <div
-        className={`absolute top-0 left-0 ${
+        className={`absolute top-0 left-0 hidden lg:block ${
           open ? "w-64" : "w-20"
         } h-full bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 -z-10`}
       ></div>
-      {isMobile && open && (
-        <div
-          className="fixed inset-0 bg-black/50"
-          onClick={() => setOpen(false)}
-        />
-      )}
 
       <aside
         className={`${
           open ? "w-64" : "w-20"
-        } fixed h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white flex flex-col justify-between`}
+        } fixed left-0 top-0 z-50 hidden h-screen bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white transition-all duration-300 lg:flex flex-col justify-between`}
       >
         <div>
           <div className="flex justify-between p-4">
@@ -129,7 +135,7 @@ const OwnerLayout = () => {
           {/* MENU */}
           <ul className="space-y-2 px-2">
             {menuItems.map((item, i) => {
-              const isActive = location.pathname === item.path;
+              const isActive = isRouteActive(item.path);
 
               return (
                 <li key={i}>
@@ -162,35 +168,63 @@ const OwnerLayout = () => {
         </div>
       </aside>
 
-      <main className={`flex min-h-screen flex-1 flex-col p-6 ${open ? "ml-64" : "ml-20"}`}>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 w-screen border-t border-slate-200 bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-slate-900/10 backdrop-blur dark:border-slate-700 dark:bg-slate-950/95 lg:hidden">
+        <div className="flex items-center gap-1 overflow-x-auto py-2">
+          {menuItems.map((item) => {
+            const isActive = isRouteActive(item.path);
+            return (
+              <button
+                key={item.path}
+                onClick={() => handleMenuClick(item.path)}
+                className={`flex min-w-[4.75rem] flex-1 flex-col items-center justify-center gap-1 rounded-xl px-2 py-2 text-[11px] font-semibold transition ${
+                  isActive
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                }`}
+              >
+                <item.icon size={20} />
+                <span className="max-w-full truncate">{item.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      <main
+        className={`ml-0 flex min-h-screen w-full min-w-0 max-w-none flex-1 flex-col overflow-y-auto overflow-x-hidden p-3 pb-24 sm:p-5 sm:pb-24 lg:p-6 lg:pb-6 ${
+          open ? "lg:ml-64" : "lg:ml-20"
+        }`}
+      >
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center">
             <img
               src="/Logo.png"
               alt="BachelorsNest Logo"
-              className="w-12 h-12 mr-4"
+              className="mr-3 h-10 w-10 shrink-0 sm:mr-4 sm:h-12 sm:w-12"
             />
-            <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="truncate text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent sm:text-4xl">
               Owner
             </h1>
           </div>
 
-          {/* Dark mode toggle */}
-          <button
-            onClick={toggleDarkMode}
-            className="relative w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
-            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            <div
-              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
-                darkMode ? "translate-x-6" : "translate-x-0"
-              }`}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleDarkMode}
+              className="relative w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
-              <span className="absolute inset-0 flex items-center justify-center text-xs">
-                {darkMode ? "☀️" : "🌙"}
-              </span>
-            </div>
-          </button>
+              <div
+                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
+                  darkMode ? "translate-x-6" : "translate-x-0"
+                }`}
+              >
+                <span className="absolute inset-0 flex items-center justify-center text-xs">
+                  {darkMode ? <Sun size={12} /> : <Moon size={12} />}
+                </span>
+              </div>
+            </button>
+
+          </div>
         </div>
         <div className="flex-1">
           <Outlet />
