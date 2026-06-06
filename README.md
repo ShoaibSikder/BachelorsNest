@@ -585,14 +585,6 @@ SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_KEY=your-supabase-key
 SUPABASE_MEDIA_BUCKET=StudyMaterials
 
-EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=
-EMAIL_HOST_PASSWORD=
-DEFAULT_FROM_EMAIL=noreply@bachelorsnest.com
-
 RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
 ```

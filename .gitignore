@@ -4,6 +4,8 @@ backend/.env
 backend/.venv/
 backend/media/
 backend/staticfiles/
+deployment-backups/
+*.dump
 frontend/.env
 frontend/.env.local
 frontend/.env.development

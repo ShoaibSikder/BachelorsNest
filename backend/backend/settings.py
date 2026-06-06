@@ -34,7 +34,17 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-%t^4^9l1b_tfvwm1jy(qz!c+p6
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 def env_list(name, default=""):
-    return [value.strip() for value in os.getenv(name, default).split(",") if value.strip()]
+    return [
+        clean_env_value(value)
+        for value in os.getenv(name, default).split(",")
+        if clean_env_value(value)
+    ]
+
+
+def clean_env_value(value, default=""):
+    if value is None:
+        return default
+    return str(value).strip().strip('"').strip("'")
 
 
 ALLOWED_HOSTS = env_list(
@@ -105,7 +115,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = clean_env_value(os.getenv("DATABASE_URL"))
 
 if DATABASE_URL:
     DATABASES = {
@@ -196,9 +206,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-SUPABASE_URL = os.getenv('SUPABASE_URL')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY')
-SUPABASE_MEDIA_BUCKET = os.getenv('SUPABASE_MEDIA_BUCKET', 'StudyMaterials')
+SUPABASE_URL = clean_env_value(os.getenv('SUPABASE_URL'))
+SUPABASE_KEY = clean_env_value(os.getenv('SUPABASE_KEY'))
+SUPABASE_MEDIA_BUCKET = clean_env_value(os.getenv('SUPABASE_MEDIA_BUCKET'), 'StudyMaterials')
 
 STORAGES = {
     'staticfiles': {
@@ -215,7 +225,7 @@ else:
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
     }
 
-REDIS_URL = os.getenv("REDIS_URL")
+REDIS_URL = clean_env_value(os.getenv("REDIS_URL"))
 
 if REDIS_URL:
     CHANNEL_LAYERS = {

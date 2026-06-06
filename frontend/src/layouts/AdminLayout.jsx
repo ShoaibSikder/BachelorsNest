@@ -27,6 +27,7 @@ const AdminLayout = () => {
 
   const [open, setOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,6 +42,7 @@ const AdminLayout = () => {
 
   const handleLogout = async () => {
     await logout();
+    setProfileMenuOpen(false);
     navigate("/");
   };
 
@@ -49,6 +51,7 @@ const AdminLayout = () => {
 
   const handleMenuClick = (path) => {
     navigate(path);
+    setProfileMenuOpen(false);
     if (isMobile) setOpen(false);
   };
 
@@ -164,7 +167,7 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 w-screen border-t border-slate-200 bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-slate-900/10 backdrop-blur dark:border-slate-700 dark:bg-slate-950/95 lg:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 w-full border-t border-slate-200 bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-slate-900/10 backdrop-blur dark:border-slate-700 dark:bg-slate-950/95 lg:hidden">
         <div className="flex items-center gap-1 overflow-x-auto py-2">
           {menuItems.map((item) => {
             const isActive = isRouteActive(item.path);
@@ -192,11 +195,11 @@ const AdminLayout = () => {
         }`}
       >
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex min-w-0 items-center">
+          <div className="flex min-w-0 items-center gap-2">
             <img
               src="/Logo.png"
               alt="BachelorsNest Logo"
-              className="mr-3 h-10 w-10 shrink-0 sm:mr-4 sm:h-12 sm:w-12"
+              className="mr-2 h-10 w-10 shrink-0 sm:mr-4 sm:h-12 sm:w-12"
             />
             <h1 className="truncate text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent sm:text-4xl">
               Admin
@@ -220,6 +223,43 @@ const AdminLayout = () => {
               </div>
             </button>
 
+            <div className="relative lg:hidden">
+              <button
+                type="button"
+                onClick={() => setProfileMenuOpen((current) => !current)}
+                className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-sm font-bold text-slate-700 ring-2 ring-blue-500/30 dark:bg-slate-800 dark:text-slate-100"
+                aria-label="Open profile menu"
+              >
+                {user?.profile_image ? (
+                  <img
+                    src={getImageUrl(user.profile_image)}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span>{user?.username?.[0]?.toUpperCase() || "A"}</span>
+                )}
+              </button>
+
+              {profileMenuOpen && (
+                <div className="absolute right-0 top-12 z-50 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-900">
+                  <button
+                    type="button"
+                    onClick={() => handleMenuClick(profilePath)}
+                    className="block w-full px-4 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
+                  >
+                    Profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="block w-full px-4 py-3 text-left text-sm font-semibold text-red-600 hover:bg-red-50 dark:text-red-300 dark:hover:bg-red-950/40"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex-1">
