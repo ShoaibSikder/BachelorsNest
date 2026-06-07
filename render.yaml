@@ -3,6 +3,7 @@ services:
     name: bachelorsnest-backend
     runtime: python
     rootDir: backend
+    autoDeployTrigger: commit
     buildCommand: bash build.sh
     startCommand: daphne backend.asgi:application -b 0.0.0.0 -p $PORT
     healthCheckPath: /health/
