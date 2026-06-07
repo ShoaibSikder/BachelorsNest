@@ -1,52 +1,61 @@
+import { createElement, lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Auth Pages
+// Auth pages stay eager because they are outside the dashboard shell.
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgetPassword from "./pages/auth/ForgetPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 
-// Bachelor
-import BachelorHome from "./pages/bachelor/Home";
-import MyRequests from "./pages/bachelor/MyRequests";
-import BachelorNotifications from "./pages/bachelor/Notifications";
-import SavedProperties from "./pages/bachelor/SavedProperties";
+// Layouts stay eager so top bars, sidebars, and mobile tab bars render immediately.
 import BachelorLayout from "./layouts/BachelorLayout";
-
-// Profile
-import Profile from "./pages/Profile";
-
-// Owner
-import OwnerHome from "./pages/owner/Home";
-import OwnerRequests from "./pages/owner/OwnerRequests";
-import OwnerNotifications from "./pages/owner/Notifications";
-import OwnerProperties from "./pages/owner/OwnerProperties";
-import OwnerAddProperty from "./pages/owner/OwnerAddProperty";
-import OwnerEditProperty from "./pages/owner/OwnerEditProperty";
 import OwnerLayout from "./layouts/OwnerLayout";
-
-// Admin (✅ NEW CORRECT IMPORTS)
 import AdminLayout from "./layouts/AdminLayout";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminProperties from "./pages/admin/AdminProperties";
-import AdminRequests from "./pages/admin/AdminRequests";
-import AdminReports from "./pages/admin/AdminReports";
-import AdminNotifications from "./pages/admin/AdminNotifications";
-import AdminSecurity from "./pages/admin/AdminSecurity";
-import AdminSettings from "./pages/admin/AdminSettings";
 
-// Chat
-import ChatPage from "./pages/chat/ChatPage";
-
-// Protected Route
 import ProtectedRoute from "./routes/ProtectedRoute";
+import PageFallback from "./components/common/PageFallback";
+import { SectionCacheProvider } from "./context/SectionCacheContext";
+
+// Bachelor sections
+const BachelorHome = lazy(() => import("./pages/bachelor/Home"));
+const MyRequests = lazy(() => import("./pages/bachelor/MyRequests"));
+const BachelorNotifications = lazy(() => import("./pages/bachelor/Notifications"));
+const SavedProperties = lazy(() => import("./pages/bachelor/SavedProperties"));
+
+// Shared dashboard sections
+const Profile = lazy(() => import("./pages/Profile"));
+const ChatPage = lazy(() => import("./pages/chat/ChatPage"));
+
+// Owner sections
+const OwnerHome = lazy(() => import("./pages/owner/Home"));
+const OwnerRequests = lazy(() => import("./pages/owner/OwnerRequests"));
+const OwnerNotifications = lazy(() => import("./pages/owner/Notifications"));
+const OwnerProperties = lazy(() => import("./pages/owner/OwnerProperties"));
+const OwnerAddProperty = lazy(() => import("./pages/owner/OwnerAddProperty"));
+const OwnerEditProperty = lazy(() => import("./pages/owner/OwnerEditProperty"));
+
+// Admin sections
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminProperties = lazy(() => import("./pages/admin/AdminProperties"));
+const AdminRequests = lazy(() => import("./pages/admin/AdminRequests"));
+const AdminReports = lazy(() => import("./pages/admin/AdminReports"));
+const AdminNotifications = lazy(() => import("./pages/admin/AdminNotifications"));
+const AdminSecurity = lazy(() => import("./pages/admin/AdminSecurity"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+
+const lazySection = (Component) => (
+  <Suspense fallback={<PageFallback />}>
+    {createElement(Component)}
+  </Suspense>
+);
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* ROOT REDIRECT */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
+      <SectionCacheProvider>
+        <Routes>
+          {/* ROOT REDIRECT */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
 
         {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
@@ -63,13 +72,13 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<BachelorHome />} />
-          <Route path="requests" element={<MyRequests />} />
-          <Route path="saved" element={<SavedProperties />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="profile/:userId" element={<Profile />} />
-          <Route path="notifications" element={<BachelorNotifications />} />
-          <Route path="chats" element={<ChatPage />} />
+          <Route index element={lazySection(BachelorHome)} />
+          <Route path="requests" element={lazySection(MyRequests)} />
+          <Route path="saved" element={lazySection(SavedProperties)} />
+          <Route path="profile" element={lazySection(Profile)} />
+          <Route path="profile/:userId" element={lazySection(Profile)} />
+          <Route path="notifications" element={lazySection(BachelorNotifications)} />
+          <Route path="chats" element={lazySection(ChatPage)} />
         </Route>
 
         {/* ================= OWNER ================= */}
@@ -81,41 +90,42 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<OwnerHome />} />
-          <Route path="requests" element={<OwnerRequests />} />
-          <Route path="notifications" element={<OwnerNotifications />} />
-          <Route path="properties" element={<OwnerProperties />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="profile/:userId" element={<Profile />} />
-          <Route path="properties/add" element={<OwnerAddProperty />} />
-          <Route path="properties/edit/:id" element={<OwnerEditProperty />} />
-          <Route path="chats" element={<ChatPage />} />
+          <Route index element={lazySection(OwnerHome)} />
+          <Route path="requests" element={lazySection(OwnerRequests)} />
+          <Route path="notifications" element={lazySection(OwnerNotifications)} />
+          <Route path="properties" element={lazySection(OwnerProperties)} />
+          <Route path="profile" element={lazySection(Profile)} />
+          <Route path="profile/:userId" element={lazySection(Profile)} />
+          <Route path="properties/add" element={lazySection(OwnerAddProperty)} />
+          <Route path="properties/edit/:id" element={lazySection(OwnerEditProperty)} />
+          <Route path="chats" element={lazySection(ChatPage)} />
         </Route>
 
-        {/* ================= ADMIN (FIXED) ================= */}
+        {/* ================= ADMIN ================= */}
         <Route
           path="/admin"
           element={
             <ProtectedRoute allowedRole="admin">
-              <AdminLayout /> {/* ✅ IMPORTANT FIX */}
+              <AdminLayout />
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to="/admin/reports" />} />
-          <Route path="users" element={<AdminUsers />} />
-          <Route path="properties" element={<AdminProperties />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="profile/:userId" element={<Profile />} />
-          <Route path="requests" element={<AdminRequests />} />
-          <Route path="reports" element={<AdminReports />} />
-          <Route path="notifications" element={<AdminNotifications />} />
-          <Route path="security" element={<AdminSecurity />} />
-          <Route path="settings" element={<AdminSettings />} />
+          <Route path="users" element={lazySection(AdminUsers)} />
+          <Route path="properties" element={lazySection(AdminProperties)} />
+          <Route path="profile" element={lazySection(Profile)} />
+          <Route path="profile/:userId" element={lazySection(Profile)} />
+          <Route path="requests" element={lazySection(AdminRequests)} />
+          <Route path="reports" element={lazySection(AdminReports)} />
+          <Route path="notifications" element={lazySection(AdminNotifications)} />
+          <Route path="security" element={lazySection(AdminSecurity)} />
+          <Route path="settings" element={lazySection(AdminSettings)} />
         </Route>
 
         {/* CATCH-ALL - Redirect unmatched routes to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </SectionCacheProvider>
     </BrowserRouter>
   );
 }

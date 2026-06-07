@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 import SiteFooter from "../components/SiteFooter";
 import { useTheme } from "../context/ThemeContext";
@@ -25,6 +25,7 @@ const OwnerLayout = () => {
   const [open, setOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -36,6 +37,23 @@ const OwnerLayout = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (!profileMenuOpen) return undefined;
+
+    const handleOutsidePress = (event) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsidePress);
+    document.addEventListener("touchstart", handleOutsidePress);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsidePress);
+      document.removeEventListener("touchstart", handleOutsidePress);
+    };
+  }, [profileMenuOpen]);
 
   const handleLogout = async () => {
     await logout();
@@ -213,21 +231,20 @@ const OwnerLayout = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={toggleDarkMode}
-              className="relative w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
+              className="relative hidden h-6 w-12 rounded-full bg-gradient-to-r from-amber-300 to-yellow-400 shadow-lg shadow-amber-500/20 ring-1 ring-amber-500/30 transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 dark:from-slate-700 dark:to-indigo-700 dark:shadow-indigo-950/30 dark:ring-indigo-400/30 dark:focus:ring-indigo-400 lg:block"
               title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              aria-pressed={darkMode}
             >
               <div
-                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
+                className={`absolute left-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-amber-500 shadow-md transition-transform duration-300 ease-in-out dark:bg-slate-950 dark:text-indigo-200 ${
                   darkMode ? "translate-x-6" : "translate-x-0"
                 }`}
               >
-                <span className="absolute inset-0 flex items-center justify-center text-xs">
-                  {darkMode ? <Sun size={12} /> : <Moon size={12} />}
-                </span>
+                {darkMode ? <Moon size={12} /> : <Sun size={12} />}
               </div>
             </button>
 
-            <div className="relative lg:hidden">
+            <div className="relative lg:hidden" ref={profileMenuRef}>
               <button
                 type="button"
                 onClick={() => setProfileMenuOpen((current) => !current)}
@@ -253,6 +270,22 @@ const OwnerLayout = () => {
                     className="block w-full px-4 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
                   >
                     Profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleDarkMode}
+                    className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100 dark:text-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <span>Theme</span>
+                    <span className="relative h-6 w-12 rounded-full bg-gradient-to-r from-amber-300 to-yellow-400 shadow-inner ring-1 ring-amber-500/30 dark:from-slate-700 dark:to-indigo-700 dark:ring-indigo-400/30">
+                      <span
+                        className={`absolute left-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-amber-500 shadow-md transition-transform duration-300 dark:bg-slate-950 dark:text-indigo-200 ${
+                          darkMode ? "translate-x-6" : "translate-x-0"
+                        }`}
+                      >
+                        {darkMode ? <Moon size={12} /> : <Sun size={12} />}
+                      </span>
+                    </span>
                   </button>
                   <button
                     type="button"
