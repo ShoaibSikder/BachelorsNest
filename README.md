@@ -11,8 +11,20 @@ BachelorsNest is a full-stack flat rental platform built for bachelors, property
 
 The application uses a Django REST backend and a React + Vite frontend. It is organized around three protected role areas: `bachelor`, `owner`, and `admin`.
 
+## Current Update Notes
+
+- Media uploads are integrated with Supabase Storage through `backend/backend/storage.py`.
+- Uploaded profile images and property images are stored in the configured `SUPABASE_MEDIA_BUCKET`.
+- Current image URLs are generated as public Supabase object URLs by the Django storage backend.
+- If the Supabase bucket is changed from public to private, property/profile images will not keep working without code changes.
+- To support a private bucket, add Django media proxy endpoints or signed URL generation so Django can check permissions before returning files.
+- Authentication remains Django/JWT based; Supabase Storage `authenticated` policies do not automatically understand these Django JWT users.
+- Render deployment is configured by `render.yaml` with Django/Daphne, PostgreSQL, Redis, secure cookies, HSTS settings, and Supabase media variables.
+- Frontend API calls continue to use `VITE_API_URL` and Axios token refresh through `frontend/src/api/axios.js`.
+
 ## Table Of Contents
 
+- [Current Update Notes](#current-update-notes)
 - [Screenshots](#screenshots)
 - [Core Features](#core-features)
 - [Role-Based Access](#role-based-access)
@@ -726,6 +738,8 @@ Useful route checks:
 - Property owners manage only their own listings.
 - Admins can moderate users and properties across the platform.
 - Supabase storage is used for uploaded media through the configured Django storage backend.
+- Supabase object URLs are currently public URLs. Private-bucket support should be implemented through Django permission-checked media endpoints or signed URLs.
+- Supabase Auth policies such as `to authenticated` do not apply to Django JWT users unless the app is redesigned to use Supabase Auth tokens for storage requests.
 - Channels uses Redis when `REDIS_URL` is set and falls back to an in-memory layer for local development.
 
 ## Deployment
