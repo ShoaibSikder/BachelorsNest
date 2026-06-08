@@ -9,6 +9,9 @@ import PropertyCard from "../../components/PropertyCard";
 
 const BachelorHome = () => {
   const [properties, setProperties] = useState([]);
+  const [propertiesLoading, setPropertiesLoading] = useState(true);
+  const [propertiesNextPage, setPropertiesNextPage] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [myRequests, setMyRequests] = useState([]);
   const [modalImage, setModalImage] = useState(null);
   const [message, setMessage] = useState(null);
@@ -37,13 +40,26 @@ const BachelorHome = () => {
     return !searchValue || searchableText.includes(searchValue);
   });
 
-  const fetchProperties = async () => {
+  const fetchProperties = async (page = 1, append = false) => {
+    if (append) {
+      setLoadingMore(true);
+    } else {
+      setPropertiesLoading(true);
+    }
+
     try {
-      const response = await getApprovedProperties();
-      setProperties(response.data);
+      const response = await getApprovedProperties({ page, page_size: 12 });
+      const payload = response.data;
+      const items = Array.isArray(payload) ? payload : payload.results || [];
+
+      setProperties((current) => (append ? [...current, ...items] : items));
+      setPropertiesNextPage(!Array.isArray(payload) && payload.next ? page + 1 : null);
     } catch {
       setMessage("Failed to fetch properties.");
       setMessageType("error");
+    } finally {
+      setPropertiesLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -57,7 +73,7 @@ const BachelorHome = () => {
   };
 
   useEffect(() => {
-    fetchProperties();
+    fetchProperties(1);
     fetchMyRequests();
   }, []);
 
@@ -81,7 +97,7 @@ const BachelorHome = () => {
     try {
       await sendRentRequest(propertyId);
       await fetchMyRequests();
-      await fetchProperties();
+      await fetchProperties(1);
       setMessage("Your request was sent successfully.");
       setMessageType("success");
     } catch (error) {
@@ -152,7 +168,11 @@ const BachelorHome = () => {
         </div>
       </div>
 
-      {properties.length === 0 ? (
+      {propertiesLoading ? (
+        <p className="text-gray-600 dark:text-gray-300">
+          Loading properties...
+        </p>
+      ) : properties.length === 0 ? (
         <p className="text-gray-600 dark:text-gray-300">
           No properties available.
         </p>
@@ -161,8 +181,9 @@ const BachelorHome = () => {
           No properties match your search criteria.
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProperties.map((property) => {
+        <>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProperties.map((property) => {
             const status = getRequestStatus(property.id);
 
             const badge = status ? (
@@ -233,80 +254,94 @@ const BachelorHome = () => {
               </div>
             );
 
-            return (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                onImageClick={(imgUrl) => setModalImage(imgUrl)}
-                onOwnerClick={(owner) =>
-                  owner?.id && navigate(`/bachelor/profile/${owner.id}`)
-                }
-                badge={badge}
-                footer={footer}
-                headerRight={
-                  <div
-                    className="flex items-center gap-2"
-                    ref={(el) => (menuRefs.current[property.id] = el)}
-                  >
-                    <button
-                      onClick={() => handleWishlistToggle(property.id)}
-                      className={`rounded-full p-2 transition ${
-                        property.is_saved
-                          ? "bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300"
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-                      }`}
-                      aria-label={
-                        property.is_saved
-                          ? "Remove from wishlist"
-                          : "Save to wishlist"
-                      }
+              return (
+                <PropertyCard
+                  key={property.id}
+                  property={property}
+                  onImageClick={(imgUrl) => setModalImage(imgUrl)}
+                  onOwnerClick={(owner) =>
+                    owner?.id && navigate(`/bachelor/profile/${owner.id}`)
+                  }
+                  badge={badge}
+                  footer={footer}
+                  headerRight={
+                    <div
+                      className="flex items-center gap-2"
+                      ref={(el) => (menuRefs.current[property.id] = el)}
                     >
-                      <Heart
-                        size={18}
-                        fill={property.is_saved ? "currentColor" : "none"}
-                      />
-                    </button>
-                    <div className="relative">
                       <button
-                        onClick={() =>
-                          setOpenMenuId(
-                            openMenuId === property.id ? null : property.id,
-                          )
+                        onClick={() => handleWishlistToggle(property.id)}
+                        className={`rounded-full p-2 transition ${
+                          property.is_saved
+                            ? "bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                        }`}
+                        aria-label={
+                          property.is_saved
+                            ? "Remove from wishlist"
+                            : "Save to wishlist"
                         }
-                        className="rounded-full px-2 py-1 text-xl hover:bg-gray-200 dark:hover:bg-gray-700"
                       >
-                        ...
+                        <Heart
+                          size={18}
+                          fill={property.is_saved ? "currentColor" : "none"}
+                        />
                       </button>
-                      {openMenuId === property.id && (
-                        <div className="absolute right-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
-                          <button
-                            onClick={() =>
-                              property.owner?.id &&
-                              navigate(`/bachelor/profile/${property.owner.id}`)
-                            }
-                            className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                          >
-                            <User size={16} /> View Owner Profile
-                          </button>
-                          <button
-                            onClick={() =>
-                              navigate("/bachelor/chats", {
-                                state: { selectedUser: property.owner },
-                              })
-                            }
-                            className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                          >
-                            <MessageCircle size={16} /> Message Owner
-                          </button>
-                        </div>
-                      )}
+                      <div className="relative">
+                        <button
+                          onClick={() =>
+                            setOpenMenuId(
+                              openMenuId === property.id ? null : property.id,
+                            )
+                          }
+                          className="rounded-full px-2 py-1 text-xl hover:bg-gray-200 dark:hover:bg-gray-700"
+                        >
+                          ...
+                        </button>
+                        {openMenuId === property.id && (
+                          <div className="absolute right-0 z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                            <button
+                              onClick={() =>
+                                property.owner?.id &&
+                                navigate(`/bachelor/profile/${property.owner.id}`)
+                              }
+                              className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                            >
+                              <User size={16} /> View Owner Profile
+                            </button>
+                            <button
+                              onClick={() =>
+                                navigate("/bachelor/chats", {
+                                  state: { selectedUser: property.owner },
+                                })
+                              }
+                              className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                            >
+                              <MessageCircle size={16} /> Message Owner
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                }
-              />
-            );
-          })}
-        </div>
+                  }
+                />
+              );
+            })}
+          </div>
+
+          {propertiesNextPage && (
+            <div className="mt-8 flex justify-center">
+              <button
+                type="button"
+                onClick={() => fetchProperties(propertiesNextPage, true)}
+                disabled={loadingMore}
+                className="rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-wait disabled:bg-indigo-400"
+              >
+                {loadingMore ? "Loading..." : "Load more"}
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {modalImage && (

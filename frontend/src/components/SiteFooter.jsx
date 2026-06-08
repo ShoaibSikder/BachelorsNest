@@ -1,5 +1,12 @@
 import { createElement } from "react";
-import { Facebook, Github, Instagram, Linkedin, Mail } from "lucide-react";
+import {
+  Facebook,
+  Github,
+  Instagram,
+  Linkedin,
+  Mail,
+  Globe,
+} from "lucide-react";
 
 const socialLinks = [
   {
@@ -22,6 +29,13 @@ const socialLinks = [
     href: "https://www.instagram.com/shoaibsikder0",
     tone: "pink",
     Icon: Instagram,
+  },
+  {
+    label: "Portfolio",
+    value: "shoaibsikderportfolio.vercel.app",
+    href: "https://shoaibsikderportfolio.vercel.app/",
+    tone: "cyan",
+    Icon: Globe,
   },
   {
     label: "Facebook",
@@ -59,7 +73,7 @@ const SiteFooter = () => {
       <p className="text-slate-600 dark:text-slate-400">
         Copyright &copy; 2026 by{" "}
         <a
-          href="https://github.com/ShoaibSikder"
+          href="https://shoaibsikderportfolio.vercel.app/"
           target="_blank"
           rel="noreferrer"
           className="font-medium text-blue-600 hover:text-indigo-600 dark:text-blue-300 dark:hover:text-indigo-300"

@@ -17,8 +17,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (data) => {
     const response = await loginUser(data);
 
-    console.log("Login response:", response.data);
-
     // Save tokens
     localStorage.setItem("access_token", response.data.access);
     localStorage.setItem("refresh_token", response.data.refresh);
@@ -28,17 +26,24 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("email", response.data.email);
     localStorage.setItem("role", response.data.role);
 
-    // Fetch profile to get complete user data
-    const profile = await getProfile();
-    setUser(profile.data);
+    const basicUser = {
+      username: response.data.username,
+      email: response.data.email,
+      role: response.data.role,
+    };
+
+    setUser(basicUser);
     setLoading(false);
 
-    return profile.data; // return full user object with role
+    getProfile()
+      .then((profile) => setUser(profile.data))
+      .catch(() => {});
+
+    return basicUser;
   };
 
   const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    localStorage.clear();
     setUser(null);
   };
 
@@ -64,6 +69,17 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
       const token = localStorage.getItem("access_token");
       if (token) {
+        const cachedUser = {
+          username: localStorage.getItem("username"),
+          email: localStorage.getItem("email"),
+          role: localStorage.getItem("role"),
+        };
+
+        if (cachedUser.role) {
+          setUser(cachedUser);
+          setLoading(false);
+        }
+
         try {
           const profile = await getProfile();
           setUser(profile.data);

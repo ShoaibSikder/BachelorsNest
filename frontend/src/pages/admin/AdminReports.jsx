@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
-import { getAllProperties } from "../../api/adminPropertyApi";
-import { API_ENDPOINTS } from "../../config";
 
 const AdminReports = () => {
   const [stats, setStats] = useState(null);
@@ -14,62 +12,20 @@ const AdminReports = () => {
       setError(null);
 
       try {
-        const [
-          dashboardResponse,
-          usersResponse,
-          propertiesResponse,
-          rentalsResponse,
-        ] =
-          await Promise.all([
-            api.get("accounts/admin-dashboard/"),
-            api.get("accounts/admin/users/"),
-            getAllProperties(),
-            api.get(API_ENDPOINTS.RENTALS_ADMIN),
-          ]);
-
+        const dashboardResponse = await api.get("accounts/admin-dashboard/");
         const dashboard = dashboardResponse.data || {};
-        const users = usersResponse.data || [];
-        const properties = propertiesResponse.data || [];
-        const rentals = rentalsResponse.data || [];
-
-        const now = new Date();
-        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-        const totalUsers = users.length;
-        const activeUsers = users.filter((user) => user.is_active).length;
-        const newRegistrations = users.filter((user) => {
-          const joined = user.date_joined ? new Date(user.date_joined) : null;
-          return joined && joined >= sevenDaysAgo;
-        }).length;
-
-        const activeProperties =
-          dashboard.total_properties - dashboard.pending_properties;
-        const rejectedProperties = properties.filter(
-          (property) => property.is_rejected,
-        ).length;
-
-        const totalWishlistSaves = properties.reduce(
-          (sum, property) => sum + (property.saved_count || 0),
-          0,
-        );
 
         setStats({
-          totalUsers: dashboard.total_users ?? totalUsers,
-          activeUsers: dashboard.active_users ?? activeUsers,
-          newRegistrations,
-          totalProperties: dashboard.total_properties ?? properties.length,
-          activeProperties,
-          pendingProperties:
-            dashboard.pending_properties ??
-            properties.filter(
-              (property) => !property.is_approved && !property.is_rejected,
-            ).length,
-          rejectedProperties,
-          totalRequests: dashboard.total_requests ?? rentals.length,
-          approvedRentals:
-            dashboard.approved_requests ??
-            rentals.filter((request) => request.status === "accepted").length,
-          totalWishlistSaves,
+          totalUsers: dashboard.total_users ?? 0,
+          activeUsers: dashboard.active_users ?? 0,
+          newRegistrations: dashboard.new_registrations ?? 0,
+          totalProperties: dashboard.total_properties ?? 0,
+          activeProperties: dashboard.active_properties ?? 0,
+          pendingProperties: dashboard.pending_properties ?? 0,
+          rejectedProperties: dashboard.rejected_properties ?? 0,
+          totalRequests: dashboard.total_requests ?? 0,
+          approvedRentals: dashboard.approved_requests ?? 0,
+          totalWishlistSaves: dashboard.total_wishlist_saves ?? 0,
         });
       } catch (err) {
         console.error("Failed to load reports", err);

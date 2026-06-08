@@ -38,6 +38,8 @@ const PropertyCard = ({
         <img
           src={getImageUrl(property.owner.profile_image)}
           alt="owner"
+          loading="lazy"
+          decoding="async"
           className="h-10 w-10 rounded-full object-cover"
         />
       ) : (
@@ -90,6 +92,8 @@ const PropertyCard = ({
         <img
           src={getImageUrl(property.images[0].image)}
           alt={`${property.title} 1`}
+          loading="lazy"
+          decoding="async"
           className="h-60 w-full cursor-pointer object-cover rounded"
           onClick={() => openImage(property.images[0].image)}
         />
@@ -104,6 +108,8 @@ const PropertyCard = ({
               key={idx}
               src={getImageUrl(img.image)}
               alt={`${property.title} ${idx + 1}`}
+              loading="lazy"
+              decoding="async"
               className="h-40 w-full cursor-pointer rounded object-cover"
               onClick={() => openImage(img.image)}
             />
@@ -118,18 +124,24 @@ const PropertyCard = ({
           <img
             src={getImageUrl(property.images[0].image)}
             alt={`${property.title} 1`}
+            loading="lazy"
+            decoding="async"
             className="row-span-2 h-full w-full cursor-pointer rounded object-cover"
             onClick={() => openImage(property.images[0].image)}
           />
           <img
             src={getImageUrl(property.images[1].image)}
             alt={`${property.title} 2`}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full cursor-pointer rounded object-cover"
             onClick={() => openImage(property.images[1].image)}
           />
           <img
             src={getImageUrl(property.images[2].image)}
             alt={`${property.title} 3`}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full cursor-pointer rounded object-cover"
             onClick={() => openImage(property.images[2].image)}
           />
@@ -144,6 +156,8 @@ const PropertyCard = ({
             key={idx}
             src={getImageUrl(img.image)}
             alt={`${property.title} ${idx + 1}`}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full cursor-pointer rounded object-cover"
             onClick={() => openImage(img.image)}
           />

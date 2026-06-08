@@ -4,10 +4,21 @@ from django.utils import timezone
 from datetime import timedelta
 from .models import UserLog, User, PasswordResetToken, SecuritySettings
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.db.models import Q
+from django.core.cache import cache
 from notifications.models import SystemLog
 
 User = get_user_model()
+
+
+SECURITY_SETTINGS_CACHE_KEY = "accounts.security_settings.solo"
+
+
+def get_security_settings():
+    settings = cache.get(SECURITY_SETTINGS_CACHE_KEY)
+    if settings is None:
+        settings = SecuritySettings.get_solo()
+        cache.set(SECURITY_SETTINGS_CACHE_KEY, settings, 60)
+    return settings
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -135,7 +146,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not username_or_email or not password:
             raise serializers.ValidationError("Both email/username and password are required.")
 
-        settings = SecuritySettings.get_solo()
+        settings = get_security_settings()
         request = self.context.get("request")
         client_ip = get_client_ip(request)
 
@@ -159,10 +170,15 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             )
             raise serializers.ValidationError("Login from this IP address is not allowed.")
 
-        # Find user by username or email
-        user = User.objects.filter(
-            Q(username=username_or_email) | Q(email__iexact=username_or_email)
-        ).first()
+        # Email values are normalized on save, so exact lookups can use the
+        # regular unique indexes instead of a broader OR/iexact scan.
+        login_value = username_or_email.strip()
+        if "@" in login_value:
+            user = User.objects.filter(email=login_value.lower()).first()
+        else:
+            user = User.objects.filter(username=login_value).first()
+            if not user:
+                user = User.objects.filter(email=login_value.lower()).first()
 
         if not user:
             log_security_event(
@@ -212,9 +228,15 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             if user.password_changed_at and user.password_changed_at < timezone.now() - timedelta(days=settings.password_expiry_days):
                 raise serializers.ValidationError("Password has expired. Please reset your password.")
 
-        user.failed_login_attempts = 0
-        user.locked_until = None
-        user.save(update_fields=["failed_login_attempts", "locked_until"])
+        reset_fields = []
+        if user.failed_login_attempts:
+            user.failed_login_attempts = 0
+            reset_fields.append("failed_login_attempts")
+        if user.locked_until:
+            user.locked_until = None
+            reset_fields.append("locked_until")
+        if reset_fields:
+            user.save(update_fields=reset_fields)
 
         if settings.audit_enabled:
             SystemLog.objects.create(
@@ -292,7 +314,7 @@ class SecuritySettingsSerializer(serializers.ModelSerializer):
 
 
 def validate_password_against_policy(password):
-    settings = SecuritySettings.get_solo()
+    settings = get_security_settings()
     errors = []
 
     if len(password) < settings.password_min_length:
@@ -322,7 +344,7 @@ def get_client_ip(request):
 
 
 def log_security_event(level, title, message, user=None, alert_enabled=False):
-    settings = SecuritySettings.get_solo()
+    settings = get_security_settings()
     event = None
 
     if settings.audit_enabled:

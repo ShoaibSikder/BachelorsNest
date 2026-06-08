@@ -1,12 +1,13 @@
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import PageFallback from "../components/common/PageFallback";
 
 const ProtectedRoute = ({ children, allowedRole }) => {
   const { user, loading } = useContext(AuthContext);
 
   if (loading) {
-    return null;
+    return <PageFallback />;
   }
 
   if (!user) {

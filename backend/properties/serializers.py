@@ -42,11 +42,15 @@ class PropertySerializer(serializers.ModelSerializer):
         }
 
     def get_saved_count(self, obj):
+        if hasattr(obj, 'saved_count_value'):
+            return obj.saved_count_value or 0
         if hasattr(obj, '_prefetched_objects_cache') and 'wishlists' in obj._prefetched_objects_cache:
             return len(obj._prefetched_objects_cache['wishlists'])
         return obj.wishlists.count()
 
     def get_is_saved(self, obj):
+        if hasattr(obj, 'is_saved_value'):
+            return bool(obj.is_saved_value)
         request = self.context.get('request')
         user = getattr(request, 'user', None)
         if not user or not user.is_authenticated or getattr(user, 'role', None) != 'bachelor':

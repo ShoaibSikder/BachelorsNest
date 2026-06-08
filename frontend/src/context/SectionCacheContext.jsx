@@ -61,14 +61,15 @@ export function useSectionCache(key) {
     throw new Error("useSectionCache must be used inside SectionCacheProvider");
   }
 
-  const cached = context.cache[key] ?? null;
+  const { cache, clearSectionCache, setSectionCache } = context;
+  const cached = cache[key] ?? null;
   const clearCached = useCallback(
-    () => context.clearSectionCache(key),
-    [context.clearSectionCache, key],
+    () => clearSectionCache(key),
+    [clearSectionCache, key],
   );
   const setCached = useCallback(
-    (value) => context.setSectionCache(key, value),
-    [context.setSectionCache, key],
+    (value) => setSectionCache(key, value),
+    [setSectionCache, key],
   );
 
   return useMemo(

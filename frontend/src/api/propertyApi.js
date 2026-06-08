@@ -1,7 +1,8 @@
 import api from "./axios";
 
-// Get all approved properties (public)
-export const getApprovedProperties = () => api.get("properties/approved/");
+// Get approved properties (public, paginated by the backend)
+export const getApprovedProperties = (params = {}) =>
+  api.get("properties/approved/", { params });
 
 export const getSavedProperties = () => api.get("properties/saved/");
 

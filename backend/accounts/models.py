@@ -115,6 +115,9 @@ class SecuritySettings(models.Model):
     def save(self, *args, **kwargs):
         self.pk = 1
         super().save(*args, **kwargs)
+        from django.core.cache import cache
+
+        cache.delete("accounts.security_settings.solo")
 
     @classmethod
     def get_solo(cls):

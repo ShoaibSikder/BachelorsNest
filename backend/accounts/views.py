@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
+from django.db.models import Count
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.shortcuts import get_object_or_404
@@ -14,7 +16,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 from .models import UserLog, PasswordResetToken, SecuritySettings
-from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, CustomTokenObtainPairSerializer, SecuritySettingsSerializer, log_security_event
+from .serializers import RegisterSerializer, ProfileSerializer, UserSerializer, UserLogSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, CustomTokenObtainPairSerializer, SecuritySettingsSerializer, log_security_event, SECURITY_SETTINGS_CACHE_KEY
 from .permissions import IsAdmin
 from notifications.models import SystemLog
 
@@ -367,6 +369,7 @@ class SecuritySettingsView(APIView):
         serializer = SecuritySettingsSerializer(settings_obj, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            cache.delete(SECURITY_SETTINGS_CACHE_KEY)
             self._prune_audit_logs(serializer.instance)
             SystemLog.objects.create(
                 level="info",
@@ -389,14 +392,28 @@ class AdminDashboardView(APIView):
 
     def get(self, request):
         try:
+            seven_days_ago = timezone.now() - timedelta(days=7)
             data = {
                 "total_users": User.objects.count(),
                 "active_users": User.objects.filter(is_active=True).count(),
+                "new_registrations": User.objects.filter(
+                    date_joined__gte=seven_days_ago
+                ).count(),
                 "total_properties": Property.objects.count(),
                 "pending_properties": Property.objects.filter(
                     is_approved=False,
                     is_rejected=False,
                 ).count(),
+                "rejected_properties": Property.objects.filter(
+                    is_rejected=True,
+                ).count(),
+                "active_properties": Property.objects.filter(
+                    is_approved=True,
+                    is_rejected=False,
+                ).count(),
+                "total_wishlist_saves": Property.objects.aggregate(
+                    total=Count("wishlists")
+                ).get("total") or 0,
                 "total_requests": RentRequest.objects.count(),
                 "approved_requests": RentRequest.objects.filter(
                     status='accepted'
