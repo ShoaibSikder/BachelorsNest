@@ -1,7 +1,8 @@
-import { useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
+import API_BASE_URL from "../../config";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,20 @@ const Login = () => {
   const navigate = useNavigate();
 
   // Dark mode toggle is now handled by ThemeContext
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const warmupUrl = `${API_BASE_URL}/warmup/`;
+
+    fetch(warmupUrl, {
+      cache: "no-store",
+      signal: controller.signal,
+    }).catch(() => {
+      // The login request will still handle any remaining wake-up delay.
+    });
+
+    return () => controller.abort();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({

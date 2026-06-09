@@ -16,14 +16,23 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.db import connection
 from django.http import JsonResponse
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from accounts.views import CustomTokenObtainPairView
 
 
+def warmup_view(request):
+    connection.ensure_connection()
+    get_user_model().objects.only("id").first()
+    return JsonResponse({'status': 'warm'})
+
+
 urlpatterns = [
     path('health/', lambda request: JsonResponse({'status': 'ok'}), name='health'),
+    path('warmup/', warmup_view, name='warmup'),
     path('admin/', admin.site.urls),
     # Auth
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
