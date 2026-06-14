@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getOwnerRequests, updateRentRequestStatus } from "../../api/rentalApi";
 import MessageBox from "../../components/MessageBox";
+import PageFallback from "../../components/common/PageFallback";
 
 import { getMediaUrl } from "../../config";
 
@@ -71,9 +72,7 @@ const OwnerRequests = () => {
   };
 
   if (loading) {
-    return (
-      <p className="text-gray-600 dark:text-gray-300">Loading requests...</p>
-    );
+    return <PageFallback />;
   }
 
   return (

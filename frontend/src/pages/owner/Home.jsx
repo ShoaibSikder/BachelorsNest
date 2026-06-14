@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import PageFallback from "../../components/common/PageFallback";
 
 const OwnerHome = () => {
   const [stats, setStats] = useState(null);
@@ -24,9 +25,7 @@ const OwnerHome = () => {
   }
 
   if (!stats) {
-    return (
-      <p className="text-gray-600 dark:text-gray-300">Loading dashboard...</p>
-    );
+    return <PageFallback />;
   }
 
   // Dashboard items as a flat array

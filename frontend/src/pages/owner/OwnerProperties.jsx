@@ -4,6 +4,7 @@ import { Edit, Trash2, X } from "lucide-react";
 import { getOwnerProperties, deleteProperty } from "../../api/propertyApi";
 import MessageBox from "../../components/MessageBox";
 import ConfirmModal from "../../components/ConfirmModal";
+import PageFallback from "../../components/common/PageFallback";
 import PropertyCard from "../../components/PropertyCard";
 const OwnerProperties = () => {
   const [properties, setProperties] = useState([]);
@@ -75,9 +76,7 @@ const OwnerProperties = () => {
   }, []);
 
   if (loading)
-    return (
-      <p className="text-gray-600 dark:text-gray-300">Loading properties...</p>
-    );
+    return <PageFallback />;
   if (error)
     return (
       <>

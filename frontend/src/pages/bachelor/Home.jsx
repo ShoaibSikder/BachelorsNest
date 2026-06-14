@@ -5,6 +5,7 @@ import { Heart, MessageCircle, User, X } from "lucide-react";
 import { getApprovedProperties, toggleWishlist } from "../../api/propertyApi";
 import { getMyRentRequests, sendRentRequest } from "../../api/rentalApi";
 import MessageBox from "../../components/MessageBox";
+import PageFallback from "../../components/common/PageFallback";
 import PropertyCard from "../../components/PropertyCard";
 
 const BachelorHome = () => {
@@ -169,9 +170,7 @@ const BachelorHome = () => {
       </div>
 
       {propertiesLoading ? (
-        <p className="text-gray-600 dark:text-gray-300">
-          Loading properties...
-        </p>
+        <PageFallback />
       ) : properties.length === 0 ? (
         <p className="text-gray-600 dark:text-gray-300">
           No properties available.

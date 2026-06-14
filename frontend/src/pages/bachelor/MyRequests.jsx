@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getMyRentRequests, cancelRentRequest } from "../../api/rentalApi";
 import MessageBox from "../../components/MessageBox";
 import ConfirmModal from "../../components/ConfirmModal";
+import PageFallback from "../../components/common/PageFallback";
 
 const MyRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -61,11 +62,7 @@ const MyRequests = () => {
   };
 
   if (loading) {
-    return (
-      <p className="p-6 text-gray-600 dark:text-gray-300">
-        Loading your requests...
-      </p>
-    );
+    return <PageFallback />;
   }
 
   return (

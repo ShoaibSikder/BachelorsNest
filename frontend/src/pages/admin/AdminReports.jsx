@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import PageFallback from "../../components/common/PageFallback";
 
 const AdminReports = () => {
   const [stats, setStats] = useState(null);
@@ -39,11 +40,7 @@ const AdminReports = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="text-gray-800 dark:text-white">
-        <p>Loading reports...</p>
-      </div>
-    );
+    return <PageFallback />;
   }
 
   if (error) {

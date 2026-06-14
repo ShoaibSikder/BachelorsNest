@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { updateProperty } from "../../api/propertyApi";
 import api from "../../api/axios";
+import PageFallback from "../../components/common/PageFallback";
 
 const OwnerEditProperty = () => {
   const { id } = useParams(); // property id from URL
@@ -130,7 +131,7 @@ const OwnerEditProperty = () => {
     }
   };
 
-  if (loading) return <p className="text-gray-600">Loading property...</p>;
+  if (loading) return <PageFallback />;
 
   return (
     <div className="w-full rounded-xl bg-white p-4 shadow-lg dark:bg-gray-800 sm:p-6 lg:mx-auto lg:max-w-2xl">

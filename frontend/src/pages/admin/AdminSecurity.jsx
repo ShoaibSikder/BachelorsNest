@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Shield, Lock, Key, AlertTriangle, Eye, Settings } from "lucide-react";
 import ConfirmModal from "../../components/ConfirmModal";
+import PageFallback from "../../components/common/PageFallback";
 import {
   getSecuritySettings,
   updateSecuritySettings,
@@ -129,11 +130,7 @@ const AdminSecurity = () => {
   };
 
   if (initialLoading) {
-    return (
-      <div className="p-6 text-gray-800 dark:text-white">
-        Loading security settings...
-      </div>
-    );
+    return <PageFallback />;
   }
 
   const tabs = [

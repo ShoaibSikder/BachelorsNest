@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS } from "../../config";
+import PageFallback from "../../components/common/PageFallback";
 
 const AdminRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -121,14 +122,7 @@ const AdminRequests = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-gray-800 dark:text-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Loading rent requests...</p>
-        </div>
-      </div>
-    );
+    return <PageFallback />;
   }
 
   return (

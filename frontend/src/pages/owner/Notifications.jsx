@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getNotifications } from "../../api/notificationApi";
+import PageFallback from "../../components/common/PageFallback";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
@@ -21,11 +22,7 @@ const Notifications = () => {
   }, []);
 
   if (loading) {
-    return (
-      <p className="text-gray-600 dark:text-gray-300">
-        Loading notifications...
-      </p>
-    );
+    return <PageFallback />;
   }
 
   return (

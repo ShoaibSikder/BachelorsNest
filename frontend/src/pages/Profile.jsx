@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { getUserProfile } from "../api/authApi";
+import PageFallback from "../components/common/PageFallback";
 
 import { getMediaUrl } from "../config";
 
@@ -131,9 +132,7 @@ const Profile = () => {
   };
 
   if (loading || !displayUser) {
-    return (
-      <p className="text-gray-600 dark:text-gray-300">Loading profile...</p>
-    );
+    return <PageFallback />;
   }
 
   return (
