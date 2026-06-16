@@ -6,8 +6,10 @@ from .models import UserLog, User, PasswordResetToken, SecuritySettings
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core.cache import cache
 from notifications.models import SystemLog
+import logging
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 SECURITY_SETTINGS_CACHE_KEY = "accounts.security_settings.solo"
@@ -348,12 +350,15 @@ def log_security_event(level, title, message, user=None, alert_enabled=False):
     event = None
 
     if settings.audit_enabled:
-        event = SystemLog.objects.create(
-            level=level,
-            title=title,
-            message=message,
-            user=user,
-        )
+        try:
+            event = SystemLog.objects.create(
+                level=level,
+                title=title,
+                message=message,
+                user=user,
+            )
+        except Exception:
+            logger.exception("Failed to write security audit event: %s", title)
 
     if alert_enabled:
         if settings.alert_email:
