@@ -15,9 +15,7 @@ services:
       - key: ALLOWED_HOSTS
         value: ".onrender.com"
       - key: DATABASE_URL
-        fromDatabase:
-          name: bachelorsnest-db
-          property: connectionString
+        sync: false
       - key: REDIS_URL
         fromService:
           type: keyvalue
@@ -63,7 +61,3 @@ services:
   - type: keyvalue
     name: bachelorsnest-redis
     ipAllowList: []
-
-databases:
-  - name: bachelorsnest-db
-    plan: free
