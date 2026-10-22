@@ -550,11 +550,7 @@ DEBUG=True
 SECRET_KEY=dev-only-secret-key
 ALLOWED_HOSTS=localhost,127.0.0.1
 
-POSTGRES_DB=BachelorsNest
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your-local-password
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require
 
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
@@ -580,7 +576,7 @@ DEBUG=False
 SECRET_KEY=replace-me-with-a-strong-secret
 ALLOWED_HOSTS=your-backend.onrender.com,.onrender.com
 
-DATABASE_URL=postgresql://user:password@host:5432/database
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require
 REDIS_URL=redis://host:6379
 
 CORS_ALLOW_ALL_ORIGINS=False
@@ -601,7 +597,7 @@ RESEND_API_KEY=
 RESEND_FROM_EMAIL=onboarding@resend.dev
 ```
 
-When `DEBUG=False`, the backend requires `DATABASE_URL`. On Render this is injected from the Render PostgreSQL database defined in `render.yaml`; without it, the backend intentionally refuses to start.
+The backend requires `DATABASE_URL` in both development and production. Set it to your Supabase project's PostgreSQL connection string (copy it from the Supabase dashboard); use the Supabase pooler connection string if your host cannot connect directly. The backend does not fall back to a local PostgreSQL server.
 
 ### Frontend
 
@@ -761,7 +757,7 @@ Health check path: /health/
 
 Required production services:
 
-- Render Postgres, exposed as `DATABASE_URL`.
+- Supabase PostgreSQL, configured through `DATABASE_URL` in the Render environment.
 - Render Key Value/Redis, exposed as `REDIS_URL`, for Django Channels WebSocket support.
 
 ### Frontend On Vercel

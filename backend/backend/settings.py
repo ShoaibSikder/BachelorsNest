@@ -117,33 +117,18 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASE_URL = clean_env_value(os.getenv("DATABASE_URL"))
 
-if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    if not DEBUG:
-        raise ImproperlyConfigured("DATABASE_URL is required when DEBUG=False.")
+if not DATABASE_URL:
+    raise ImproperlyConfigured(
+        "DATABASE_URL must be set to the Supabase PostgreSQL connection string."
+    )
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB', 'BachelorsNest'),
-            'USER': os.getenv('POSTGRES_USER', 'postgres'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', '12345678'),
-            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-            'PORT': os.getenv('POSTGRES_PORT', '5432'),
-            'CONN_MAX_AGE': 60,
-            'CONN_HEALTH_CHECKS': True,
-            'OPTIONS': {
-                'client_encoding': 'UTF8',
-            },
-        }
-    }
+DATABASES = {
+    "default": dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+}
 
 
 # Password validation
