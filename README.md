@@ -1,3 +1,5 @@
+<p align="center"> <img src="frontend/public/Logo.png" alt="logo" width="112" /> </p>
+
 <h1 align="center">BachelorsNest</h1>
 
 <p align="center"><strong>Find a place to call home.</strong><br />A role-based rental platform connecting bachelors with property owners.</p>
