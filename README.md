@@ -1,11 +1,15 @@
-# BachelorsNest
+<h1 align="center">BachelorsNest</h1>
 
-![License](https://img.shields.io/badge/License-MIT-blue)
-![Frontend](https://img.shields.io/badge/Frontend-React-61DAFB)
-![Backend](https://img.shields.io/badge/Backend-Django-0C4B33)
-![API](https://img.shields.io/badge/API-Django%20REST%20Framework-red)
-![Auth](https://img.shields.io/badge/Auth-JWT-orange)
-![Database](https://img.shields.io/badge/Database-PostgreSQL-336791)
+<p align="center"><strong>Find a place to call home.</strong><br />A role-based rental platform connecting bachelors with property owners.</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React 19" />
+  <img src="https://img.shields.io/badge/Django-6-0C4B33?logo=django&logoColor=white" alt="Django 6" />
+  <img src="https://img.shields.io/badge/API-Django%20REST%20Framework-red" alt="Django REST Framework" />
+  <img src="https://img.shields.io/badge/Auth-JWT-orange" alt="JWT authentication" />
+  <img src="https://img.shields.io/badge/Database-PostgreSQL-336791?logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" /></a>
+</p>
 
 BachelorsNest is a full-stack flat rental platform built for bachelors, property owners, and platform administrators. It helps bachelors discover approved rental properties, save listings, send rent requests, and chat with owners after requests are accepted. Owners can publish properties, manage listings, and approve or reject rent requests. Admins control users, properties, requests, notifications, security settings, and platform activity logs.
 
@@ -29,6 +33,7 @@ The application uses a Django REST backend and a React + Vite frontend. It is or
 - [Core Features](#core-features)
 - [Role-Based Access](#role-based-access)
 - [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Backend Apps](#backend-apps)
 - [Frontend Architecture](#frontend-architecture)
@@ -314,6 +319,28 @@ Protected by `allowedRole="admin"`:
 - Vercel frontend hosting
 - python-dotenv
 - Requests
+
+## Architecture
+
+```mermaid
+flowchart LR
+    Browser[Browser]
+    Web[React and Vite frontend on Vercel]
+    API[Django REST API and Channels on Render]
+    DB[(PostgreSQL)]
+    Redis[(Redis)]
+    Storage[Supabase Storage]
+    Email[Email provider]
+
+    Browser --> Web
+    Web -->|HTTPS and JWT| API
+    API --> DB
+    API --> Redis
+    API --> Storage
+    API --> Email
+```
+
+The frontend provides separate bachelor, owner, and administrator experiences. Django enforces role permissions for API operations and handles real-time chat through Channels; frontend route guards are not a substitute for backend authorization. The deployment blueprint and service-specific settings are documented in [Deployment](#deployment).
 
 ## Project Structure
 
@@ -798,3 +825,7 @@ MIT License. See `LICENSE` if present in the repository.
 ## Support
 
 If this project is useful, consider starring the repository and keeping the documentation up to date as features evolve.
+
+---
+
+Created by [@shoaibsikder](https://shoaibsikderportfolio.vercel.app) to make it easier for bachelors and property owners to find the right rental connection.
