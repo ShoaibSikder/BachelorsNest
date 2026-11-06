@@ -192,8 +192,11 @@ SIMPLE_JWT = {
 }
 
 SUPABASE_URL = clean_env_value(os.getenv('SUPABASE_URL'))
-SUPABASE_KEY = clean_env_value(os.getenv('SUPABASE_KEY'))
-SUPABASE_MEDIA_BUCKET = clean_env_value(os.getenv('SUPABASE_MEDIA_BUCKET'), 'StudyMaterials')
+# Prefer a server-only service-role key for uploads when configured. Keep the
+# existing key as a fallback for installations that use bucket policies.
+SUPABASE_SERVICE_ROLE_KEY = clean_env_value(os.getenv('SUPABASE_SERVICE_ROLE_KEY'))
+SUPABASE_KEY = SUPABASE_SERVICE_ROLE_KEY or clean_env_value(os.getenv('SUPABASE_KEY'))
+SUPABASE_MEDIA_BUCKET = clean_env_value(os.getenv('SUPABASE_MEDIA_BUCKET'), 'BachelorsNestImages')
 
 STORAGES = {
     'staticfiles': {

@@ -19,6 +19,5 @@ export const confirmPasswordReset = (data) =>
 
 export const updateProfile = (data, config = {}) =>
   api.patch("accounts/profile/", data, {
-    headers: { "Content-Type": "multipart/form-data" },
     ...config,
   });
