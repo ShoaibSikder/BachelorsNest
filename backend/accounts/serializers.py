@@ -241,7 +241,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             user.save(update_fields=reset_fields)
 
         if settings.audit_enabled:
-            SystemLog.objects.create(
+            # Auditing must not prevent a valid user from receiving tokens.
+            # The audit helper deliberately catches persistence failures so a
+            # logging/schema problem cannot turn login into an HTTP 500.
+            log_security_event(
                 level="info",
                 title="Admin Login" if user.role == "admin" else "User Login",
                 message=f"{user.username} logged in successfully",

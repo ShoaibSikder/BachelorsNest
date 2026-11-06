@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from unittest.mock import patch
 
 from notifications.models import SystemLog
 from .models import SecuritySettings
@@ -116,3 +117,18 @@ class LoginSecurityTests(APITestCase):
         self.assertIsNotNone(self.user.locked_until)
         self.assertIn("temporarily locked", str(third.data).lower())
         self.assertTrue(SystemLog.objects.filter(title="Account Locked").exists())
+
+    @patch("accounts.serializers.SystemLog.objects.create", side_effect=Exception("audit storage unavailable"))
+    def test_successful_login_is_not_blocked_by_audit_failure(self, _audit_create):
+        response = self.client.post(
+            "/api/token/",
+            {
+                "username_or_email": "lockeduser",
+                "password": "StrongPass123!",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access", response.data)
+        self.assertIn("refresh", response.data)
