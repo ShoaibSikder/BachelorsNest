@@ -115,28 +115,27 @@ class ProfileView(APIView):
 
     def patch(self, request):
         serializer = ProfileSerializer(request.user, data=request.data, partial=True)
-        if serializer.is_valid():
-            try:
-                serializer.save()
-            except Exception:
-                # A failed remote media upload should not become an opaque 500
-                # in the browser. The detailed exception is kept server-side.
-                import logging
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-                logging.getLogger(__name__).exception(
-                    "Profile update failed for user %s", request.user.pk
-                )
-                return Response(
-                    {
-                        "detail": (
-                            "Profile could not be saved because media storage is "
-                            "unavailable. Check the Supabase URL and credentials."
-                        )
-                    },
-                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
-                )
+        try:
+            serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+        except Exception:
+            import logging
+
+            logging.getLogger(__name__).exception(
+                "Profile update failed for user %s", request.user.pk
+            )
+            return Response(
+                {
+                    "detail": (
+                        "Profile image storage is unavailable. Verify the Supabase "
+                        "URL, bucket name, bucket access, and upload key."
+                    )
+                },
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
 
 class UserDetailView(APIView):

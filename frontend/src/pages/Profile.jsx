@@ -9,6 +9,46 @@ import { getMediaUrl } from "../config";
 const getImageUrl = (img) =>
   getMediaUrl(img);
 
+const optimizeImageForUpload = (file) =>
+  new Promise((resolve) => {
+    const maxBytes = 1.5 * 1024 * 1024;
+    if (!file || file.size <= maxBytes || !file.type.startsWith("image/")) {
+      resolve(file);
+      return;
+    }
+
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    image.onload = () => {
+      const maxDimension = 1800;
+      const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(objectUrl);
+          resolve(
+            blob
+              ? new File([blob], `${file.name.replace(/\.[^.]+$/, "")}.jpg`, {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                })
+              : file,
+          );
+        },
+        "image/jpeg",
+        0.82,
+      );
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(file);
+    };
+    image.src = objectUrl;
+  });
+
 const Profile = () => {
   const { user, updateProfile } = useContext(AuthContext);
   const { userId } = useParams();
@@ -120,7 +160,7 @@ const Profile = () => {
       data.append("address", formData.address);
       data.append("bio", formData.bio);
       if (profileImage) {
-        data.append("profile_image", profileImage);
+        data.append("profile_image", await optimizeImageForUpload(profileImage));
       }
 
       await updateProfile(data, {

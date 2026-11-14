@@ -46,4 +46,38 @@ body {
   button {
     @apply disabled:cursor-not-allowed;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-slate-900 dark:text-slate-100;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply text-slate-900 placeholder:text-slate-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-400;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply border-blue-500 outline-none ring-2 ring-blue-500/30;
+  }
+
+  ::selection {
+    @apply bg-blue-600 text-white;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-text-fill-color: #f1f5f9;
+    transition: background-color 9999s ease-in-out 0s;
+  }
 }

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.http import QueryDict
 
 from .models import Property, PropertyImage
 
@@ -87,7 +88,12 @@ class PropertyCreateUpdateSerializer(serializers.ModelSerializer):
         # Normalize them before ListField validation so all selected images,
         # rather than only the last one, reach create/update.
         if hasattr(data, 'getlist'):
-            data = data.copy()
+            # QueryDict.copy() deep-copies UploadedFile objects and fails on
+            # Windows with "cannot pickle BufferedRandom".
+            safe_data = QueryDict('', mutable=True)
+            for key in data:
+                safe_data.setlist(key, data.getlist(key))
+            data = safe_data
             image_files = data.getlist('images')
             if image_files:
                 data.setlist('images', image_files)

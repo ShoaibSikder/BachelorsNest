@@ -20,8 +20,11 @@ from django.core.exceptions import ImproperlyConfigured
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from backend/.env no matter where the server is started.
-load_dotenv(BASE_DIR / '.env', encoding='utf-8-sig')
+# Load local configuration from backend/.env regardless of the directory from
+# which Django is started. Render and other hosts can inject the same values as
+# process environment variables; those take precedence over the local file.
+ENV_FILE = BASE_DIR / '.env'
+load_dotenv(dotenv_path=ENV_FILE, encoding='utf-8-sig', override=False)
 
 
 # Quick-start development settings - unsuitable for production
@@ -196,7 +199,20 @@ SUPABASE_URL = clean_env_value(os.getenv('SUPABASE_URL'))
 # existing key as a fallback for installations that use bucket policies.
 SUPABASE_SERVICE_ROLE_KEY = clean_env_value(os.getenv('SUPABASE_SERVICE_ROLE_KEY'))
 SUPABASE_KEY = SUPABASE_SERVICE_ROLE_KEY or clean_env_value(os.getenv('SUPABASE_KEY'))
-SUPABASE_MEDIA_BUCKET = clean_env_value(os.getenv('SUPABASE_MEDIA_BUCKET'), 'BachelorsNestImages')
+SUPABASE_MEDIA_BUCKET = clean_env_value(os.getenv('SUPABASE_MEDIA_BUCKET'))
+
+if not SUPABASE_URL:
+    raise ImproperlyConfigured(
+        "SUPABASE_URL must be set to the Supabase project URL."
+    )
+if not SUPABASE_KEY:
+    raise ImproperlyConfigured(
+        "SUPABASE_KEY or SUPABASE_SERVICE_ROLE_KEY must be set for media storage."
+    )
+if not SUPABASE_MEDIA_BUCKET:
+    raise ImproperlyConfigured(
+        "SUPABASE_MEDIA_BUCKET must be set to the media bucket name."
+    )
 
 STORAGES = {
     'staticfiles': {
@@ -204,14 +220,9 @@ STORAGES = {
     },
 }
 
-if SUPABASE_URL and SUPABASE_KEY:
-    STORAGES['default'] = {
-        'BACKEND': 'backend.storage.SupabaseRootMediaStorage',
-    }
-else:
-    STORAGES['default'] = {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-    }
+STORAGES['default'] = {
+    'BACKEND': 'backend.storage.SupabaseRootMediaStorage',
+}
 
 REDIS_URL = clean_env_value(os.getenv("REDIS_URL"))
 

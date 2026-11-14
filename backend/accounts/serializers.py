@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from django.http import QueryDict
 from django.utils import timezone
 from datetime import timedelta
 from .models import UserLog, User, PasswordResetToken, SecuritySettings
@@ -57,7 +58,15 @@ class ProfileSerializer(serializers.ModelSerializer):
         # identity fields when the request is only updating profile metadata
         # or an image.
         if self.instance is not None:
-            data = data.copy()
+            if isinstance(data, QueryDict):
+                # QueryDict.copy() deep-copies UploadedFile objects and fails
+                # on Windows with "cannot pickle BufferedRandom".
+                safe_data = QueryDict('', mutable=True)
+                for key in data:
+                    safe_data.setlist(key, data.getlist(key))
+                data = safe_data
+            else:
+                data = dict(data)
             if data.get('username') == self.instance.username:
                 data.pop('username', None)
             if data.get('email') == self.instance.email:
