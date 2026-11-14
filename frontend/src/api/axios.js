@@ -11,6 +11,14 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
 
+  // Let the browser set the multipart boundary for file uploads. Keeping the
+  // JSON default header on FormData requests makes DRF reject the body with
+  // HTTP 400 before it reaches the image serializer.
+  if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+    delete config.headers["content-type"];
+  }
+
   // Don't add auth header for login/token endpoints
   const isAuthEndpoint = config.url?.includes("token");
 

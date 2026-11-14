@@ -51,6 +51,19 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 class ProfileSerializer(serializers.ModelSerializer):
+    def to_internal_value(self, data):
+        # Older accounts can contain usernames that Django no longer accepts
+        # (for example, a trailing backslash). Do not revalidate unchanged
+        # identity fields when the request is only updating profile metadata
+        # or an image.
+        if self.instance is not None:
+            data = data.copy()
+            if data.get('username') == self.instance.username:
+                data.pop('username', None)
+            if data.get('email') == self.instance.email:
+                data.pop('email', None)
+        return super().to_internal_value(data)
+
     class Meta:
         model = User
         fields = [

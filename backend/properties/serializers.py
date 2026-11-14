@@ -82,6 +82,17 @@ class PropertyCreateUpdateSerializer(serializers.ModelSerializer):
             'images',
         )
 
+    def to_internal_value(self, data):
+        # Repeated multipart keys are represented by QueryDict.getlist().
+        # Normalize them before ListField validation so all selected images,
+        # rather than only the last one, reach create/update.
+        if hasattr(data, 'getlist'):
+            data = data.copy()
+            image_files = data.getlist('images')
+            if image_files:
+                data.setlist('images', image_files)
+        return super().to_internal_value(data)
+
     def validate(self, attrs):
         instance = getattr(self, 'instance', None)
         property_type = attrs.get(

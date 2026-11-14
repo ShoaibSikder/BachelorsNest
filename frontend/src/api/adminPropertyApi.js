@@ -30,9 +30,6 @@ export const deleteProperty = (id) => {
 // 🔹 Update property
 export const updateProperty = (id, data, config = {}) => {
   return api.put(`${API}/update-delete/${id}/`, data, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
     ...config,
   });
 };
