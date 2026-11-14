@@ -104,8 +104,16 @@ const Profile = () => {
 
     try {
       const data = new FormData();
-      data.append("username", formData.username);
-      data.append("email", formData.email);
+      // Do not resend the legacy username on every picture upload. Older
+      // accounts may contain characters rejected by Django's username
+      // validator (for example, a trailing backslash), which would otherwise
+      // make an otherwise valid image update fail with HTTP 400.
+      if (formData.username !== (displayUser.username || "")) {
+        data.append("username", formData.username);
+      }
+      if (formData.email !== (displayUser.email || "")) {
+        data.append("email", formData.email);
+      }
       data.append("first_name", formData.first_name);
       data.append("last_name", formData.last_name);
       data.append("phone_number", formData.phone_number);
@@ -124,7 +132,15 @@ const Profile = () => {
       setMessage("Profile updated successfully.");
     } catch (err) {
       console.error("Profile update failed:", err);
-      setError("Failed to update profile. Please try again.");
+      const validationErrors = err.response?.data;
+      const firstValidationError = validationErrors
+        ? Object.values(validationErrors).flat().find(Boolean)
+        : null;
+      setError(
+        firstValidationError ||
+          validationErrors?.detail ||
+          "Failed to update profile. Please try again.",
+      );
     } finally {
       setSaving(false);
       setUploadProgress(0);
