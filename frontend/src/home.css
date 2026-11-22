@@ -3,11 +3,12 @@
   color-scheme:light;
   --paper:#fafbf8; --ink:#172a22; --soft:#536259; --rule:#d0d9d2;
   --owner:#e6eee8; --button:#224e39; --inverse:#f6fbf7;
+  --toggle-muted:#59675f; --toggle-wash:#dfede3; --toggle-ink:#202b24; --toggle-focus:#246344;
 }
 @media(prefers-color-scheme:dark) {
-  :root:not([data-theme]) {--paper:#151e19;--ink:#f2f5ed;--soft:#b5c4b9;--rule:#35473c;--owner:#20372b;--button:#bce7ca;--inverse:#112b1b;color-scheme:dark}
+  :root:not([data-theme]) {--paper:#151e19;--ink:#f2f5ed;--soft:#b5c4b9;--rule:#35473c;--owner:#20372b;--button:#bce7ca;--inverse:#112b1b;--toggle-muted:#b1bdb4;--toggle-wash:#2a4234;--toggle-ink:#edf2ed;--toggle-focus:#9ad9ae;color-scheme:dark}
 }
-[data-theme="dark"] {--paper:#151e19;--ink:#f2f5ed;--soft:#b5c4b9;--rule:#35473c;--owner:#20372b;--button:#bce7ca;--inverse:#112b1b;color-scheme:dark}
+[data-theme="dark"] {--paper:#151e19;--ink:#f2f5ed;--soft:#b5c4b9;--rule:#35473c;--owner:#20372b;--button:#bce7ca;--inverse:#112b1b;--toggle-muted:#b1bdb4;--toggle-wash:#2a4234;--toggle-ink:#edf2ed;--toggle-focus:#9ad9ae;color-scheme:dark}
 * {box-sizing:border-box}
 body {margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,sans-serif}
 a {color:inherit;text-underline-offset:4px}
@@ -21,10 +22,10 @@ a:focus-visible,summary:focus-visible {outline:3px solid currentColor;outline-of
 .mast-actions {gap:10px;flex:none}
 .wordmark {text-decoration:none;font-weight:700;font-size:23px;gap:10px}
 .mast-nav {gap:28px}.mast-nav a,.signin {font-size:14px;font-weight:600;text-decoration:none}
-.mast-nav a {padding-block:12px}.mast-nav a:hover,.hero-link:hover {text-decoration:underline}
-.theme-toggle {display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid var(--rule);border-radius:6px;background:transparent;color:var(--ink);font:22px/1 "Segoe UI Symbol",system-ui,sans-serif;cursor:pointer}
-.theme-toggle:hover {background:var(--owner)}
-.theme-toggle:focus-visible {outline:3px solid currentColor;outline-offset:3px}
+.mast-nav a {padding-block:12px}.mast-nav a:hover {text-decoration:underline}
+.theme-toggle {display:inline-grid;place-items:center;width:44px;height:44px;flex-shrink:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--toggle-muted);cursor:pointer}
+.theme-toggle:hover {background:var(--toggle-wash);color:var(--toggle-ink)}
+.theme-toggle:focus-visible {outline:3px solid var(--toggle-focus);outline-offset:3px}
 .signin,.action {justify-content:center;gap:18px;border-radius:6px;min-height:44px;padding:9px 18px}
 .signin {border:1px solid var(--rule)}.signin:hover {background:var(--owner)}
 .hero {isolation:isolate;position:relative;display:grid;align-items:center;min-height:min(620px,66svh);background:#283b30;color:#fff}
@@ -41,7 +42,7 @@ h1 em {color:#d4f1d9;font-weight:400}
 .hero-actions {gap:24px;flex-wrap:wrap;margin-top:24px}
 .action {display:inline-flex;text-decoration:none;background:var(--button);color:var(--inverse);font-weight:650}
 .action:hover {filter:brightness(1.1)}.hero .action {background:#d6efcb;color:#173526}
-.hero-link {color:#fff;font-weight:600;text-decoration:underline}
+.hero-link {color:#fff;font-weight:600;text-decoration:none}
 .options,.questions {padding-block:56px}
 .section-head {display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:24px}
 h2 {font-size:42px;line-height:1.13}.section-head p,.option-grid p,.owner-inner p,.answers p {color:var(--soft)}
