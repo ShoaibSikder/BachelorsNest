@@ -20,6 +20,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
+        if not hasattr(self, 'group_name'):
+            return
         await self.channel_layer.group_discard(
             self.group_name,
             self.channel_name

@@ -1,18 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-BD">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary SEO -->
-  <title>BachelorsNest</title>
+  <title>BachelorsNest | Shared Flats and Rental Seats in Bangladesh</title>
 
   <meta name="description"
-    content="Find shared flats, bachelor rooms, and rental seats in Bangladesh with BachelorsNest. Discover properties, connect with property owners, save listings, and manage rental requests." />
+    content="Find shared flats and rental seats in Bangladesh, save places, and request a rental through BachelorsNest. Developed by MD. Shoaib Sikder." />
 
   <meta name="application-name" content="BachelorsNest" />
-  <meta name="author" content="BachelorsNest" />
+  <meta name="author" content="MD. Shoaib Sikder" />
+  <link rel="author" href="https://shoaibsikderportfolio.vercel.app/" />
+  <link rel="stylesheet" href="/src/home.css" />
 
   <meta name="robots" content="index, follow, max-image-preview:large" />
 
@@ -24,9 +26,10 @@
   <meta name="google-site-verification" content="IuV0GXaCJ4DNlX6ertSMdmnUt7f9a8dpLVHov507YWs" />
 
   <!-- Favicon and App Icons -->
-  <link rel="icon" type="image/png" href="/Logo.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/bachelorsnest-icon-32.png" />
+  <link rel="icon" type="image/svg+xml" sizes="any" href="/bachelorsnest-icon.svg" />
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/bachelorsnest-touch.png" />
 
   <!-- Canonical: use this for the homepage only -->
   <link rel="canonical" href="https://bachelorsnest.vercel.app/" />
@@ -78,6 +81,7 @@
         "alternateName": "Bachelors Nest",
         "description": "A housing platform helping bachelors in Bangladesh discover shared flats and rental seats and connect with property owners.",
         "inLanguage": "en-BD",
+        "creator": { "@id": "https://bachelorsnest.vercel.app/#developer" },
         "publisher": {
           "@id": "https://bachelorsnest.vercel.app/#organization"
         }
@@ -89,13 +93,24 @@
         "url": "https://bachelorsnest.vercel.app/",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://bachelorsnest.vercel.app/Logo.png"
+          "url": "https://bachelorsnest.vercel.app/bachelorsnest-touch.png"
         }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://bachelorsnest.vercel.app/#developer",
+        "name": "MD. Shoaib Sikder",
+        "url": "https://shoaibsikderportfolio.vercel.app/",
+        "sameAs": [
+          "https://github.com/ShoaibSikder",
+          "https://www.linkedin.com/in/md-shoaib-sikder-232abb3b3/"
+        ]
       },
       {
         "@type": "SoftwareApplication",
         "@id": "https://bachelorsnest.vercel.app/#application",
         "name": "BachelorsNest",
+        "author": { "@id": "https://bachelorsnest.vercel.app/#developer" },
         "url": "https://bachelorsnest.vercel.app/",
         "applicationCategory": "RealEstateApplication",
         "operatingSystem": "Web",
@@ -116,9 +131,49 @@
 </head>
 
 <body>
-  <div id="root"></div>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="mast">
+    <div class="wrap mast-inner">
+      <a class="wordmark" href="/" aria-label="BachelorsNest home"><img src="/bachelorsnest-icon.svg" width="36" height="36" alt="" />BachelorsNest</a>
+      <nav class="mast-nav" aria-label="Explore BachelorsNest"><a href="#rental-options">Rental options</a><a href="#owners">For owners</a><a href="#questions">FAQs</a></nav>
+      <a class="signin" href="/login">Sign in <span aria-hidden="true">&nearr;</span></a>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="page-title">
+      <img src="/apartment-interior.jpg" width="1500" height="1125" alt="" fetchpriority="high" />
+      <div class="wrap hero-inner">
+        <p class="region">Renting in Bangladesh</p>
+        <h1 id="page-title">Shared flats.<br><em>Rental seats.</em></h1>
+        <p class="hero-summary">Find a place that fits your budget, save your shortlist, and connect with the owner when your request is accepted.</p>
+        <div class="hero-actions"><a class="action" href="/register">Find a place <span aria-hidden="true">&rarr;</span></a><a class="hero-link" href="#owners">List a property</a></div>
+      </div>
+    </section>
 
-  <script type="module" src="/src/main.jsx"></script>
+    <section class="wrap options" id="rental-options" aria-labelledby="options-title">
+      <div class="section-head"><h2 id="options-title">Rental options</h2><p>Choose the space that suits how you live.</p></div>
+      <div class="option-grid">
+        <article><img src="/flat-interior.webp" width="960" height="540" loading="lazy" alt="An open living area in a furnished flat" />
+          <h3>Flats</h3><p>Compare rent, location, photos, and availability for a whole flat.</p></article>
+        <article><img src="/bedroom-interior.webp" width="960" height="540" loading="lazy" alt="A furnished bedroom with space beside the bed" />
+          <h3>Rental seats</h3><p>Find an available seat in shared accommodation and see how many places are open.</p></article>
+      </div>
+    </section>
+
+    <section class="owner-band" id="owners" aria-labelledby="owners-title"><div class="wrap owner-inner">
+      <div><h2 id="owners-title">List your property</h2><p>Add photos, rent, and available seats. Once your listing is approved, you can review rental requests and manage occupancy from your owner dashboard.</p></div>
+      <a class="action" href="/register?role=owner">Create an owner account <span aria-hidden="true">&rarr;</span></a>
+    </div></section>
+
+    <section class="wrap questions" id="questions" aria-labelledby="questions-title">
+      <h2 id="questions-title">Rental questions</h2>
+      <div class="answers">
+        <details><summary>How do I request a rental?</summary><p>Create a bachelor account, open an available listing, and select Request Rent. You can follow its status in My requests.</p></details>
+        <details><summary>Can I save a place for later?</summary><p>Yes. Select the heart on a listing to keep it in Saved places while you compare your options.</p></details>
+        <details><summary>When can I message the owner?</summary><p>Once the owner accepts your rental request, open Messages to discuss the property and arrange the next steps.</p></details>
+      </div>
+    </section>
+  </main>
+  <!-- site-footer -->
 </body>
-
 </html>

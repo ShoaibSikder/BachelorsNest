@@ -121,7 +121,7 @@ const AdminProperties = () => {
         onConfirm={handleConfirm}
         onCancel={() => setConfirmAction(null)}
       />
-      <h2 className="text-2xl font-bold mb-6">Property Management</h2>
+      <h2 className="text-2xl font-bold mb-6">Property moderation</h2>
 
       {/* Filters */}
       <div className="mb-6 space-x-2">

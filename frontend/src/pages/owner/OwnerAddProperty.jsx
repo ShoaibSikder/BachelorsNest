@@ -79,13 +79,13 @@ const OwnerAddProperty = () => {
   };
 
   return (
-    <div>
+    <div className="bn-editor">
       <h2 className="text-2xl font-bold mb-6">Add New Property</h2>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="w-full space-y-4 lg:max-w-lg">
-        <input
+      <form onSubmit={handleSubmit} className="bn-editform">
+        <label className="bn-field">Property title<input
           type="text"
           name="title"
           placeholder="Title"
@@ -93,9 +93,9 @@ const OwnerAddProperty = () => {
           onChange={handleChange}
           required
           className="w-full p-2 border rounded-lg"
-        />
+        /></label>
 
-        <input
+        <label className="bn-field">Location<input
           type="text"
           name="location"
           placeholder="Location"
@@ -103,9 +103,9 @@ const OwnerAddProperty = () => {
           onChange={handleChange}
           required
           className="w-full p-2 border rounded-lg"
-        />
+        /></label>
 
-        <input
+        <label className="bn-field">Rent (BDT)<input
           type="number"
           name="rent"
           placeholder="Rent"
@@ -113,9 +113,9 @@ const OwnerAddProperty = () => {
           onChange={handleChange}
           required
           className="w-full p-2 border rounded-lg"
-        />
+        /></label>
 
-        <select
+        <label className="bn-field">Property type<select
           name="property_type"
           value={formData.property_type}
           onChange={handleChange}
@@ -124,27 +124,27 @@ const OwnerAddProperty = () => {
           <option value="">Select Type</option>
           <option value="flat">Flat</option>
           <option value="seat">Seat</option>
-        </select>
+        </select></label>
 
-        <textarea
+        <label className="bn-field">Description<textarea
           name="description"
           placeholder="Description"
           value={formData.description}
           onChange={handleChange}
           className="w-full p-2 border rounded-lg"
-        />
+        /></label>
 
-        <input
+        <label className="bn-field">Available from<input
           type="date"
           name="available_from"
           value={formData.available_from}
           onChange={handleChange}
           className="w-full p-2 border rounded-lg"
-        />
+        /></label>
 
         {formData.property_type === "seat" && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <input
+            <label className="bn-field">Total seats<input
               type="number"
               name="total_seats"
               min="1"
@@ -153,9 +153,9 @@ const OwnerAddProperty = () => {
               onChange={handleChange}
               required
               className="w-full p-2 border rounded-lg"
-            />
+            /></label>
 
-            <input
+            <label className="bn-field">Occupied seats<input
               type="number"
               name="occupied_seats"
               min="0"
@@ -164,7 +164,7 @@ const OwnerAddProperty = () => {
               onChange={handleChange}
               required
               className="w-full p-2 border rounded-lg"
-            />
+            /></label>
           </div>
         )}
 
@@ -178,13 +178,13 @@ const OwnerAddProperty = () => {
           Property is currently available
         </label>
 
-        <input
+        <label className="bn-field">Listing photos<input
           type="file"
           multiple
           onChange={handleImageChange}
           className="w-full"
           accept="image/*"
-        />
+        /></label>
 
         <button
           type="submit"

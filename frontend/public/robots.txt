@@ -1,10 +1,4 @@
 User-agent: *
-Allow: /login
-Allow: /register
-Disallow: /bachelor/
-Disallow: /owner/
-Disallow: /admin/
-Disallow: /forget-password
-Disallow: /reset-password/
+Allow: /
 
 Sitemap: https://bachelorsnest.vercel.app/sitemap.xml

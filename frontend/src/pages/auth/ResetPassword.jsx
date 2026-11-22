@@ -1,3 +1,4 @@
+import AuthLayout from "../../layouts/AuthLayout";
 import { useState, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -107,31 +108,8 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex dark:bg-gray-900 transition">
-      {/* LEFT SIDE */}
-      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white items-center justify-center">
-        <div className="text-center px-10 space-y-4">
-          <h1 className="text-5xl font-extrabold">BachelorsNest</h1>
-          <p className="text-lg opacity-90">Set your new password.</p>
-        </div>
-      </div>
-
-      {/* RIGHT SIDE */}
-      <div className="w-full md:w-1/2 flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-5"
-        >
-          {/* Header */}
-          <div className="text-center">
-            <h2 className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
-              Reset Password
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-              Enter your new password.
-            </p>
-          </div>
-
+    <AuthLayout title="Reset your password">
+      <form onSubmit={handleSubmit} className="bn-form">
           {/* Loading state */}
           {verifying && (
             <div className="flex items-center justify-center space-x-2">
@@ -235,9 +213,8 @@ const ResetPassword = () => {
               </p>
             </>
           )}
-        </form>
-      </div>
-    </div>
+      </form>
+    </AuthLayout>
   );
 };
 

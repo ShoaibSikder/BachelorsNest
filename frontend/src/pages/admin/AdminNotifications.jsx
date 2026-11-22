@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import api from "../../api/axios";
-import { API_ENDPOINTS } from "../../config";
 import {
   Send,
   AlertCircle,
@@ -147,9 +146,9 @@ const AdminNotifications = () => {
   );
 
   return (
-    <div className="text-gray-800 dark:text-white p-6">
+    <div className="bn-admin">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold mb-2">Messaging & Notifications</h2>
+        <h2 className="text-3xl font-bold mb-2">Communications</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Send and manage system notifications and messages.
         </p>
@@ -169,7 +168,7 @@ const AdminNotifications = () => {
         </div>
       )}
 
-      <div className="flex gap-2 mb-6 border-b border-gray-300 dark:border-gray-700">
+      <div className="bn-tabs mb-6">
         <button
           onClick={() => setActiveTab("broadcast")}
           className={`px-4 py-3 font-semibold border-b-2 transition ${

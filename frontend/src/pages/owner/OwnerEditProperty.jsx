@@ -134,17 +134,17 @@ const OwnerEditProperty = () => {
   if (loading) return <PageFallback />;
 
   return (
-    <div className="w-full rounded-xl bg-white p-4 shadow-lg dark:bg-gray-800 sm:p-6 lg:mx-auto lg:max-w-2xl">
+    <div className="bn-editor">
       <h2 className="text-2xl font-bold mb-6">Edit Property</h2>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="bn-editform">
         <div>
-          <label className="block text-sm font-medium">Title</label>
+          <label htmlFor="edit-title" className="block text-sm font-medium">Title</label>
           <input
             type="text"
-            name="title"
+            id="edit-title" name="title"
             value={formData.title}
             onChange={handleChange}
             className="w-full p-2 rounded border border-gray-300"
@@ -153,10 +153,10 @@ const OwnerEditProperty = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Location</label>
+          <label htmlFor="edit-location" className="block text-sm font-medium">Location</label>
           <input
             type="text"
-            name="location"
+            id="edit-location" name="location"
             value={formData.location}
             onChange={handleChange}
             className="w-full p-2 rounded border border-gray-300"
@@ -165,10 +165,10 @@ const OwnerEditProperty = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Rent</label>
+          <label htmlFor="edit-rent" className="block text-sm font-medium">Rent</label>
           <input
             type="number"
-            name="rent"
+            id="edit-rent" name="rent"
             value={formData.rent}
             onChange={handleChange}
             className="w-full p-2 rounded border border-gray-300"
@@ -177,9 +177,9 @@ const OwnerEditProperty = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Property Type</label>
+          <label htmlFor="edit-property_type" className="block text-sm font-medium">Property Type</label>
           <select
-            name="property_type"
+            id="edit-property_type" name="property_type"
             value={formData.property_type}
             onChange={handleChange}
             className="w-full p-2 rounded border border-gray-300"
@@ -191,9 +191,9 @@ const OwnerEditProperty = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Description</label>
+          <label htmlFor="edit-description" className="block text-sm font-medium">Description</label>
           <textarea
-            name="description"
+            id="edit-description" name="description"
             value={formData.description}
             onChange={handleChange}
             className="w-full p-2 rounded border border-gray-300"
@@ -202,10 +202,10 @@ const OwnerEditProperty = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Available From</label>
+          <label htmlFor="edit-available_from" className="block text-sm font-medium">Available From</label>
           <input
             type="date"
-            name="available_from"
+            id="edit-available_from" name="available_from"
             value={formData.available_from}
             onChange={handleChange}
             className="w-full p-2 rounded border border-gray-300"
@@ -215,11 +215,11 @@ const OwnerEditProperty = () => {
         {formData.property_type === "seat" && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium">Total Seats</label>
+              <label htmlFor="edit-total_seats" className="block text-sm font-medium">Total Seats</label>
               <input
                 type="number"
                 min="1"
-                name="total_seats"
+                id="edit-total_seats" name="total_seats"
                 value={formData.total_seats}
                 onChange={handleChange}
                 className="w-full p-2 rounded border border-gray-300"
@@ -228,11 +228,11 @@ const OwnerEditProperty = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium">Occupied Seats</label>
+              <label htmlFor="edit-occupied_seats" className="block text-sm font-medium">Occupied Seats</label>
               <input
                 type="number"
                 min="0"
-                name="occupied_seats"
+                id="edit-occupied_seats" name="occupied_seats"
                 value={formData.occupied_seats}
                 onChange={handleChange}
                 className="w-full p-2 rounded border border-gray-300"

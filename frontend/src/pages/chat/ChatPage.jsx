@@ -13,6 +13,7 @@ const ChatPage = () => {
   const [activeUser, setActiveUser] = useState(null);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [isCompact, setIsCompact] = useState(false);
+  const [notice, setNotice] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,13 +37,16 @@ const ChatPage = () => {
       const res = await getChatUsers();
       setUsers(res.data || []);
 
-      // ✅ auto select user if came from "Message Owner"
-      if (selectedUser && !res.data.find((u) => u.id === selectedUser.id)) {
-        setUsers((prev) => [selectedUser, ...prev]);
+      setNotice("");
+      if (selectedUser) {
+        const contact = res.data.find(u => u.id === selectedUser.id);
+        setActiveUser(contact || null);
+        if (!contact) setNotice("Messaging opens once a rental request is accepted.");
       }
     } catch (err) {
       console.error("Failed to fetch users", err);
       setUsers([]);
+      setNotice("Unable to load your conversations.");
     } finally {
       setLoadingUsers(false);
     }
@@ -52,19 +56,9 @@ const ChatPage = () => {
     fetchUsers();
   }, [fetchUsers]);
 
-  // ✅ auto set selected user as active when navigating from "Message Owner"
-  useEffect(() => {
-    if (selectedUser && users.length > 0) {
-      const foundUser = users.find((u) => u.id === selectedUser.id);
-      if (foundUser) {
-        setActiveUser(foundUser);
-      } else if (selectedUser.id) {
-        setActiveUser(selectedUser);
-      }
-    }
-  }, [selectedUser, users]);
-
   return (
+    <>
+    {notice && <p role="status" className="mb-3 text-sm">{notice}</p>}
     <div className="flex h-[calc(100vh-10.5rem)] min-h-[30rem] overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 lg:h-[calc(100vh-9rem)]">
       {(!isCompact || !activeUser) && (
         <ChatList
@@ -84,6 +78,7 @@ const ChatPage = () => {
         />
       )}
     </div>
+    </>
   );
 };
 

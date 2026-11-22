@@ -1,7 +1,8 @@
+import AuthLayout from "../../layouts/AuthLayout";
+import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { useTheme } from "../../context/ThemeContext";
 import API_BASE_URL from "../../config";
 
 const Login = () => {
@@ -16,7 +17,6 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
 
   const { login } = useContext(AuthContext);
-  const { darkMode, toggleDarkMode } = useTheme();
   const navigate = useNavigate();
 
   // Dark mode toggle is now handled by ThemeContext
@@ -55,7 +55,6 @@ const Login = () => {
     }
 
     try {
-      console.log("Login attempt with:", formData.username_or_email);
       const user = await login(formData);
 
       if (remember) {
@@ -75,13 +74,6 @@ const Login = () => {
         navigate("/bachelor");
       }
     } catch (err) {
-      console.error("Login error details:", {
-        message: err.message,
-        status: err.response?.status,
-        data: err.response?.data,
-        url: err.config?.url,
-      });
-
       // Get detailed error message from API
       let errorMsg = "Login failed. Please try again.";
 
@@ -94,7 +86,7 @@ const Login = () => {
       } else if (err.response?.status === 401) {
         errorMsg = "Authentication failed. Please check your credentials.";
       } else if (err.message === "Network Error") {
-        errorMsg = "Network error. Please check your connection.";
+        errorMsg = "The sign-in service is unreachable. Please try again in a moment.";
       }
 
       setError(errorMsg);
@@ -104,54 +96,8 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex dark:bg-gray-900 transition">
-      {/* LEFT SIDE */}
-      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white items-center justify-center">
-        <div className="text-center px-10 space-y-4">
-          <img
-            src="/Logo.png"
-            alt="BachelorsNest Logo"
-            className="w-24 h-28 mx-auto mb-4"
-          />
-          <h1 className="text-5xl font-extrabold">BachelorsNest</h1>
-          <p className="text-lg opacity-90">
-            Find your perfect stay with ease.
-          </p>
-        </div>
-      </div>
-
-      {/* RIGHT SIDE */}
-      <div className="w-full md:w-1/2 flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-5"
-        >
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
-              Login
-            </h2>
-
-            {/* Dark mode toggle */}
-            <button
-              type="button"
-              onClick={toggleDarkMode}
-              className="relative w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
-              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              <div
-                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
-                  darkMode ? "translate-x-6" : "translate-x-0"
-                }`}
-              >
-                <span className="absolute inset-0 flex items-center justify-center text-xs">
-                  {darkMode ? "☀️" : "🌙"}
-                </span>
-              </div>
-            </button>
-          </div>
-
-          {/* Error */}
+    <AuthLayout title="Welcome back">
+      <form onSubmit={handleSubmit} className="bn-form">
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
               {error}
@@ -159,7 +105,7 @@ const Login = () => {
           )}
 
           {/* Username or Email */}
-          <input
+          <label className="bn-field">Username or email<input
             type="text"
             name="username_or_email"
             placeholder="Email or Username"
@@ -167,14 +113,14 @@ const Login = () => {
             value={formData.username_or_email}
             onChange={handleChange}
             required
-            autoComplete="username"
-          />
+            autoComplete="username" /></label>
 
           {/* Password */}
-          <div className="relative">
+          <label className="bn-field">Password</label>
+          <div className="bn-pass">
             <input
               type={showPassword ? "text" : "password"}
-              name="password"
+              name="password" aria-label="Password" autoComplete="current-password"
               placeholder="Password"
               className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
               value={formData.password}
@@ -182,12 +128,7 @@ const Login = () => {
               required
             />
 
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 cursor-pointer text-sm text-gray-500 dark:text-gray-300"
-            >
-              {showPassword ? "🙈" : "👁️"}
-            </span>
+            <button type="button" className="bn-eye" aria-label={showPassword ? "Hide password" : "Show password"} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}</button>
           </div>
 
           {/* Remember me */}
@@ -201,12 +142,8 @@ const Login = () => {
               />
               Remember me
             </label>
-            <span
-              className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"
-              onClick={() => navigate("/forget-password")}
-            >
-              Forgot Password?
-            </span>
+            <Link to="/forget-password">Forgot Password?
+            </Link>
           </div>
 
           {/* Button */}
@@ -218,23 +155,17 @@ const Login = () => {
             {loading ? (
               <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
             ) : (
-              "Login"
+              "Sign in"
             )}
           </button>
 
           {/* Footer */}
           <p className="text-center text-sm text-gray-600 dark:text-gray-300">
-            Don’t have an account?{" "}
-            <span
-              className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </span>
+            New to BachelorsNest?{" "}
+            <Link to="/register">Create an account</Link>
           </p>
-        </form>
-      </div>
-    </div>
+      </form>
+    </AuthLayout>
   );
 };
 

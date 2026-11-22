@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, Image as ImageIcon, MapPin } from "lucide-react";
 import { getMediaUrl } from "../config";
 
 const getImageUrl = (image) =>
@@ -30,6 +32,9 @@ const PropertyCard = ({
   onOwnerClick,
   className = "",
 }) => {
+  const [index, setIndex] = useState(0);
+  const photos = property.images || [];
+  const active = Math.min(index, Math.max(0, photos.length - 1));
   const showSeatCapacity = property.property_type === "seat";
 
   const ownerBlock = (
@@ -78,162 +83,20 @@ const PropertyCard = ({
     }
   };
 
-  const renderImages = () => {
-    if (!property.images?.length) {
-      return (
-        <div className="flex h-56 w-full items-center justify-center bg-gray-200 text-gray-500 dark:bg-gray-700">
-          No image
-        </div>
-      );
-    }
-
-    if (property.images.length === 1) {
-      return (
-        <img
-          src={getImageUrl(property.images[0].image)}
-          alt={`${property.title} 1`}
-          loading="lazy"
-          decoding="async"
-          className="h-60 w-full cursor-pointer object-cover rounded"
-          onClick={() => openImage(property.images[0].image)}
-        />
-      );
-    }
-
-    if (property.images.length === 2) {
-      return (
-        <div className="grid grid-cols-2 gap-1">
-          {property.images.map((img, idx) => (
-            <img
-              key={idx}
-              src={getImageUrl(img.image)}
-              alt={`${property.title} ${idx + 1}`}
-              loading="lazy"
-              decoding="async"
-              className="h-40 w-full cursor-pointer rounded object-cover"
-              onClick={() => openImage(img.image)}
-            />
-          ))}
-        </div>
-      );
-    }
-
-    if (property.images.length === 3) {
-      return (
-        <div className="grid h-60 grid-cols-2 grid-rows-2 gap-1">
-          <img
-            src={getImageUrl(property.images[0].image)}
-            alt={`${property.title} 1`}
-            loading="lazy"
-            decoding="async"
-            className="row-span-2 h-full w-full cursor-pointer rounded object-cover"
-            onClick={() => openImage(property.images[0].image)}
-          />
-          <img
-            src={getImageUrl(property.images[1].image)}
-            alt={`${property.title} 2`}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full cursor-pointer rounded object-cover"
-            onClick={() => openImage(property.images[1].image)}
-          />
-          <img
-            src={getImageUrl(property.images[2].image)}
-            alt={`${property.title} 3`}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full cursor-pointer rounded object-cover"
-            onClick={() => openImage(property.images[2].image)}
-          />
-        </div>
-      );
-    }
-
-    return (
-      <div className="relative grid h-60 grid-cols-2 grid-rows-2 gap-1">
-        {property.images.slice(0, 4).map((img, idx) => (
-          <img
-            key={idx}
-            src={getImageUrl(img.image)}
-            alt={`${property.title} ${idx + 1}`}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full cursor-pointer rounded object-cover"
-            onClick={() => openImage(img.image)}
-          />
-        ))}
-        {property.images.length > 4 && (
-          <div className="absolute inset-0 flex items-center justify-center rounded bg-black/40 text-2xl font-bold text-white">
-            +{property.images.length - 4}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  return (
-    <div
-      className={`flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-md transition hover:shadow-xl dark:bg-gray-900 ${className}`}
-    >
-      <div className="flex items-center justify-between p-4">
-        {headerLeft ?? defaultHeaderLeft}
-        <div>{headerRight}</div>
-      </div>
-
-      {renderImages()}
-
-      <div className="px-2 pb-2 pt-2">
-        <h3 className="mb-2 text-md font-semibold text-gray-800 dark:text-white">
-          {property.title}
-        </h3>
-        <div className="mb-2 rounded-2xl bg-white p-1 dark:bg-gray-900">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
-            Location: {property.location}
-          </p>
-        </div>
-        <div className="mb-2 flex flex-wrap gap-2">
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-              property.is_available
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
-                : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200"
-            }`}
-          >
-            {property.is_available ? "Available" : "Unavailable"}
-          </span>
-          {showSeatCapacity && (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-              Vacancy {property.vacancy_count ?? 0}/{property.total_seats ?? 0}
-            </span>
-          )}
-          <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-200">
-            {property.property_type === "seat" ? "Seat" : "Flat"}
-          </span>
-          {property.saved_count > 0 && (
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">
-              Saved {property.saved_count}
-            </span>
-          )}
-        </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400">
-          {formatAvailabilityDate(property.available_from)}
-        </p>
-      </div>
-
-      <div className="flex flex-grow flex-col px-3 pb-3">
-        <p className="flex-grow text-sm text-gray-600 line-clamp-2 dark:text-gray-300">
-          {property.description}
-        </p>
-
-        <div className="mb-3 mt-3 flex items-center justify-between">
-          <p className="text-lg font-bold text-indigo-600">BDT {property.rent}</p>
-          {badge}
-        </div>
-      </div>
-
-      {footer && <div className="mt-auto px-3 pb-3">{footer}</div>}
-    </div>
-  );
+  return <article className={`bn-listing ${className}`}>
+    <div className="bn-listing-head">{headerLeft ?? defaultHeaderLeft}{headerRight}</div>
+    <div className="bn-gallery">{photos.length ? <>
+      <button type="button" aria-label={`View photo ${active + 1} of ${property.title}`} onClick={() => openImage(photos[active].image)} disabled={!onImageClick}>
+        <img loading="lazy" src={getImageUrl(photos[active].image)} alt={`${property.title}, photo ${active + 1}`}/>
+      </button>
+      {photos.length > 1 && <div className="bn-pager"><button aria-label="Previous photo" onClick={()=>setIndex((active + photos.length - 1) % photos.length)}><ChevronLeft size={17}/></button><span>{active + 1} / {photos.length}</span><button aria-label="Next photo" onClick={()=>setIndex((active + 1) % photos.length)}><ChevronRight size={17}/></button></div>}
+    </> : <span className="bn-noimage"><ImageIcon/>No photo available</span>}</div>
+    <div className="bn-details"><div className="bn-row bn-wrap"><span className="bn-chip">{showSeatCapacity ? "Seat" : "Flat"}</span><span className={property.is_available ? "bn-available" : "bn-muted"}>{property.is_available ? "Available" : "Unavailable"}</span>{badge}</div>
+      <h3>{property.title}</h3><p className="bn-location"><MapPin size={15}/>{property.location}</p>
+      <p className="bn-muted line-clamp-2">{property.description}</p>
+      <p className="bn-meta">{formatAvailabilityDate(property.available_from)}{showSeatCapacity && ` · ${property.vacancy_count ?? 0}/${property.total_seats} seats free`}{property.saved_count > 0 && ` · ${property.saved_count} saved`}</p>
+      <strong className="bn-price">BDT {Number(property.rent).toLocaleString("en-BD")}</strong>
+    </div>{footer && <div className="bn-listing-foot">{footer}</div>}
+  </article>;
 };
-
 export default PropertyCard;

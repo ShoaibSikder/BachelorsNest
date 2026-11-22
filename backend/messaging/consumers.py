@@ -3,6 +3,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from .models import Message
 from notifications.models import Notification
+from django.db.models import Q
+from rentals.models import RentRequest
 
 User = get_user_model()
 
@@ -18,6 +20,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         user1 = int(self.user.id)
         user2 = int(self.other_user_id)
+        allowed = await RentRequest.objects.filter(
+            Q(owner_id=user1, bachelor_id=user2) | Q(owner_id=user2, bachelor_id=user1),
+            status="accepted",
+        ).aexists()
+        if not allowed:
+            await self.close()
+            return
 
         self.room_group_name = f"chat_{min(user1,user2)}_{max(user1,user2)}"
 
@@ -42,6 +51,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def disconnect(self, close_code):
+        if not hasattr(self, 'room_group_name'):
+            return
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
         # ✅ Notify offline

@@ -4,23 +4,17 @@ from channels.db import database_sync_to_async
 from channels.middleware import BaseMiddleware
 from django.db import close_old_connections
 from django.contrib.auth.models import AnonymousUser
-from rest_framework_simplejwt.tokens import UntypedToken
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-import jwt
-from django.conf import settings
 
 User = get_user_model()
 
 @database_sync_to_async
 def get_user_from_token(token):
     try:
-        # Validate token
-        UntypedToken(token)
-        # Decode to get user_id
-        decoded_data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        user_id = decoded_data.get("user_id")
-        return User.objects.get(id=user_id)
-    except (InvalidToken, TokenError, User.DoesNotExist, jwt.DecodeError):
+        user_id = AccessToken(token)["user_id"]
+        return User.objects.get(id=user_id, is_active=True, is_banned=False)
+    except (InvalidToken, TokenError, KeyError, User.DoesNotExist):
         return AnonymousUser()
 
 class TokenAuthMiddleware(BaseMiddleware):

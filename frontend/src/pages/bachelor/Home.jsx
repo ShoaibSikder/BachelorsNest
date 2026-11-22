@@ -136,7 +136,7 @@ const BachelorHome = () => {
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="bn-discover">
       <MessageBox
         type={messageType}
         message={message}
@@ -147,23 +147,23 @@ const BachelorHome = () => {
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Available Properties
+            Discover places
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Browse listings, save favorites, and send rent requests.
+            Available rentals
           </p>
         </div>
 
         <div className="flex flex-col items-start gap-2 text-sm text-gray-600 dark:text-gray-300 sm:items-end">
           <p>
-            Showing {filteredProperties.length} of {properties.length} properties
+            {filteredProperties.length} {filteredProperties.length === 1 ? "listing" : "listings"} shown
           </p>
           <div className="flex gap-2">
             <button
               onClick={() => navigate("/bachelor/saved")}
               className="rounded-full bg-white px-4 py-2 font-medium text-indigo-600 shadow-sm transition hover:bg-indigo-50 dark:bg-gray-800 dark:text-indigo-300 dark:hover:bg-gray-700"
             >
-              Saved Properties
+              Saved places
             </button>
           </div>
         </div>
@@ -308,7 +308,7 @@ const BachelorHome = () => {
                             >
                               <User size={16} /> View Owner Profile
                             </button>
-                            <button
+                            {status === "accepted" && <button
                               onClick={() =>
                                 navigate("/bachelor/chats", {
                                   state: { selectedUser: property.owner },
@@ -317,7 +317,7 @@ const BachelorHome = () => {
                               className="flex w-full items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                             >
                               <MessageCircle size={16} /> Message Owner
-                            </button>
+                            </button>}
                           </div>
                         )}
                       </div>

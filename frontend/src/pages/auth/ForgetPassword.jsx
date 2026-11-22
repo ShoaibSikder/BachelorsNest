@@ -1,3 +1,4 @@
+import AuthLayout from "../../layouts/AuthLayout";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -56,35 +57,8 @@ const ForgetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex dark:bg-gray-900 transition">
-      {/* LEFT SIDE */}
-      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white items-center justify-center">
-        <div className="text-center px-10 space-y-4">
-          <h1 className="text-5xl font-extrabold">BachelorsNest</h1>
-          <p className="text-lg opacity-90">Reset your password securely.</p>
-          <p className="text-sm opacity-75 mt-6">
-            Enter your email address to verify your account and set a new
-            password.
-          </p>
-        </div>
-      </div>
-
-      {/* RIGHT SIDE */}
-      <div className="w-full md:w-1/2 flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-5"
-        >
-          {/* Header */}
-          <div className="text-center">
-            <h2 className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
-              Forgot Password?
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-              No worries! We'll help you reset it.
-            </p>
-          </div>
-
+    <AuthLayout title="Forgot your password?">
+      <form onSubmit={handleSubmit} className="bn-form">
           {/* Success Message */}
           {success && (
             <div className="rounded-lg border border-green-300 bg-green-100 p-3 text-sm text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-200">
@@ -116,15 +90,6 @@ const ForgetPassword = () => {
             />
           </div>
 
-          {/* Info Box */}
-          <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 p-3 rounded-lg text-sm text-blue-800 dark:text-blue-200">
-            <p className="flex items-start gap-2">
-              <span>
-                Enter your email address and we will send a secure reset link.
-              </span>
-            </p>
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"
@@ -134,7 +99,7 @@ const ForgetPassword = () => {
             {loading ? (
               <>
                 <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
-                <span>Verifying...</span>
+                <span>Sending...</span>
               </>
             ) : (
               "Send Reset Link"
@@ -151,9 +116,8 @@ const ForgetPassword = () => {
               Back to Login
             </span>
           </p>
-        </form>
-      </div>
-    </div>
+      </form>
+    </AuthLayout>
   );
 };
 

@@ -1,3 +1,4 @@
+import MetricOverview from "../../components/MetricOverview";
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import PageFallback from "../../components/common/PageFallback";
@@ -64,35 +65,6 @@ const AdminReports = () => {
     { title: "Wishlist Saves", value: stats.totalWishlistSaves },
   ];
 
-  return (
-    <div className="w-full max-w-full overflow-hidden text-gray-800 dark:text-white sm:p-6">
-      <div className="mb-6 sm:mb-8">
-        <h2 className="mb-2 break-words text-2xl font-bold sm:text-3xl">
-          Reports & Analytics
-        </h2>
-        <p className="max-w-3xl text-sm leading-6 text-gray-600 dark:text-gray-400 sm:text-base">
-          Dashboard overview plus detailed admin analytics for users,
-          properties, and rental activity.
-        </p>
-      </div>
-
-      <div className="grid min-w-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-4">
-        {cards.map((card, index) => (
-          <div
-            key={index}
-            className="min-w-0 rounded-2xl bg-white p-5 shadow-lg transition hover:shadow-xl dark:bg-gray-800 sm:rounded-3xl sm:p-6"
-          >
-            <p className="break-words text-sm text-gray-500 dark:text-gray-400">
-              {card.title}
-            </p>
-            <p className="mt-4 text-3xl font-bold text-gray-900 dark:text-white sm:text-4xl">
-              {card.value ?? 0}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <MetricOverview title="Reports and analytics" metrics={cards} />;
 };
-
 export default AdminReports;

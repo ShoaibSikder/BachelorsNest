@@ -1,17 +1,18 @@
+import AuthLayout from "../../layouts/AuthLayout";
+import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { registerUser } from "../../api/authApi";
-import { useTheme } from "../../context/ThemeContext";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { darkMode, toggleDarkMode } = useTheme();
+  const [params] = useSearchParams();
 
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    role: "bachelor",
+    role: params.get("role") === "owner" ? "owner" : "bachelor",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +68,7 @@ const Register = () => {
 
     try {
       await registerUser(formData);
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       const messages = normalizeErrors(err.response?.data);
       setError(messages[0] || "Registration failed.");
@@ -79,49 +80,8 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex dark:bg-gray-900 transition">
-      <div className="hidden md:flex w-1/2 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white items-center justify-center">
-        <div className="text-center px-10 space-y-4">
-          <img
-            src="/Logo.png"
-            alt="BachelorsNest Logo"
-            className="w-24 h-28 mx-auto mb-4"
-          />
-          <h1 className="text-5xl font-extrabold">BachelorsNest</h1>
-          <p className="text-lg opacity-90">
-            Create your account and start your journey
-          </p>
-        </div>
-      </div>
-
-      <div className="w-full md:w-1/2 flex items-center justify-center px-4 bg-gray-100 dark:bg-gray-900">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-5"
-        >
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-extrabold bg-gradient-to-r from-blue-500 to-indigo-400 bg-clip-text text-transparent">
-              Register
-            </h2>
-
-            <button
-              type="button"
-              onClick={toggleDarkMode}
-              className="relative w-12 h-6 bg-gray-300 dark:bg-gray-600 rounded-full transition-all duration-300 ease-in-out hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg"
-              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            >
-              <div
-                className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white dark:bg-gray-200 rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${
-                  darkMode ? "translate-x-6" : "translate-x-0"
-                }`}
-              >
-                <span className="absolute inset-0 flex items-center justify-center text-xs">
-                  {darkMode ? "L" : "D"}
-                </span>
-              </div>
-            </button>
-          </div>
-
+    <AuthLayout title="Create an account">
+      <form onSubmit={handleSubmit} className="bn-form">
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
               {errorList.length > 1 ? (
@@ -136,30 +96,27 @@ const Register = () => {
             </div>
           )}
 
-          <input
-            type="text"
-            name="username"
+          <label className="bn-field">Username<input type="text" name="username"
             placeholder="Username"
             className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
             value={formData.username}
             onChange={handleChange}
             required
-          />
+          /></label>
 
-          <input
-            type="email"
-            name="email"
+          <label className="bn-field">Email address<input type="email" name="email"
             placeholder="Email"
             className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
             value={formData.email}
             onChange={handleChange}
             required
-          />
+          /></label>
 
-          <div className="relative">
+          <label className="bn-field">Password</label>
+          <div className="bn-pass">
             <input
               type={showPassword ? "text" : "password"}
-              name="password"
+              name="password" aria-label="Password" autoComplete="new-password"
               placeholder="Password"
               className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
               value={formData.password}
@@ -167,15 +124,10 @@ const Register = () => {
               required
             />
 
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 cursor-pointer text-sm text-gray-500 dark:text-gray-300"
-            >
-              {showPassword ? "Hide" : "Show"}
-            </span>
+            <button type="button" className="bn-eye" aria-label={showPassword ? "Hide password" : "Show password"} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={18}/> : <Eye size={18}/>}</button>
           </div>
 
-          <select
+          <label className="bn-field">Account type<select
             name="role"
             className="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500"
             value={formData.role}
@@ -183,7 +135,7 @@ const Register = () => {
           >
             <option value="bachelor">Bachelor</option>
             <option value="owner">Owner</option>
-          </select>
+          </select></label>
 
           <button
             type="submit"
@@ -199,16 +151,11 @@ const Register = () => {
 
           <p className="text-center text-sm text-gray-600 dark:text-gray-300">
             Already have an account?{" "}
-            <span
-              className="cursor-pointer text-blue-600 hover:underline dark:text-blue-400"
-              onClick={() => navigate("/")}
-            >
-              Login
-            </span>
+            <Link to="/login">Login
+            </Link>
           </p>
-        </form>
-      </div>
-    </div>
+      </form>
+    </AuthLayout>
   );
 };
 

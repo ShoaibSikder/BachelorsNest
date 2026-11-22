@@ -66,7 +66,7 @@ const MyRequests = () => {
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100 dark:bg-gray-900 transition">
+    <div className="bn-records">
       <MessageBox
         type={notificationType}
         message={notification}
@@ -83,13 +83,13 @@ const MyRequests = () => {
         onCancel={() => setConfirmRequestId(null)}
       />
       <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-white">
-        My Rent Requests
+        My requests
       </h1>
 
       {requests.length === 0 ? (
         <p className="text-gray-600 dark:text-gray-300">No requests yet.</p>
       ) : (
-        <div className="space-y-5">
+        <div className="bn-record-list">
           {requests.map((request) => (
             <div
               key={request.id}

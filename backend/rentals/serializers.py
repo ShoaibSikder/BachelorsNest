@@ -24,7 +24,7 @@ class UserMiniSerializer(serializers.ModelSerializer):
         ]
 
     def get_phone(self, obj):
-        return getattr(obj, 'phone', 'N/A')
+        return obj.phone_number or 'N/A'
 
 
 class PropertyMiniSerializer(serializers.ModelSerializer):

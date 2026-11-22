@@ -171,7 +171,7 @@ const AdminUsers = () => {
         onConfirm={confirmDeleteUser}
         onCancel={() => setConfirmDeleteUserId(null)}
       />
-      <h2 className="mb-4 text-2xl font-bold">User Management</h2>
+      <h2 className="mb-4 text-2xl font-bold">People</h2>
 
       {/* Filters */}
       <div className="mb-4 flex flex-wrap gap-2">
@@ -215,7 +215,7 @@ const AdminUsers = () => {
 
       {/* Users Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
-        <table className="min-w-[760px] w-full text-center">
+        <table className="bn-table min-w-[760px] w-full">
           <thead className="bg-gray-200 dark:bg-gray-700">
             <tr>
               <th className="p-2">Username</th>

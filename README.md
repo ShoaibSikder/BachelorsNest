@@ -681,6 +681,11 @@ http://localhost:8000/admin/
 
 ### Frontend Setup
 
+Keep the backend terminal running on port 8000 and open a second terminal for Vite.
+For an existing Windows checkout with dependencies installed, start the API from
+the project root with `backend\.venv\Scripts\python.exe backend\manage.py runserver 127.0.0.1:8000`.
+Visit `http://localhost:8000/warmup/` to check both Django and its database connection.
+
 ```powershell
 cd frontend
 copy .env.development.example .env

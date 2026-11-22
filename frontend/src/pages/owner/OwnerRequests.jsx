@@ -87,7 +87,7 @@ const OwnerRequests = () => {
         Incoming Requests
       </h2>
 
-      <div className="space-y-5">
+      <div className="bn-record-list">
         {requests.map((request) => (
           <div
             key={request.id}

@@ -192,8 +192,8 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-lg p-6">
+    <div className="bn-profile">
+      <div className="bn-profile-summary">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="relative flex-shrink-0">
             <div className="h-28 w-28 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center text-4xl font-semibold text-slate-700 dark:text-slate-200">
@@ -242,7 +242,7 @@ const Profile = () => {
       </div>
 
       {isOwnProfile ? (
-        <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-lg p-6">
+        <div className="bn-profile-body">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">
@@ -394,7 +394,7 @@ const Profile = () => {
           </form>
         </div>
       ) : (
-        <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-lg p-6">
+        <div className="bn-profile-body">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">

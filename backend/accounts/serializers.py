@@ -25,6 +25,7 @@ def get_security_settings():
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    role = serializers.ChoiceField(choices=['bachelor', 'owner'])
 
     class Meta:
         model = User

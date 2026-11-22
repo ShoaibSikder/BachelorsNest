@@ -67,7 +67,7 @@ class UpdateRentRequestStatusView(generics.UpdateAPIView):
 
     @transaction.atomic
     def update(self, request, *args, **kwargs):
-        rent_request = self.get_queryset().select_for_update().get(pk=kwargs['pk'])
+        rent_request = get_object_or_404(self.get_queryset().select_for_update(), pk=kwargs['pk'])
 
         if request.user != rent_request.owner and not (
             request.user.is_staff or request.user.role == "admin"

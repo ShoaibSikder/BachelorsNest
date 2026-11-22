@@ -103,7 +103,7 @@ const ChatBox = ({ activeUser, currentUser, onBack }) => {
   if (!activeUser) {
     return (
       <div className="flex min-h-[18rem] flex-1 items-center justify-center">
-        Select a user
+        Select a conversation
       </div>
     );
   }
@@ -141,8 +141,8 @@ const ChatBox = ({ activeUser, currentUser, onBack }) => {
               className={`flex ${isMe ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[85%] rounded p-2 sm:max-w-xs ${
-                  isMe ? "bg-blue-700 text-white" : "bg-blue-400 text-white"
+                className={`bn-bubble max-w-[85%] sm:max-w-xs ${
+                  isMe ? "bg-blue-700 text-white" : "bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
                 }`}
               >
                 {msg.content}
@@ -175,8 +175,8 @@ const ChatBox = ({ activeUser, currentUser, onBack }) => {
           value={input}
           onChange={handleTyping}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          className="min-w-0 flex-1 rounded border bg-white p-2 text-black"
-          placeholder="Type message..."
+          className="min-w-0 flex-1 rounded-lg border bg-white p-3 text-gray-900 dark:bg-gray-900 dark:text-gray-100"
+          aria-label="Message" placeholder="Write a message..."
         />
         <button
           onClick={sendMessage}

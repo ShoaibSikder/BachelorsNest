@@ -40,7 +40,7 @@ const SavedProperties = () => {
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="bn-collection">
       <MessageBox
         type={messageType}
         message={message}
@@ -51,7 +51,7 @@ const SavedProperties = () => {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Saved Properties
+            Saved places
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Your shortlist of places worth revisiting.

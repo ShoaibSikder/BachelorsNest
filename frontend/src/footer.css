@@ -1,0 +1,12 @@
+.site-foot {background:#172b23;color:#f4f8f5;font:14px/1.55 "Segoe UI",system-ui,sans-serif;container-type:inline-size}
+.foot-inner {box-sizing:border-box;max-width:1320px;margin:auto;padding:54px 5% 18px}
+.foot-grid {display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px}
+.foot-grid>* {min-width:0}
+.site-foot h2 {font:650 14px/1.4 "Segoe UI",system-ui,sans-serif;margin:0 0 12px;color:#fff}
+.site-foot a {display:table;width:fit-content;max-width:100%;padding:5px 0;color:#c5d6cc;text-decoration:none;overflow-wrap:anywhere}
+.site-foot a:hover,.site-foot a:focus-visible {color:white;text-decoration:underline;text-underline-offset:4px}
+.site-foot .foot-brand {display:inline-flex;align-items:center;gap:10px;font-size:23px;font-weight:700;padding:0;color:#fff}
+.foot-about p {margin:8px 0 0;max-width:23ch;color:#c5d6cc}
+.foot-base {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid #43574c;margin-top:34px;padding-top:16px;color:#c5d6cc}
+@container (max-width:700px) {.foot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.foot-about{grid-column:1/-1}.foot-inner{padding-block-start:36px}}
+@container (max-width:460px) {.foot-grid{gap:24px 16px}.site-foot a{padding-block:8px}}

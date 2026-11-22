@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from accounts.permissions import IsAdmin
 
 # Create your views here.
 from rest_framework import generics, status
@@ -32,7 +32,7 @@ class MarkNotificationReadView(generics.UpdateAPIView):
 
 
 class BroadcastNotificationView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsAdmin]
 
     def post(self, request):
         message = request.data.get('message', '').strip()
@@ -60,7 +60,7 @@ class BroadcastNotificationView(APIView):
 
 
 class RoleNotificationView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsAdmin]
 
     def post(self, request):
         role = request.data.get('role', '').strip()
@@ -90,7 +90,7 @@ class RoleNotificationView(APIView):
 
 
 class IndividualMessageView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsAdmin]
 
     def post(self, request):
         user_id = request.data.get('user_id')
@@ -127,14 +127,14 @@ class IndividualMessageView(APIView):
 
 class SystemLogListView(generics.ListAPIView):
     serializer_class = SystemLogSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsAdmin]
     queryset = SystemLog.objects.all()
     ordering = ['-timestamp']
     filterset_fields = ['level']
 
 
 class AdminUsersListView(generics.ListAPIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsAdmin]
 
     def get(self, request):
         users = User.objects.filter(is_active=True).values('id', 'username', 'email', 'role')

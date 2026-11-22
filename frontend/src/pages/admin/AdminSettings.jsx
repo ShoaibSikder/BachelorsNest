@@ -151,9 +151,9 @@ const AdminSettings = () => {
   ];
 
   return (
-    <div className="text-gray-800 dark:text-white p-6">
+    <div className="bn-admin">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold mb-2">System Settings</h2>
+        <h2 className="text-3xl font-bold mb-2">Workspace settings</h2>
         <p className="text-gray-600 dark:text-gray-400">
           Configure system-wide settings and preferences
         </p>
@@ -173,13 +173,13 @@ const AdminSettings = () => {
 
       {/* Tab Navigation */}
       <div className="mb-6">
-        <div className="flex flex-wrap gap-2 border-b border-gray-200 dark:border-gray-700">
+        <div className="bn-tabs">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                aria-pressed={activeTab === tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === tab.id
                     ? "border-blue-500 text-blue-600 dark:text-blue-400"

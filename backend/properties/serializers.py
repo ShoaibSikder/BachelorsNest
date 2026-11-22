@@ -154,7 +154,7 @@ class PropertyCreateUpdateSerializer(serializers.ModelSerializer):
         instance.save()
 
         if remove_images:
-            PropertyImage.objects.filter(id__in=remove_images).delete()
+            instance.images.filter(id__in=remove_images).delete()
 
         if replace_images:
             instance.images.all().delete()

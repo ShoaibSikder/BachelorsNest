@@ -20,7 +20,7 @@ api.interceptors.request.use((config) => {
   }
 
   // Don't add auth header for login/token endpoints
-  const isAuthEndpoint = config.url?.includes("token");
+  const isAuthEndpoint = /^(token\/|accounts\/(register|password-reset(?:-verify|-confirm)?)\/)/.test(config.url);
 
   if (token && !isAuthEndpoint) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -41,7 +41,7 @@ api.interceptors.response.use(
     }
 
     // Handle 401 Unauthorized - try to refresh token
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && originalRequest.headers?.Authorization && !originalRequest._retry) {
       originalRequest._retry = true;
 
       const refreshToken = localStorage.getItem("refresh_token");

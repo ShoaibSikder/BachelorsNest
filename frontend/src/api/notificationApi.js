@@ -7,5 +7,5 @@ export const getNotifications = () => {
 
 // (Optional) Mark notification as read
 export const markNotificationAsRead = (id) => {
-  return api.patch(`notifications/${id}/read/`);
+  return api.patch(`notifications/read/${id}/`);
 };

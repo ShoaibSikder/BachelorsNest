@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/:section(login|register|forget-password|reset-password|bachelor|owner|admin)/:path*",
+      "destination": "/app.html"
     }
   ]
 }

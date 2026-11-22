@@ -2,6 +2,7 @@ import json
 import os
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -321,7 +322,7 @@ class PasswordResetVerifyTokenView(APIView):
                 "detail": "Token is valid. You can now reset your password."
             }, status=status.HTTP_200_OK)
             
-        except PasswordResetToken.DoesNotExist:
+        except (PasswordResetToken.DoesNotExist, ValidationError):
             return Response({
                 "valid": False,
                 "detail": "Invalid token."

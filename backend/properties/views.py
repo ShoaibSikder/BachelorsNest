@@ -136,7 +136,7 @@ class PropertyListView(generics.ListAPIView):
         availability = self.request.query_params.get('available')
         if availability == 'true':
             queryset = queryset.filter(is_available=True)
-        return queryset
+        return queryset.order_by('-created_at', '-pk')
 
 
 class WishlistToggleView(APIView):

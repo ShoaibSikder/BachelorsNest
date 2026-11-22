@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { API_ENDPOINTS } from "../../config";
+import api from "../../api/axios";
 import PageFallback from "../../components/common/PageFallback";
 
 const AdminRequests = () => {
@@ -21,33 +21,7 @@ const AdminRequests = () => {
     try {
       setLoading(true);
 
-      const token = localStorage.getItem("access_token");
-      if (!token) {
-        setError("Authentication token not found. Please login again.");
-        setLoading(false);
-        return;
-      }
-
-      // Fetch from the admin endpoint
-      const response = await fetch(API_ENDPOINTS.RENTALS_ADMIN, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        if (response.status === 403) {
-          setError("You do not have admin access. Contact your administrator.");
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        setLoading(false);
-        return;
-      }
-
-      const data = await response.json();
+      const { data } = await api.get("rentals/admin/");
 
       // Transform the data to match the component structure
       const transformedRequests = (Array.isArray(data) ? data : []).map(
@@ -129,7 +103,7 @@ const AdminRequests = () => {
     <div className="p-0 text-gray-800 dark:text-white sm:p-6">
       <div className="mb-6">
         <div>
-          <h2 className="mb-2 text-2xl font-bold sm:text-3xl">Rent Request Management</h2>
+          <h2 className="mb-2 text-2xl font-bold sm:text-3xl">Rental requests</h2>
           <p className="text-gray-600 dark:text-gray-400">
             Manage and track all rent requests from users
           </p>
@@ -204,7 +178,7 @@ const AdminRequests = () => {
 
       {/* Requests Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
-        <table className="min-w-[680px] w-full text-center">
+        <table className="bn-table min-w-[680px] w-full">
           <thead className="bg-gray-200 dark:bg-gray-700">
             <tr>
               <th className="p-2 border-r">User</th>

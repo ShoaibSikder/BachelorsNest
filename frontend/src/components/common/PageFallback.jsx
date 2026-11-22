@@ -2,7 +2,7 @@ export default function PageFallback() {
   const block = "rounded-lg bg-slate-200/90 dark:bg-slate-800";
 
   return (
-    <div className="grid animate-pulse gap-4" aria-label="Loading section content" role="status">
+    <div className="grid grid-cols-1 animate-pulse gap-4" aria-label="Loading section content" role="status">
       <section className="rounded-lg border border-slate-200 bg-white/86 p-4 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/76">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="grid gap-2">
@@ -30,15 +30,15 @@ export default function PageFallback() {
         ))}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)]">
         <section className="rounded-lg border border-slate-200 bg-white/86 p-4 shadow-sm shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-950/76">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className={`${block} h-4 w-36`} />
             <div className={`${block} h-8 w-24`} />
           </div>
-          <div className="grid gap-3">
+          <div className="grid grid-cols-1 gap-3">
             {Array.from({ length: 5 }, (_, index) => (
-              <div key={index} className="grid gap-2 rounded-lg border border-slate-100 p-3 dark:border-slate-800">
+              <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-slate-100 p-3 dark:border-slate-800">
                 <div className="flex items-center justify-between gap-3">
                   <div className={`${block} h-4 w-40 max-w-[55vw]`} />
                   <div className={`${block} h-6 w-16`} />
