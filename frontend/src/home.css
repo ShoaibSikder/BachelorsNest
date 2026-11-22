@@ -1,25 +1,30 @@
 @import "./footer.css";
 :root {
-  color-scheme:light dark;
+  color-scheme:light;
   --paper:#fafbf8; --ink:#172a22; --soft:#536259; --rule:#d0d9d2;
   --owner:#e6eee8; --button:#224e39; --inverse:#f6fbf7;
 }
 @media(prefers-color-scheme:dark) {
-  :root {--paper:#151e19;--ink:#f2f5ed;--soft:#b5c4b9;--rule:#35473c;--owner:#20372b;--button:#bce7ca;--inverse:#112b1b}
+  :root:not([data-theme]) {--paper:#151e19;--ink:#f2f5ed;--soft:#b5c4b9;--rule:#35473c;--owner:#20372b;--button:#bce7ca;--inverse:#112b1b;color-scheme:dark}
 }
+[data-theme="dark"] {--paper:#151e19;--ink:#f2f5ed;--soft:#b5c4b9;--rule:#35473c;--owner:#20372b;--button:#bce7ca;--inverse:#112b1b;color-scheme:dark}
 * {box-sizing:border-box}
 body {margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 "Segoe UI",system-ui,sans-serif}
 a {color:inherit;text-underline-offset:4px}
 a:focus-visible,summary:focus-visible {outline:3px solid currentColor;outline-offset:3px}
-.skip {position:fixed;top:-100px;left:12px;padding:10px 18px;background:var(--paper);z-index:5}
+.skip {position:fixed;top:-100px;left:12px;padding:10px 18px;background:var(--paper);z-index:30}
 .skip:focus {top:8px}
 .wrap {width:min(90%,1188px);margin-inline:auto}
-.mast {border-bottom:1px solid var(--rule)}
-.mast-inner,.mast-nav,.hero-actions,.wordmark,.signin,.action {display:flex;align-items:center}
+.mast {position:sticky;top:0;z-index:20;border-bottom:1px solid var(--rule);background:var(--paper)}
+.mast-inner,.mast-nav,.mast-actions,.hero-actions,.wordmark,.signin,.action {display:flex;align-items:center}
 .mast-inner {min-height:76px;justify-content:space-between;gap:24px}
+.mast-actions {gap:10px;flex:none}
 .wordmark {text-decoration:none;font-weight:700;font-size:23px;gap:10px}
 .mast-nav {gap:28px}.mast-nav a,.signin {font-size:14px;font-weight:600;text-decoration:none}
 .mast-nav a {padding-block:12px}.mast-nav a:hover,.hero-link:hover {text-decoration:underline}
+.theme-toggle {display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid var(--rule);border-radius:6px;background:transparent;color:var(--ink);font:22px/1 "Segoe UI Symbol",system-ui,sans-serif;cursor:pointer}
+.theme-toggle:hover {background:var(--owner)}
+.theme-toggle:focus-visible {outline:3px solid currentColor;outline-offset:3px}
 .signin,.action {justify-content:center;gap:18px;border-radius:6px;min-height:44px;padding:9px 18px}
 .signin {border:1px solid var(--rule)}.signin:hover {background:var(--owner)}
 .hero {isolation:isolate;position:relative;display:grid;align-items:center;min-height:min(620px,66svh);background:#283b30;color:#fff}
@@ -47,6 +52,7 @@ h2 {font-size:42px;line-height:1.13}.section-head p,.option-grid p,.owner-inner 
 .owner-inner {display:flex;justify-content:space-between;align-items:center;gap:36px;padding-block:44px}
 .owner-inner p {max-width:62ch;margin-top:12px}.owner-inner .action {flex:none}
 .questions {display:grid;grid-template-columns:1fr 1.4fr;gap:36px}
+.options,.owner-band,.questions {scroll-margin-top:92px}
 .answers {border-top:1px solid var(--rule)}.answers details {border-bottom:1px solid var(--rule)}
 .answers summary {cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 2px;font-weight:600}
 .answers summary::-webkit-details-marker {display:none}
@@ -61,7 +67,8 @@ h2 {font-size:42px;line-height:1.13}.section-head p,.option-grid p,.owner-inner 
 @media(max-width:650px) {
   .mast-inner {display:grid;grid-template-columns:1fr auto;gap:0;padding-top:9px}
   .mast-nav {grid-column:1/-1;grid-row:2;justify-content:space-between;border-top:1px solid var(--rule);margin-top:8px}
-  .wordmark {font-size:20px}.signin {gap:8px;padding-inline:12px}
+  .wordmark {font-size:20px}.signin {gap:8px;padding-inline:12px}.mast-actions {gap:7px}
+  .options,.owner-band,.questions {scroll-margin-top:142px}
   .hero {min-height:min(500px,60svh)}.hero-inner {padding-block:32px}
   .hero::before {background:linear-gradient(90deg,rgba(12,26,21,.86),rgba(12,26,21,.56))}
   h1 {font-size:52px}.hero-summary {font-size:16px;max-width:34ch}

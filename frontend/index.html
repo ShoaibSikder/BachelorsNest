@@ -4,6 +4,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("darkMode");
+      const isDark = savedTheme === null
+        ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        : JSON.parse(savedTheme);
+      document.documentElement.dataset.theme = isDark ? "dark" : "light";
+    } catch {
+      document.documentElement.dataset.theme = "light";
+    }
+  </script>
 
   <!-- Primary SEO -->
   <title>BachelorsNest | Shared Flats and Rental Seats in Bangladesh</title>
@@ -136,7 +147,10 @@
     <div class="wrap mast-inner">
       <a class="wordmark" href="/" aria-label="BachelorsNest home"><img src="/bachelorsnest-icon.svg" width="36" height="36" alt="" />BachelorsNest</a>
       <nav class="mast-nav" aria-label="Explore BachelorsNest"><a href="#rental-options">Rental options</a><a href="#owners">For owners</a><a href="#questions">FAQs</a></nav>
-      <a class="signin" href="/login">Sign in <span aria-hidden="true">&nearr;</span></a>
+      <div class="mast-actions">
+        <button class="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme" aria-pressed="false">☾</button>
+        <a class="signin" href="/login">Sign in <span aria-hidden="true">&nearr;</span></a>
+      </div>
     </div>
   </header>
   <main id="main">
@@ -175,5 +189,6 @@
     </section>
   </main>
   <!-- site-footer -->
+  <script type="module" src="/src/home.js"></script>
 </body>
 </html>
