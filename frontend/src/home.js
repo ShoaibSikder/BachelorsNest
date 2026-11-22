@@ -6,6 +6,17 @@ const icons = {
   sun: '<svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
 };
 
+const apiBaseUrl = (
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV ? "http://localhost:8000" : "https://bachelorsnest-1.onrender.com")
+).replace(/\/+$/, "");
+fetch(`${apiBaseUrl}/warmup/`, {
+  method: "GET",
+  mode: "no-cors",
+  cache: "no-store",
+  keepalive: true,
+}).catch(() => {});
+
 function updateThemeButton() {
   const isDark = root.dataset.theme === "dark";
   const label = isDark ? "Switch to light theme" : "Switch to dark theme";

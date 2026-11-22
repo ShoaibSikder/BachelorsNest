@@ -609,7 +609,7 @@ Use `backend/.env.deployment.example` as the Render backend variable template. R
 ```env
 DEBUG=False
 SECRET_KEY=replace-me-with-a-strong-secret
-ALLOWED_HOSTS=your-backend.onrender.com,.onrender.com
+    ALLOWED_HOSTS=bachelorsnest-1.onrender.com,.onrender.com
 
 DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require
 REDIS_URL=redis://host:6379
@@ -645,7 +645,7 @@ VITE_API_URL=http://localhost:8000
 Use `frontend/.env.deployment.example` as the Vercel variable template:
 
 ```env
-VITE_API_URL=https://your-backend.onrender.com
+    VITE_API_URL=https://bachelorsnest-1.onrender.com
 ```
 
 The frontend derives WebSocket URLs from `VITE_API_URL`. Local HTTP uses `ws://`; production HTTPS uses `wss://`.
@@ -816,7 +816,7 @@ Output directory: dist
 Production frontend env:
 
 ```env
-VITE_API_URL=https://your-backend.onrender.com
+    VITE_API_URL=https://bachelorsnest-1.onrender.com
 ```
 
 For a more detailed checklist, see `DEPLOYMENT.md`.

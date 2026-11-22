@@ -23,6 +23,7 @@ a:focus-visible,summary:focus-visible {outline:3px solid currentColor;outline-of
 .wordmark {text-decoration:none;font-weight:700;font-size:23px;gap:10px}
 .mast-nav {gap:28px}.mast-nav a,.signin {font-size:14px;font-weight:600;text-decoration:none}
 .mast-nav a {padding-block:12px}.mast-nav a:hover {text-decoration:underline}
+@media(max-width:1024px) {.mast-nav {display:none}}
 .theme-toggle {display:inline-grid;place-items:center;width:44px;height:44px;flex-shrink:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--toggle-muted);cursor:pointer}
 .theme-toggle:hover {background:var(--toggle-wash);color:var(--toggle-ink)}
 .theme-toggle:focus-visible {outline:3px solid var(--toggle-focus);outline-offset:3px}
@@ -67,7 +68,7 @@ h2 {font-size:42px;line-height:1.13}.section-head p,.option-grid p,.owner-inner 
 }
 @media(max-width:650px) {
   .mast-inner {display:grid;grid-template-columns:1fr auto;gap:0;padding-top:9px}
-  .mast-nav {grid-column:1/-1;grid-row:2;justify-content:space-between;border-top:1px solid var(--rule);margin-top:8px}
+  .mast-nav {display:none}
   .wordmark {font-size:20px}.signin {gap:8px;padding-inline:12px}.mast-actions {gap:7px}
   .options,.owner-band,.questions {scroll-margin-top:142px}
   .hero {min-height:min(500px,60svh)}.hero-inner {padding-block:32px}
