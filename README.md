@@ -49,7 +49,13 @@ The application uses a Django REST backend and a React + Vite frontend. It is or
 
 ## Screenshots
 
-All screenshots are stored in `Documentations/SystemImages`.
+Select a screenshot to view it at full size. The workspace screenshots use fictional accounts, listings, and conversations.
+
+### Public Homepage
+
+<a href="Documentations/SystemImages/HomePage.png">
+  <img src="Documentations/SystemImages/HomePage.png" width="640" alt="BachelorsNest public homepage with rental options for flats and seats, owner registration, and rental questions" />
+</a>
 
 ### Authentication
 
